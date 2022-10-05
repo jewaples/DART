@@ -1,0 +1,1163 @@
+{
+	"name": "ANAPLAN_FACTS_LOAD_Weekly",
+	"properties": {
+		"activities": [
+			{
+				"name": "Load Fact Anaplan_Full",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SapHanaSource",
+						"query": {
+							"value": "SELECT DEPLETION_PERIOD\n       ,PERIOD\n       ,\"Item_Id\"\n       ,DISTRIBUTOR\n       ,CHANNEL\n       ,FISCAL_YEAR\n       ,FISCAL_PERIOD\n       ,TIMESTAMP_PRIOR_LE\n       ,TIMESTAMP_SNAPSHOT\n       ,VOL_ACT_CS\n       ,VOL_ACT_9L       \n       ,VOL_ACT_LE_CS\n       ,VOL_ACT_LE_9L\n       ,VOL_FCST_CS\n       ,VOL_FCST_9L\n       ,VOL_GOAL_CS\n       ,VOL_GOAL_9L\n       ,VOL_QUARTER_CS\n       ,VOL_QUARTER_9L\n       ,NSV_ACT,NSV_ACT_LE\n       ,NSV_FCST,NSV_GOAL\n       ,NSV_QUARTER\n       ,GS_ACT,GS_ACT_LE\n       ,GS_FCST, GS_GOAL\n       ,DISC_ACT,DISCOUNT_ACT_LE, DISCOUNT_TOTAL_ACT_LE,DISCOUNT_SCANS_ACT_LE\n       ,DISCOUNT_FCST,DISCOUNT_GOAL\n       ,DISCOUNT_TOTAL_FCST\n       ,DISCOUNT_TOTAL_GOAL\n       ,DISCOUNT_SCANS_FCST\n       ,DISCOUNT_SCANS_GOAL\n ,VOL_COVID_GOAL_CS\n\t   ,VOL_COVID_GOAL_9L\n\t   ,NSV_COVID_GOAL\n\t   ,GS_COVID_GOAL\n\t   ,DISCOUNT_COVID_GOAL\n\t   ,DISCOUNT_COVID_TOTAL_GOAL\n\t   ,DISCOUNT_COVID_SCANS_GOAL\n\t   ,GS_QUARTER\n\t   ,DISCOUNT_TOTAL_QUARTER\n\t   ,DISCOUNT_SCANS_QUARTER\n\t   ,DISCOUNT_QUARTER\n,\"CV_PRODUCT_BRAND_PLANNING_SIZE_Product_Brand_Planning_Size_Id\"\n  FROM \"_SYS_BIC\".\"T_Prod.Distributors_USA.Depletions.Reporting/CV_R_DEPLETIONS\"\n    ('PLACEHOLDER' = ('$$I_SOURCE$$', 'ALL'), 'PLACEHOLDER' = ('$$I_MANUAL_ADJUSTMENT$$', 'FORECAST'), 'PLACEHOLDER' = ('$$I_UOM$$', '9L'),'PLACEHOLDER' = ('$$I_YEARS$$', '-7'))",
+							"type": "Expression"
+						},
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"preCopyScript": {
+							"value": "TRUNCATE TABLE [RAD].[FACT_ANAPLAN]",
+							"type": "Expression"
+						},
+						"writeBehavior": "insert",
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "DEPLETION_PERIOD",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DEPLETION_PERIOD",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "PERIOD",
+									"type": "DateTime"
+								},
+								"sink": {
+									"name": "PERIOD",
+									"type": "DateTime"
+								}
+							},
+							{
+								"source": {
+									"name": "Item_Id",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Item_Id",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "DISTRIBUTOR",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DISTRIBUTOR",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "CHANNEL",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CHANNEL",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "FISCAL_YEAR",
+									"type": "String"
+								},
+								"sink": {
+									"name": "FISCAL_YEAR",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "FISCAL_PERIOD",
+									"type": "String"
+								},
+								"sink": {
+									"name": "FISCAL_PERIOD",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "TIMESTAMP_PRIOR_LE",
+									"type": "DateTime"
+								},
+								"sink": {
+									"name": "TIMESTAMP_PRIOR_LE",
+									"type": "DateTime"
+								}
+							},
+							{
+								"source": {
+									"name": "TIMESTAMP_SNAPSHOT",
+									"type": "DateTime"
+								},
+								"sink": {
+									"name": "TIMESTAMP_SNAPSHOT",
+									"type": "DateTime"
+								}
+							},
+							{
+								"source": {
+									"name": "VOL_ACT_CS",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "VOL_ACT_CS",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "VOL_ACT_9L",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "VOL_ACT_9L",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "VOL_ACT_LE_CS",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "VOL_ACT_LE_CS",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "VOL_ACT_LE_9L",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "VOL_ACT_LE_9L",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "VOL_FCST_CS",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "VOL_FCST_CS",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "VOL_FCST_9L",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "VOL_FCST_9L",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "VOL_GOAL_CS",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "VOL_GOAL_CS",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "VOL_GOAL_9L",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "VOL_GOAL_9L",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "VOL_QUARTER_CS",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "VOL_QUARTER_CS",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "VOL_QUARTER_9L",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "VOL_QUARTER_9L",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "NSV_ACT",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "NSV_ACT",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "NSV_ACT_LE",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "NSV_ACT_LE",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "NSV_FCST",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "NSV_FCST",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "NSV_GOAL",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "NSV_GOAL",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "NSV_QUARTER",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "NSV_QUARTER",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "GS_ACT",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "GS_ACT",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "GS_ACT_LE",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "GS_ACT_LE",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "GS_FCST",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "GS_FCST",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "GS_GOAL",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "GS_GOAL",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "DISC_ACT",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "DISC_ACT",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "DISCOUNT_ACT_LE",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "DISCOUNT_ACT_LE",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "DISCOUNT_TOTAL_ACT_LE",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "DISCOUNT_TOTAL_ACT_LE",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "DISCOUNT_SCANS_ACT_LE",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "DISCOUNT_SCANS_ACT_LE",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "DISCOUNT_FCST",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "DISCOUNT_FCST",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "DISCOUNT_GOAL",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "DISCOUNT_GOAL",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "DISCOUNT_TOTAL_FCST",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "DISCOUNT_TOTAL_FCST",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "DISCOUNT_TOTAL_GOAL",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "DISCOUNT_TOTAL_GOAL",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "DISCOUNT_SCANS_FCST",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "DISCOUNT_SCANS_FCST",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "DISCOUNT_SCANS_GOAL",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "DISCOUNT_SCANS_GOAL",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "VOL_COVID_GOAL_CS",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "VOL_COVID_GOAL_CS",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "VOL_COVID_GOAL_9L",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "VOL_COVID_GOAL_9L",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "NSV_COVID_GOAL",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "NSV_COVID_GOAL",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "GS_COVID_GOAL",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "GS_COVID_GOAL",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "DISCOUNT_COVID_GOAL",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "DISCOUNT_COVID_GOAL",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "DISCOUNT_COVID_TOTAL_GOAL",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "DISCOUNT_COVID_TOTAL_GOAL",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "DISCOUNT_COVID_SCANS_GOAL",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "DISCOUNT_COVID_SCANS_GOAL",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "GS_QUARTER",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "GS_QUARTER",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "DISCOUNT_TOTAL_QUARTER",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "DISCOUNT_TOTAL_QUARTER",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "DISCOUNT_SCANS_QUARTER",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "DISCOUNT_SCANS_QUARTER",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "DISCOUNT_QUARTER",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "DISCOUNT_QUARTER",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "CV_PRODUCT_BRAND_PLANNING_SIZE_Product_Brand_Planning_Size_Id",
+									"type": "String"
+								},
+								"sink": {
+									"name": "PRODUCT_BRAND_PLANNING_SIZE",
+									"type": "String"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "RAD_Fact_Sales_Hana",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "RAD_Fact_Anaplan",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Load Fact Anaplan_Snapshot_Full",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Load Fact Anaplan_Full",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SapHanaSource",
+						"query": {
+							"value": "SELECT DEPLETION_PERIOD\n       ,PERIOD\n       ,SNAPSHOT_ID\n       ,\"Item_Id\"\n       ,DISTRIBUTOR\n       ,CHANNEL\n       ,FISCAL_YEAR\n       ,FISCAL_PERIOD\n       ,TIMESTAMP_PRIOR_LE\n       ,TIMESTAMP_SNAPSHOT\n       ,VOL_SNAPSHOT_CS\n       ,VOL_SNAPSHOT_9L\n       ,NSV_SNAPSHOT\n       ,GS_SNAPSHOT\n       ,DISCOUNT_SNAPSHOT\n,DISCOUNT_TOTAL_SNAPSHOT\n,DISCOUNT_SCANS_SNAPSHOT\n  FROM \"_SYS_BIC\".\"T_Prod.Distributors_USA.Depletions.Reporting/CV_R_DEPLETIONS_SNAPSHOT\"\n       ('PLACEHOLDER' = ('$$I_SOURCE$$', 'ALL'), 'PLACEHOLDER' = ('$$I_MANUAL_ADJUSTMENT$$', 'FORECAST'), 'PLACEHOLDER' = ('$$I_UOM$$', '9L'),'PLACEHOLDER' = ('$$I_YEARS$$', '-7'))\nWHERE SNAPSHOT_ID <= TIMESTAMP_SNAPSHOT\nAND VOL_SNAPSHOT_9L IS NOT NULL AND VOL_SNAPSHOT_CS IS NOT NULL",
+							"type": "Expression"
+						},
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"preCopyScript": {
+							"value": "TRUNCATE TABLE [RAD].[FACT_ANAPLAN_SNAPSHOT]\n",
+							"type": "Expression"
+						},
+						"writeBehavior": "insert",
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "DEPLETION_PERIOD",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DEPLETION_PERIOD",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "PERIOD",
+									"type": "DateTime"
+								},
+								"sink": {
+									"name": "PERIOD",
+									"type": "DateTime"
+								}
+							},
+							{
+								"source": {
+									"name": "SNAPSHOT_ID",
+									"type": "DateTime"
+								},
+								"sink": {
+									"name": "SNAPSHOT_ID",
+									"type": "DateTime"
+								}
+							},
+							{
+								"source": {
+									"name": "Item_Id",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Item_Id",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "DISTRIBUTOR",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DISTRIBUTOR",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "CHANNEL",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CHANNEL",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "FISCAL_YEAR",
+									"type": "String"
+								},
+								"sink": {
+									"name": "FISCAL_YEAR",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "FISCAL_PERIOD",
+									"type": "String"
+								},
+								"sink": {
+									"name": "FISCAL_PERIOD",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "TIMESTAMP_PRIOR_LE",
+									"type": "DateTime"
+								},
+								"sink": {
+									"name": "TIMESTAMP_PRIOR_LE",
+									"type": "DateTime"
+								}
+							},
+							{
+								"source": {
+									"name": "TIMESTAMP_SNAPSHOT",
+									"type": "DateTime"
+								},
+								"sink": {
+									"name": "TIMESTAMP_SNAPSHOT",
+									"type": "DateTime"
+								}
+							},
+							{
+								"source": {
+									"name": "VOL_SNAPSHOT_CS",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "VOL_SNAPSHOT_CS",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "VOL_SNAPSHOT_9L",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "VOL_SNAPSHOT_9L",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "NSV_SNAPSHOT",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "NSV_SNAPSHOT",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "GS_SNAPSHOT",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "GS_SNAPSHOT",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "DISCOUNT_SNAPSHOT",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "DISCOUNT_SNAPSHOT",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "DISCOUNT_TOTAL_SNAPSHOT",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "DISCOUNT_TOTAL_SNAPSHOT",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "DISCOUNT_SCANS_SNAPSHOT",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "DISCOUNT_SCANS_SNAPSHOT",
+									"type": "Double"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "RAD_Fact_Sales_Hana",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "RAD_Fact_Anaplan_Snapshot",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Load Fact TM1 Discounts",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Load Fact Anaplan_Snapshot_Full",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SapHanaSource",
+						"query": "SELECT\n\"Brand Planning Size P5 Code\", \"Region Distributor C6 Code\", \"Export Version\", \"Discount Types Billings\",\"TM1 Planning Cycle\", \"TIME\", \"Total Discount\", \"Phased Discount\"\nFROM DISTRIBUTORS_USA.NAMIBP_DISCOUNTS_TM1",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"preCopyScript": {
+							"value": "DELETE FROM [RAD].[FACT_TM1_DISCOUNT]",
+							"type": "Expression"
+						},
+						"writeBehavior": "insert",
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "Brand Planning Size P5 Code",
+									"type": "String"
+								},
+								"sink": {
+									"name": "BRAND_PLANNING_SIZE_P5_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Region Distributor C6 Code",
+									"type": "String"
+								},
+								"sink": {
+									"name": "REGION_DISTRIBUTOR_C6_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Export Version",
+									"type": "String"
+								},
+								"sink": {
+									"name": "EXPORT_VERSION",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Discount Types Billings",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DISCOUNT_TYPES_BILLINGS",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "TM1 Planning Cycle",
+									"type": "String"
+								},
+								"sink": {
+									"name": "TM1_PLANNING_CYCLE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "TIME",
+									"type": "DateTime"
+								},
+								"sink": {
+									"name": "TIME",
+									"type": "DateTime"
+								}
+							},
+							{
+								"source": {
+									"name": "Total Discount",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "TOTAL_DISCOUNT",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"name": "Phased Discount",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "PHASED_DISCOUNT",
+									"type": "Decimal"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "RAD_Fact_Sales_Hana",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "RAD_Fact_TM1_Discounts",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Load Fact MT1 Snapshot Discounts",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Load Fact TM1 Discounts",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SapHanaSource",
+						"query": "SELECT\n\"Brand_Planning_Size_P5_Code\",\n\"Region_Distributor_C6_Code\",\n\"Export_Version\",\n\"Discount_Types_Billings\",\n\"Discount_Type_Description\",\n\"TM1_Planning_Cycle\",\n\"TIME\",\n\"Snapshot_Id\",\n\"Total_Discount\",\n\"Phased_Discount\",\n\"Total_Discount_Snapshot\",\n\"Phased_Discount_Snapshot\",\n\"Total_Discount_Budget\",\n\"Phased_Discount_Budget\",\n\"Total_Discount_Act\",\n\"Phased_Discounted_Act\",\n\"Total_Discount_Prior\",\n\"Phased_Discounted_Prior\"\nFROM \"_SYS_BIC\".\"T_Prod.Distributors_USA.Discounts.Reporting/CV_R_DISCOUNTS_SNAPSHOT\"\nWHERE \"Export_Version\" = 'Mid-month'\nAND \"TM1_Planning_Cycle\" = 'Act/Fcst'\n \n UNION\n\n SELECT\n\"Brand_Planning_Size_P5_Code\",\n\"Region_Distributor_C6_Code\",\n\"Export_Version\",\n\"Discount_Types_Billings\",\n\"Discount_Type_Description\",\n\"TM1_Planning_Cycle\",\n\"TIME\",\n\"Snapshot_Id\",\n\"Total_Discount\",\n\"Phased_Discount\",\n\"Total_Discount_Snapshot\",\n\"Phased_Discount_Snapshot\",\n\"Total_Discount_Budget\",\n\"Phased_Discount_Budget\",\n\"Total_Discount_Act\",\n\"Phased_Discounted_Act\",\n\"Total_Discount_Prior\",\n\"Phased_Discounted_Prior\"\nFROM \"_SYS_BIC\".\"T_Prod.Distributors_USA.Discounts.Reporting/CV_R_DISCOUNTS_SNAPSHOT\"\n WHERE \"Export_Version\" = 'Snapshot Budget'\n   AND \"TM1_Planning_Cycle\" = 'Budget'",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"preCopyScript": {
+							"value": "TRUNCATE TABLE RAD.FACT_TM1_SNAPSHOT_DISCOUNTS",
+							"type": "Expression"
+						},
+						"writeBehavior": "insert",
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "Brand_Planning_Size_P5_Code",
+									"type": "String"
+								},
+								"sink": {
+									"name": "BRAND_PLANNING_SIZE_P5_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Region_Distributor_C6_Code",
+									"type": "String"
+								},
+								"sink": {
+									"name": "REGION_DISTRIBUTOR_C6_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Export_Version",
+									"type": "String"
+								},
+								"sink": {
+									"name": "EXPORT_VERSION",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Discount_Types_Billings",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DISCOUNT_TYPES_BILLINGS",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Discount_Type_Description",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DISCOUNT_TYPE_DESCRIPTION",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "TM1_Planning_Cycle",
+									"type": "String"
+								},
+								"sink": {
+									"name": "TM1_PLANNING_CYCLE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "TIME",
+									"type": "DateTime"
+								},
+								"sink": {
+									"name": "TIME",
+									"type": "DateTime"
+								}
+							},
+							{
+								"source": {
+									"name": "Total_Discount",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "TOTAL_DISCOUNT",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"name": "Phased_Discount",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "PHASED_DISCOUNT",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"name": "Snapshot_Id",
+									"type": "DateTime"
+								},
+								"sink": {
+									"name": "SNAPSHOT_ID",
+									"type": "DateTime"
+								}
+							},
+							{
+								"source": {
+									"name": "Total_Discount_Snapshot",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "TOTAL_DISCOUNT_SNAPSHOT",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"name": "Phased_Discount_Snapshot",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "PHASED_DISCOUNT_SNAPSHOT",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"name": "Total_Discount_Budget",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "TOTAL_DISCOUNT_BUDGET",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"name": "Phased_Discount_Budget",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "PHASED_DISCOUNT_BUDGET",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"name": "Total_Discount_Act",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "TOTAL_DISCOUNT_ACT",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"name": "Phased_Discounted_Act",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "PHASED_DISCOUNT_ACT",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"name": "Total_Discount_Prior",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "TOTAL_DISCOUNT_PRIOR",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"name": "Phased_Discounted_Prior",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "PHASED_DISCOUNT_PRIOR",
+									"type": "Decimal"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "RAD_Fact_Sales_Hana",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "RAD_Fact_TM1_Snapshot_Discounts",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"parameters": {
+			"STARTDATE": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "RAD"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-05-23T17:36:45Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

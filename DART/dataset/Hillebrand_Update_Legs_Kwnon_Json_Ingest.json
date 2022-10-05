@@ -1,0 +1,208 @@
+{
+	"name": "Hillebrand_Update_Legs_Kwnon_Json_Ingest",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_Data_Foundation_DataLake",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "hillebrand_Update_Legs_Kwnon_json",
+				"folderPath": "EDW/BILLINGS/HILLEBRAND/API_PROCESS/HILLEBRANDUPDATELEGSKWNON",
+				"fileSystem": "prod"
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"items": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"fromLocation": {
+								"type": "object",
+								"properties": {
+									"_links": {
+										"type": "object",
+										"properties": {
+											"href": {
+												"type": "string"
+											},
+											"rel": {
+												"type": "string"
+											}
+										}
+									},
+									"sequenceNumber": {
+										"type": "integer"
+									},
+									"coordinate": {
+										"type": "object",
+										"properties": {
+											"latitude": {
+												"type": "number"
+											},
+											"longitude": {
+												"type": "number"
+											}
+										}
+									},
+									"address": {
+										"type": "object",
+										"properties": {
+											"cityName": {
+												"type": "string"
+											},
+											"cityCode": {
+												"type": "string"
+											},
+											"countryName": {
+												"type": "string"
+											},
+											"countryCode": {
+												"type": "string"
+											},
+											"countrySubEntityName": {
+												"type": "string"
+											},
+											"countrySubEntityCode": {
+												"type": "string"
+											}
+										}
+									},
+									"departureDate": {
+										"type": "string"
+									}
+								}
+							},
+							"toLocation": {
+								"type": "object",
+								"properties": {
+									"_links": {
+										"type": "object",
+										"properties": {
+											"href": {
+												"type": "string"
+											},
+											"rel": {
+												"type": "string"
+											}
+										}
+									},
+									"sequenceNumber": {
+										"type": "integer"
+									},
+									"coordinate": {
+										"type": "object",
+										"properties": {
+											"latitude": {
+												"type": "number"
+											},
+											"longitude": {
+												"type": "number"
+											}
+										}
+									},
+									"address": {
+										"type": "object",
+										"properties": {
+											"cityName": {
+												"type": "string"
+											},
+											"cityCode": {
+												"type": "string"
+											},
+											"countryName": {
+												"type": "string"
+											},
+											"countryCode": {
+												"type": "string"
+											}
+										}
+									},
+									"arrivalDate": {
+										"type": "string"
+									},
+									"departureDate": {
+										"type": "string"
+									}
+								}
+							},
+							"modality": {
+								"type": "string"
+							},
+							"status": {
+								"type": "string"
+							},
+							"handledBy": {
+								"type": "string"
+							},
+							"equipment": {
+								"type": "object",
+								"properties": {
+									"number": {
+										"type": "string"
+									},
+									"classification": {
+										"type": "string"
+									},
+									"type": {
+										"type": "string"
+									},
+									"transportReferences": {
+										"type": "array"
+									},
+									"grossWeight": {
+										"type": "number"
+									},
+									"grossWeightUnit": {
+										"type": "string"
+									},
+									"sealNumbers": {
+										"type": "array",
+										"items": {
+											"type": "string"
+										}
+									}
+								}
+							},
+							"emission": {
+								"type": "object",
+								"properties": {
+									"calculation": {
+										"type": "string"
+									},
+									"unit": {
+										"type": "string"
+									},
+									"type": {
+										"type": "string"
+									},
+									"value": {
+										"type": "number"
+									}
+								}
+							},
+							"distance": {
+								"type": "object",
+								"properties": {
+									"distance": {
+										"type": "number"
+									},
+									"unit": {
+										"type": "string"
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

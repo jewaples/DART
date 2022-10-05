@@ -1,0 +1,1468 @@
+{
+	"name": "DISCUS EDW",
+	"properties": {
+		"activities": [
+			{
+				"name": "Load Fact Shipment",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"preCopyScript": "TRUNCATE TABLE [DISCUS].[FACT_SHIPMENT]",
+						"writeBehavior": "insert",
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "ZPRO_ID",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ZPRO_ID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ZPRO_DESC",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ZPRO_DESC",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "RUNID",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "RUNID",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "DATE_MM",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DATE_MM",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "DATE_YYYY",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DATE_YYYY",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "DATE_DD",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DATE_DD",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "DIST_ST_PROV_CODE",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DIST_ST_PROV_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "DIST_REGION",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DIST_REGION",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "DIST_FAMILY",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DIST_FAMILY",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "DIST_GROUP",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DIST_GROUP",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "VENDOR_CODE",
+									"type": "String"
+								},
+								"sink": {
+									"name": "VENDOR_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "BRAND_CODE",
+									"type": "String"
+								},
+								"sink": {
+									"name": "BRAND_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "SIZE_CODE",
+									"type": "String"
+								},
+								"sink": {
+									"name": "SIZE_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "PHYS_CASES",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "PHYS_CASES",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "BATF_CASES",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "BATF_CASES",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "NINL_CASES",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "NINL_CASES",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "DIST_FAMILY_ID",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DIST_FAMILY_ID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "DIST_GROUP_ID",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DIST_GROUP_ID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "DIST_ID",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DIST_ID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "DIST_TYPE",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DIST_TYPE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Created By",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Created By",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Created On",
+									"type": "DateTime"
+								},
+								"sink": {
+									"name": "Created On",
+									"type": "DateTime"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "DISCUS_Distrubutor_Shipment_staging",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DISCUS_Fact_Shipment_EDW",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Load Dim Product",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT * FROM (\n \nSELECT \nROW_NUMBER() OVER (PARTITION BY \"/BIC/ZMEDPPRCD\" ORDER BY \"/BIC/ZTMSTMP\" desc) as RN,\n[/BIC/ZMEDPPRCD] AS DISCUS_BRAND_CODE,\n[/BIC/ZMEDPH1CD] AS \tH1_CODE,\n[/BIC/ZMEDBRC_D] AS \tBRAND_FAMILY,\n[/BIC/ZME_PRD_D] AS \tBRAND_NAME_FULL,\n[/BIC/ZME_PRABV] AS \tBRAND_NAME_ABBR,\n[/BIC/ZME_SUPCD] AS \tVENDOR_DISCUS_CODE, \n[/BIC/ZME_DISNM] AS \tFULL_VENDOR_NAME,\n[/BIC/ZSUPLNAME] AS \tVENDOR_ABBREV,\n[/BIC/ZMEDPMEMB] AS \tMEMBER_FLAG,\n[/BIC/ZMEDPACDY] AS \tACTIVE_DATE_YYYY,\n[/BIC/ZMEDPACDM] AS \tACTIVE_DATE_MM,\n[/BIC/ZMEDP_PRF] AS \tPROOF,\n[/BIC/ZMEDP_AGE] AS \tAGE,\n[/BIC/ZMEDPRACT] AS \tACTIVE_FLAG,\n[/BIC/ZMEDPXREF] AS \tCROSS_REF_NAME,\n[/BIC/ZMEDPH2CD] AS \tH2_CODE,\n[/BIC/ZMEDPH1_1] AS \tH1_L1,\n[/BIC/ZMEDPH1_2] AS \tH1_L2,\n[/BIC/ZMEDPH1_3] AS \tH1_L3,\n[/BIC/ZMEDPH1_4] AS \tH1_L4,\n[/BIC/ZMEDPH2_1] AS \tH2_L0,\n[/BIC/ZMEDPH2_2] AS \tH2_L1,\n[/BIC/ZMEDPH2_3] AS \tH2_L2,\n[/BIC/ZMEDPH2_4] AS \tH2_L3,\n[/BIC/ZMEDPH1_5] AS \tH1_L5,\n[/BIC/ZMEDPXRFC] AS \tCROSS_REF_CODE,\n[/BIC/ZMEDBRC] AS \tBRAND_CODE,\n[/BIC/ZMED2FLVC] AS \tSECONDARY_FLAVOR_CODE,\n[/BIC/ZMED2FLV] AS \tSECONDARY_FLAVOR,\n[/BIC/ZMEDPCOMM] AS \tV1_COMMENT,\n[/BIC/ZMEDCOMM2] AS \tV2_COMMENT,\n[/BIC/ZMEDCOMM3] AS \tV3_COMMENT,\n[/BIC/ZMEDCOMM4] AS \tV4_COMMENT,\n[/BIC/ZMEDCOMM5] AS \tV5_COMMENT,\n[/BIC/ZMED3FLVC] AS \tMAJOR_FLAVOR_CODE,\n[/BIC/ZMED3FLV] AS \tMAJOR_FLAVOR,\n[/BIC/ZMEDPFLVC] AS \tPRIMARY_FLAVOR_CODE,\n[/BIC/ZMEDPFLV] AS \tPRIMARY_FLAVOR,\n[/BIC/ZMEDPDTEM] AS \tHISTORY_AS_OF_MONTH,\n[/BIC/ZTMSTMP] AS \t[TIMESTAMP],\n[/BIC/ZMEDPH2_5] AS \tH2_L4\nFROM [STG].[/BIC/AZOTC_AO142]\nWHERE [/BIC/ZDATAPROV] = 'DISCUSS'\n   ) t WHERE RN = 1",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"preCopyScript": "TRUNCATE TABLE [DISCUS].[DIM_PRODUCT]",
+						"writeBehavior": "insert",
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "DISCUS_BRAND_CODE",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DISCUS_BRAND_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "H1_CODE",
+									"type": "String"
+								},
+								"sink": {
+									"name": "H1_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "BRAND_FAMILY",
+									"type": "String"
+								},
+								"sink": {
+									"name": "BRAND_FAMILY",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "BRAND_NAME_FULL",
+									"type": "String"
+								},
+								"sink": {
+									"name": "BRAND_NAME_FULL",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "BRAND_NAME_ABBR",
+									"type": "String"
+								},
+								"sink": {
+									"name": "BRAND_NAME_ABBR",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "VENDOR_DISCUS_CODE",
+									"type": "String"
+								},
+								"sink": {
+									"name": "VENDOR_DISCUS_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "FULL_VENDOR_NAME",
+									"type": "String"
+								},
+								"sink": {
+									"name": "FULL_VENDOR_NAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "VENDOR_ABBREV",
+									"type": "String"
+								},
+								"sink": {
+									"name": "VENDOR_ABBREV",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "MEMBER_FLAG",
+									"type": "String"
+								},
+								"sink": {
+									"name": "MEMBER_FLAG",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ACTIVE_DATE_YYYY",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ACTIVE_DATE_YYYY",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ACTIVE_DATE_MM",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ACTIVE_DATE_MM",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "PROOF",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "PROOF",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"name": "AGE",
+									"type": "String"
+								},
+								"sink": {
+									"name": "AGE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ACTIVE_FLAG",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ACTIVE_FLAG",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "CROSS_REF_NAME",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CROSS_REF_NAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "H2_CODE",
+									"type": "String"
+								},
+								"sink": {
+									"name": "H2_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "H1_L1",
+									"type": "String"
+								},
+								"sink": {
+									"name": "H1_L1",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "H1_L2",
+									"type": "String"
+								},
+								"sink": {
+									"name": "H1_L2",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "H1_L3",
+									"type": "String"
+								},
+								"sink": {
+									"name": "H1_L3",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "H1_L4",
+									"type": "String"
+								},
+								"sink": {
+									"name": "H1_L4",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "H2_L0",
+									"type": "String"
+								},
+								"sink": {
+									"name": "H2_L0",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "H2_L1",
+									"type": "String"
+								},
+								"sink": {
+									"name": "H2_L1",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "H2_L2",
+									"type": "String"
+								},
+								"sink": {
+									"name": "H2_L2",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "H2_L3",
+									"type": "String"
+								},
+								"sink": {
+									"name": "H2_L3",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "H1_L5",
+									"type": "String"
+								},
+								"sink": {
+									"name": "H1_L5",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "CROSS_REF_CODE",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CROSS_REF_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "BRAND_CODE",
+									"type": "String"
+								},
+								"sink": {
+									"name": "BRAND_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "SECONDARY_FLAVOR_CODE",
+									"type": "String"
+								},
+								"sink": {
+									"name": "SECONDARY_FLAVOR_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "SECONDARY_FLAVOR",
+									"type": "String"
+								},
+								"sink": {
+									"name": "SECONDARY_FLAVOR",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "V1_COMMENT",
+									"type": "String"
+								},
+								"sink": {
+									"name": "V1_COMMENT",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "V2_COMMENT",
+									"type": "String"
+								},
+								"sink": {
+									"name": "V2_COMMENT",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "V3_COMMENT",
+									"type": "String"
+								},
+								"sink": {
+									"name": "V3_COMMENT",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "V4_COMMENT",
+									"type": "String"
+								},
+								"sink": {
+									"name": "V4_COMMENT",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "V5_COMMENT",
+									"type": "String"
+								},
+								"sink": {
+									"name": "V5_COMMENT",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "MAJOR_FLAVOR_CODE",
+									"type": "String"
+								},
+								"sink": {
+									"name": "MAJOR_FLAVOR_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "MAJOR_FLAVOR",
+									"type": "String"
+								},
+								"sink": {
+									"name": "MAJOR_FLAVOR",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "PRIMARY_FLAVOR_CODE",
+									"type": "String"
+								},
+								"sink": {
+									"name": "PRIMARY_FLAVOR_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "PRIMARY_FLAVOR",
+									"type": "String"
+								},
+								"sink": {
+									"name": "PRIMARY_FLAVOR",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "HISTORY_AS_OF_MONTH",
+									"type": "String"
+								},
+								"sink": {
+									"name": "HISTORY_AS_OF_MONTH",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "TIMESTAMP",
+									"type": "String"
+								},
+								"sink": {
+									"name": "TIMESTAMP",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "H2_L4",
+									"type": "String"
+								},
+								"sink": {
+									"name": "H2_L4",
+									"type": "String"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "DISCUS_PRODUCT_STAGING",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DISCUS_Dim_Product_EDW",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Load Dim Product ADLs",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Load Dim Product",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "ParquetSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "ParquetWriteSettings"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "DISCUS_BRAND_CODE",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DISCUS_BRAND_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "H1_CODE",
+									"type": "String"
+								},
+								"sink": {
+									"name": "H1_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "BRAND_FAMILY",
+									"type": "String"
+								},
+								"sink": {
+									"name": "BRAND_FAMILY",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "BRAND_NAME_FULL",
+									"type": "String"
+								},
+								"sink": {
+									"name": "BRAND_NAME_FULL",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "BRAND_NAME_ABBR",
+									"type": "String"
+								},
+								"sink": {
+									"name": "BRAND_NAME_ABBR",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "VENDOR_DISCUS_CODE",
+									"type": "String"
+								},
+								"sink": {
+									"name": "VENDOR_DISCUS_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "FULL_VENDOR_NAME",
+									"type": "String"
+								},
+								"sink": {
+									"name": "FULL_VENDOR_NAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "VENDOR_ABBREV",
+									"type": "String"
+								},
+								"sink": {
+									"name": "VENDOR_ABBREV",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "MEMBER_FLAG",
+									"type": "String"
+								},
+								"sink": {
+									"name": "MEMBER_FLAG",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ACTIVE_DATE_YYYY",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ACTIVE_DATE_YYYY",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ACTIVE_DATE_MM",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ACTIVE_DATE_MM",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "PROOF",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "PROOF",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"name": "AGE",
+									"type": "String"
+								},
+								"sink": {
+									"name": "AGE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ACTIVE_FLAG",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ACTIVE_FLAG",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "CROSS_REF_NAME",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CROSS_REF_NAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "H2_CODE",
+									"type": "String"
+								},
+								"sink": {
+									"name": "H2_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "H1_L1",
+									"type": "String"
+								},
+								"sink": {
+									"name": "H1_L1",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "H1_L2",
+									"type": "String"
+								},
+								"sink": {
+									"name": "H1_L2",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "H1_L3",
+									"type": "String"
+								},
+								"sink": {
+									"name": "H1_L3",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "H1_L4",
+									"type": "String"
+								},
+								"sink": {
+									"name": "H1_L4",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "H2_L0",
+									"type": "String"
+								},
+								"sink": {
+									"name": "H2_L0",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "H2_L1",
+									"type": "String"
+								},
+								"sink": {
+									"name": "H2_L1",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "H2_L2",
+									"type": "String"
+								},
+								"sink": {
+									"name": "H2_L2",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "H2_L3",
+									"type": "String"
+								},
+								"sink": {
+									"name": "H2_L3",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "H1_L5",
+									"type": "String"
+								},
+								"sink": {
+									"name": "H1_L5",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "CROSS_REF_CODE",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CROSS_REF_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "BRAND_CODE",
+									"type": "String"
+								},
+								"sink": {
+									"name": "BRAND_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "SECONDARY_FLAVOR_CODE",
+									"type": "String"
+								},
+								"sink": {
+									"name": "SECONDARY_FLAVOR_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "SECONDARY_FLAVOR",
+									"type": "String"
+								},
+								"sink": {
+									"name": "SECONDARY_FLAVOR",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "V1_COMMENT",
+									"type": "String"
+								},
+								"sink": {
+									"name": "V1_COMMENT",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "V2_COMMENT",
+									"type": "String"
+								},
+								"sink": {
+									"name": "V2_COMMENT",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "V3_COMMENT",
+									"type": "String"
+								},
+								"sink": {
+									"name": "V3_COMMENT",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "V4_COMMENT",
+									"type": "String"
+								},
+								"sink": {
+									"name": "V4_COMMENT",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "V5_COMMENT",
+									"type": "String"
+								},
+								"sink": {
+									"name": "V5_COMMENT",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "MAJOR_FLAVOR_CODE",
+									"type": "String"
+								},
+								"sink": {
+									"name": "MAJOR_FLAVOR_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "MAJOR_FLAVOR",
+									"type": "String"
+								},
+								"sink": {
+									"name": "MAJOR_FLAVOR",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "PRIMARY_FLAVOR_CODE",
+									"type": "String"
+								},
+								"sink": {
+									"name": "PRIMARY_FLAVOR_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "PRIMARY_FLAVOR",
+									"type": "String"
+								},
+								"sink": {
+									"name": "PRIMARY_FLAVOR",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "HISTORY_AS_OF_MONTH",
+									"type": "String"
+								},
+								"sink": {
+									"name": "HISTORY_AS_OF_MONTH",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "TIMESTAMP",
+									"type": "String"
+								},
+								"sink": {
+									"name": "TIMESTAMP",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "H2_L4",
+									"type": "String"
+								},
+								"sink": {
+									"name": "H2_L4",
+									"type": "String"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "DISCUS_Dim_Product_EDW",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DISCUS_Dim_Product_ADLs_Sink",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Load Fact Shipment ADLs",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Load Fact Shipment",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "ParquetSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "ParquetWriteSettings"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "ZPRO_ID",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ZPRO_ID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ZPRO_DESC",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ZPRO_DESC",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "RUNID",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "RUNID",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "DATE_MM",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DATE_MM",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "DATE_YYYY",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DATE_YYYY",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "DATE_DD",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DATE_DD",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "DIST_ST_PROV_CODE",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DIST_ST_PROV_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "DIST_REGION",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DIST_REGION",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "DIST_FAMILY",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DIST_FAMILY",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "DIST_GROUP",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DIST_GROUP",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "VENDOR_CODE",
+									"type": "String"
+								},
+								"sink": {
+									"name": "VENDOR_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "BRAND_CODE",
+									"type": "String"
+								},
+								"sink": {
+									"name": "BRAND_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "SIZE_CODE",
+									"type": "String"
+								},
+								"sink": {
+									"name": "SIZE_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "PHYS_CASES",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "PHYS_CASES",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "BATF_CASES",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "BATF_CASES",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "NINL_CASES",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "NINL_CASES",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "DIST_FAMILY_ID",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DIST_FAMILY_ID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "DIST_GROUP_ID",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DIST_GROUP_ID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "DIST_ID",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DIST_ID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "DIST_TYPE",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DIST_TYPE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Created By",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CREATED_BY"
+								}
+							},
+							{
+								"source": {
+									"name": "Created On",
+									"type": "DateTime"
+								},
+								"sink": {
+									"name": "CREATED_ON"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "DISCUS_Distrubutor_Shipment_staging",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DISCUS_Distributor_Shipment_ADLs_Sink",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"folder": {
+			"name": "DISCUS"
+		},
+		"annotations": [],
+		"lastPublishTime": "2021-08-06T17:23:56Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

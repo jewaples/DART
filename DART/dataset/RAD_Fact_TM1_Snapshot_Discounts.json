@@ -1,0 +1,115 @@
+{
+	"name": "RAD_Fact_TM1_Snapshot_Discounts",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "RAD"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "BRAND_PLANNING_SIZE_P5_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "REGION_DISTRIBUTOR_C6_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "EXPORT_VERSION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DISCOUNT_TYPES_BILLINGS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DISCOUNT_TYPE_DESCRIPTION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TM1_PLANNING_CYCLE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TIME",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "TOTAL_DISCOUNT",
+				"type": "decimal",
+				"precision": 25,
+				"scale": 5
+			},
+			{
+				"name": "PHASED_DISCOUNT",
+				"type": "decimal",
+				"precision": 25,
+				"scale": 5
+			},
+			{
+				"name": "SNAPSHOT_ID",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "TOTAL_DISCOUNT_SNAPSHOT",
+				"type": "decimal",
+				"precision": 25,
+				"scale": 5
+			},
+			{
+				"name": "PHASED_DISCOUNT_SNAPSHOT",
+				"type": "decimal",
+				"precision": 25,
+				"scale": 5
+			},
+			{
+				"name": "TOTAL_DISCOUNT_BUDGET",
+				"type": "decimal",
+				"precision": 25,
+				"scale": 5
+			},
+			{
+				"name": "PHASED_DISCOUNT_BUDGET",
+				"type": "decimal",
+				"precision": 25,
+				"scale": 5
+			},
+			{
+				"name": "TOTAL_DISCOUNT_ACT",
+				"type": "decimal",
+				"precision": 25,
+				"scale": 5
+			},
+			{
+				"name": "PHASED_DISCOUNT_ACT",
+				"type": "decimal",
+				"precision": 25,
+				"scale": 5
+			},
+			{
+				"name": "TOTAL_DISCOUNT_PRIOR",
+				"type": "decimal",
+				"precision": 25,
+				"scale": 5
+			},
+			{
+				"name": "PHASED_DISCOUNT_PRIOR",
+				"type": "decimal",
+				"precision": 25,
+				"scale": 5
+			}
+		],
+		"typeProperties": {
+			"schema": "RAD",
+			"table": "FACT_TM1_SNAPSHOT_DISCOUNTS"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

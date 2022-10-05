@@ -1,0 +1,154 @@
+{
+	"name": "CANADA_Inventory",
+	"properties": {
+		"activities": [
+			{
+				"name": "Copy Inventory HANA ADL",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SapHanaSource",
+						"query": "SELECT MATNR,TXTMD,MEINS,WERKS,LGORT,CHARG,CLABS,CINSM,CSPEM,CRETM,TRAME,TOTAL, CURRENT_DATE \"DATE\"\nFROM \"_SYS_BIC\".\"T_Prod.Distributors_USA.Canada_Inventory.Reporting/CV_R_CANADA_INVENTORY\"",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "Hana_Source_Tables",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "Canada_Inventory_ADL",
+						"type": "DatasetReference",
+						"parameters": {
+							"FILE_NAME": "Canada_Inventory_Warehouses.csv",
+							"FILE_PATH": {
+								"value": "@pipeline().parameters.FILE_PATH",
+								"type": "Expression"
+							}
+						}
+					}
+				]
+			},
+			{
+				"name": "Copy to ADL Dev",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Copy Inventory HANA ADL",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "Canada_Inventory_ADL",
+						"type": "DatasetReference",
+						"parameters": {
+							"FILE_NAME": "Canada_Inventory_Warehouses.csv",
+							"FILE_PATH": "@pipeline().parameters.FILE_PATH"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "Canada_Inventory_ADL",
+						"type": "DatasetReference",
+						"parameters": {
+							"FILE_NAME": "Canada_Inventory_Warehouses.csv",
+							"FILE_PATH": "dev/Canada/Inventory/Input"
+						}
+					}
+				]
+			}
+		],
+		"parameters": {
+			"STARTDATE": {
+				"type": "string"
+			},
+			"FILE_PATH": {
+				"type": "string",
+				"defaultValue": "prod/Canada/Inventory/"
+			}
+		},
+		"folder": {
+			"name": "CANADA"
+		},
+		"annotations": [],
+		"lastPublishTime": "2021-10-13T16:37:27Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

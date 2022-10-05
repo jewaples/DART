@@ -1,0 +1,118 @@
+{
+	"name": "AzureSqlTSUPPLIER_ITEM_MASTER",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "SIM_DIVISION",
+				"type": "varchar"
+			},
+			{
+				"name": "SIM_DA_SIM_ITEM_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "SIM_SUPPLIER_CAT_ID",
+				"type": "varchar"
+			},
+			{
+				"name": "SIM_SUPPLIER_UPC",
+				"type": "varchar"
+			},
+			{
+				"name": "SIM_SUPPLIER_ALT_ID",
+				"type": "varchar"
+			},
+			{
+				"name": "SIM_DESCRIPTION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SIM_ITEM_STATUS",
+				"type": "varchar"
+			},
+			{
+				"name": "SIM_MIN_OQ",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "SIM_PACK_SIZE1",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "SIM_PACK_SIZE2",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "SIM_PACK_SIZE3",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "SIM_STOCK_UM",
+				"type": "varchar"
+			},
+			{
+				"name": "SIM_BRAND_CODE",
+				"type": "varchar"
+			},
+			{
+				"name": "SIM_PRODUCT_GROUP",
+				"type": "varchar"
+			},
+			{
+				"name": "SIM_CASE_COUNT",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "SIM_STACKABILITY_FACTOR",
+				"type": "decimal",
+				"precision": 14,
+				"scale": 4
+			},
+			{
+				"name": "SIM_ALT_MATCH_ID",
+				"type": "varchar"
+			},
+			{
+				"name": "SIM_CASES_PER_LAYER",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "SIM_LAYERS_PER_PALLET",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "FILE_DATE",
+				"type": "varchar"
+			},
+			{
+				"name": "LAST_UPDATE_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "LAST_UPDATE_BY",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "VMI",
+			"table": "SUPPLIER_ITEM_MASTER"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

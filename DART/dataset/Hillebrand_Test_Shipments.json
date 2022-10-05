@@ -1,0 +1,339 @@
+{
+	"name": "Hillebrand_Test_Shipments",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "MODIFIED_TIME_STAMP",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "STATUS",
+				"type": "varchar"
+			},
+			{
+				"name": "SHIP_FROM_PARTY_NAME",
+				"type": "varchar"
+			},
+			{
+				"name": "SHIP_FROM_LOCATION_CITY_NAME",
+				"type": "varchar"
+			},
+			{
+				"name": "SHIP_FROM_LOCATION_CITY_CODE",
+				"type": "varchar"
+			},
+			{
+				"name": "SHIP_FROM_LOCATION_COUNTRY_NAME",
+				"type": "varchar"
+			},
+			{
+				"name": "SHIP_FROM_LOCATION_COUNTRY_CODE",
+				"type": "varchar"
+			},
+			{
+				"name": "SHIP_FROM_LOCATION_COUNTRY_SUB_ENTITY_NAME",
+				"type": "varchar"
+			},
+			{
+				"name": "SHIP_FROM_LOCATION_COUNTRY_SUB_ENTITY_CODE",
+				"type": "varchar"
+			},
+			{
+				"name": "SHIP_FROM_LOCATION_STATUS",
+				"type": "varchar"
+			},
+			{
+				"name": "ESTIMATED_DEPARTURE_DATE",
+				"type": "varchar"
+			},
+			{
+				"name": "ACTUAL_DEPARTURE_DATE",
+				"type": "varchar"
+			},
+			{
+				"name": "DEPARTURE_DATE",
+				"type": "varchar"
+			},
+			{
+				"name": "SHIP_TO_PARTY_NAME",
+				"type": "varchar"
+			},
+			{
+				"name": "SHIP_TO_LOCATION_CITY_NAME",
+				"type": "varchar"
+			},
+			{
+				"name": "SHIP_TO_LOCATION_CITY_CODE",
+				"type": "varchar"
+			},
+			{
+				"name": "SHIP_TO_LOCATION_COUNTRY_NAME",
+				"type": "varchar"
+			},
+			{
+				"name": "SHIP_TO_LOCATION_COUNTRY_CODE",
+				"type": "varchar"
+			},
+			{
+				"name": "SHIP_TO_LOCATION_COUNTRY_SUB_ENTITY_NAME",
+				"type": "varchar"
+			},
+			{
+				"name": "SHIP_TO_LOCATION_COUNTRY_SUB_ENTITY_CODE",
+				"type": "varchar"
+			},
+			{
+				"name": "SHIP_TO_LOCATION_STATUS",
+				"type": "varchar"
+			},
+			{
+				"name": "ESTIMATED_ARRIVAL_DATE",
+				"type": "varchar"
+			},
+			{
+				"name": "ACTUAL_ARRIVAL_DATE",
+				"type": "varchar"
+			},
+			{
+				"name": "ARRIVAL_DATE",
+				"type": "varchar"
+			},
+			{
+				"name": "SOLD_BY",
+				"type": "varchar"
+			},
+			{
+				"name": "SOLD_TO",
+				"type": "varchar"
+			},
+			{
+				"name": "REFERENCE",
+				"type": "varchar"
+			},
+			{
+				"name": "ROLE",
+				"type": "varchar"
+			},
+			{
+				"name": "OTHER_REFERENCES",
+				"type": "varchar"
+			},
+			{
+				"name": "EQUIPMENT_NUMBER",
+				"type": "varchar"
+			},
+			{
+				"name": "EQUIPMENT_CLASSIFICATION",
+				"type": "varchar"
+			},
+			{
+				"name": "EQUIPMENT_TYPE",
+				"type": "varchar"
+			},
+			{
+				"name": "EQUIPMENT_GROSS_WEIGHT",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "EQUIPMENT_GROSS_WEIGHT_UNIT",
+				"type": "varchar"
+			},
+			{
+				"name": "EQUIPMENT_TRANSPORT_REFERENCES",
+				"type": "varchar"
+			},
+			{
+				"name": "EQUIPMENT_SEAL_NUMBERS",
+				"type": "varchar"
+			},
+			{
+				"name": "PROGRESS",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "TOTAL_PACKAGES",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "PALLETISATION",
+				"type": "varchar"
+			},
+			{
+				"name": "GROSS_WEIGHT",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "GROSS_WEIGHT_UNIT",
+				"type": "varchar"
+			},
+			{
+				"name": "LASTEVENT_LINKS_HREF",
+				"type": "varchar"
+			},
+			{
+				"name": "LASTEVENT_LINKS_REL",
+				"type": "varchar"
+			},
+			{
+				"name": "LASTEVENT_LINKS_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "LASTEVENT_LINKS_CODE",
+				"type": "varchar"
+			},
+			{
+				"name": "LASTEVENT_LINKS_CATEGORY",
+				"type": "varchar"
+			},
+			{
+				"name": "LASTEVENT_LINKS_DATE",
+				"type": "varchar"
+			},
+			{
+				"name": "LASTEVENT_LINKS_LASTUPDATE",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "LASTEVENT_LINKS_TEXT",
+				"type": "varchar"
+			},
+			{
+				"name": "LASTEVENT_LINKS_TEMPLATE",
+				"type": "varchar"
+			},
+			{
+				"name": "LASTEVENT_NAME",
+				"type": "varchar"
+			},
+			{
+				"name": "LASTEVENT_VALUE",
+				"type": "varchar"
+			},
+			{
+				"name": "LASTEVENT_DATATYPE",
+				"type": "varchar"
+			},
+			{
+				"name": "LASTEVENT_HREF",
+				"type": "varchar"
+			},
+			{
+				"name": "LASTEVENT_REL",
+				"type": "varchar"
+			},
+			{
+				"name": "LASTEVENT_ID",
+				"type": "varchar"
+			},
+			{
+				"name": "LASTEVENT_TYPE",
+				"type": "varchar"
+			},
+			{
+				"name": "LASTEVENT_PRIMARY",
+				"type": "varchar"
+			},
+			{
+				"name": "HS_CODES",
+				"type": "varchar"
+			},
+			{
+				"name": "ON_TIME_STATUS",
+				"type": "varchar"
+			},
+			{
+				"name": "EMISSION_CALCULATION",
+				"type": "varchar"
+			},
+			{
+				"name": "EMISSION_UNIT",
+				"type": "varchar"
+			},
+			{
+				"name": "EMISSION_TYPE",
+				"type": "varchar"
+			},
+			{
+				"name": "EMISSION_VALUE",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "INCOTERM_INCOTERM",
+				"type": "varchar"
+			},
+			{
+				"name": "INCOTERM_LOCATION_CODE",
+				"type": "varchar"
+			},
+			{
+				"name": "INCOTERM_LOCATION_NAME",
+				"type": "varchar"
+			},
+			{
+				"name": "COMMODITY",
+				"type": "varchar"
+			},
+			{
+				"name": "READY_DATE",
+				"type": "varchar"
+			},
+			{
+				"name": "INSURED",
+				"type": "bit"
+			},
+			{
+				"name": "MAIN_MODALITY",
+				"type": "varchar"
+			},
+			{
+				"name": "BOOKING_NUMBER",
+				"type": "varchar"
+			},
+			{
+				"name": "BOOKING_DATE_TIME",
+				"type": "varchar"
+			},
+			{
+				"name": "CARRIER_NAME",
+				"type": "varchar"
+			},
+			{
+				"name": "CARRIER_SCAC",
+				"type": "varchar"
+			},
+			{
+				"name": "BOOKING_BLNUMBER_NUMBER",
+				"type": "varchar"
+			},
+			{
+				"name": "BOOKING_BLNUMBER_TYPE",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "STG",
+			"table": "HILLEBRAND_SHIPMENTS_CALL"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,163 @@
+{
+	"name": "RAD_Dim_Distributor_Sql",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "RAD"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "DISTRIBUTOR",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DISTRIBUTOR_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "REGION_DISTRIBUTOR",
+				"type": "nvarchar"
+			},
+			{
+				"name": "REGION_DISTRIBUTOR_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MARKET",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MARKET_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SUB_REGION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SUB_REGION_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SUPER_REGION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SUPER_REGION_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BUSINESS_UNIT",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BUSINESS_UNIT_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "COUNTRY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "COUNTRY_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ACTIVE_FOR_PLANNING_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BILLINGS_EQUALS_DEPLETIONS_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DEPLETIONS_EXPECTED_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DISTRIBUTOR_CITY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CURRENT_CUSTOMER_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "COMMERCIAL_DIVISION_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "COMMERCIAL_DIVISION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "COMMERCIAL_NATIONAL_MANAGER_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "COMMERCIAL_NATIONAL_MANAGER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "COMMERCIAL_REGION_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "COMMERCIAL_REGION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TRANSATLANTIC_SCOPE_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TRANSATLANTIC_SCOPE_DISTRIBUTOR_TYPE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TRANSATLANTIC_MARKET_TYPE_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TRANSATLANTIC_MARKET_TYPE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PRICE_LIST_TYPE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PRICE_LIST_TYPE_DESCRIPTION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MARKET_LATEST_CLOSED_PERIOD",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "DISTRIBUTOR_LATEST_CLOSED_PERIOD",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "TOTAL_US_DOMESTIC",
+				"type": "varchar"
+			},
+			{
+				"name": "FRANCHISE_STATES_DISTRIBUTOR_GROUPING",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "RAD",
+			"table": "DIM_DISTRIBUTOR"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

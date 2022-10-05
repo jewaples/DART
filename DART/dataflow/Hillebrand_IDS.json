@@ -1,0 +1,60 @@
+{
+	"name": "Hillebrand_IDS",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "Hillebrand_Json_Ingest",
+						"type": "DatasetReference"
+					},
+					"name": "HillbrandRestAPI"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "Hillebrand_IDs",
+						"type": "DatasetReference"
+					},
+					"name": "DatasetWithIDs"
+				}
+			],
+			"transformations": [
+				{
+					"name": "ParseIDs"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          {_pagingInfo} as (totalItems as integer, totalPages as integer, hasPreviousPage as boolean, hasNextPage as boolean, itemsOnPage as integer, pageNumber as integer, pageSize as integer),",
+				"          items as ({_links} as (href as string, rel as string), id as integer, modifiedTimeStamp as integer, shipFromPartyName as string, shipFromLocation as (cityName as string, cityCode as string, countryName as string, countryCode as string, countrySubEntityName as string, countrySubEntityCode as string), shipFromLocationStatus as string, estimatedDepartureDate as string, actualDepartureDate as string, departureDate as string, shipToPartyName as string, shipToLocation as (cityName as string, cityCode as string, countryName as string, countryCode as string, countrySubEntityName as string, countrySubEntityCode as string), shipToLocationStatus as string, estimatedArrivalDate as string, actualArrivalDate as string, arrivalDate as string, soldBy as string, soldTo as string, lastEvent as ({_links} as (href as string, rel as string), id as integer, code as string, category as string, date as string, lastUpdate as integer, text as string, template as string, templateVariables as (name as string, value as string, dataType as string, resource as ({_links} as (href as string, rel as string), id as integer, type as string), primary as boolean)[]), status as string, references as (reference as string, role as string)[], equipment as (number as string, classification as string, type as string, transportReferences as string[], sealNumbers as string[]), progress as integer, onTimeStatus as string, emission as (calculation as string, unit as string, type as string, value as double), readyDate as string, mainModality as string)[]",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     documentForm: 'documentPerLine') ~> HillbrandRestAPI",
+				"HillbrandRestAPI foldDown(unroll(items, items),",
+				"     mapColumn(",
+				"          ID = items.id",
+				"     ),",
+				"     skipDuplicateMapInputs: false,",
+				"     skipDuplicateMapOutputs: false) ~> ParseIDs",
+				"ParseIDs sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     recreate:true,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     preCommands: [],",
+				"     postCommands: []) ~> DatasetWithIDs"
+			]
+		}
+	}
+}

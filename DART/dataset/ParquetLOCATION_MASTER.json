@@ -1,0 +1,22 @@
+{
+	"name": "ParquetLOCATION_MASTER",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_Data_Foundation_DataLake",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "CUSTOMER_LOCATION_MASTER.parquet",
+				"folderPath": "EDW/BILLINGS/STG_VMI_CUSTOMER_LOCATION_MASTER/CURRENT",
+				"fileSystem": "prod"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

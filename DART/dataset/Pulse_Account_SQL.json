@@ -1,0 +1,773 @@
+{
+	"name": "Pulse_Account_SQL",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "PULSE"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "Id",
+				"type": "nvarchar"
+			},
+			{
+				"name": "IsDeleted",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MasterRecordId",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Name",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Type",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RecordTypeId",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ParentId",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BillingStreet",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BillingCity",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BillingState",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BillingPostalCode",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BillingCountry",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BillingLatitude",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BillingLongitude",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BillingGeocodeAccuracy",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ShippingStreet",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ShippingCity",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ShippingState",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ShippingPostalCode",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ShippingCountry",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ShippingLatitude",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ShippingLongitude",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ShippingGeocodeAccuracy",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Phone",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Fax",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AccountNumber",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Website",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PhotoUrl",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Sic",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Industry",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AnnualRevenue",
+				"type": "nvarchar"
+			},
+			{
+				"name": "NumberOfEmployees",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Ownership",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TickerSymbol",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Description",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Rating",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Site",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CurrencyIsoCode",
+				"type": "nvarchar"
+			},
+			{
+				"name": "OwnerId",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CreatedDate",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CreatedById",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LastModifiedDate",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LastModifiedById",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SystemModstamp",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LastActivityDate",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LastViewedDate",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LastReferencedDate",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Jigsaw",
+				"type": "nvarchar"
+			},
+			{
+				"name": "JigsawCompanyId",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AccountSource",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SicDesc",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Account_Currency__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Account_Group__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Account_Holder__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Account_Number__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Account_Status__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Activity_Segment__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "App_Local_Id__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Approval_status__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Bank_Country__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Bank_Key__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Banner__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Best_com_path__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Best_day_to_visit__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Best_time_to_visit__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Change_note__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "City__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Consumer_Activity__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Consumer_Type__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Consumption_Cluster__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Consumption_Moment__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Control_Key__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Country__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Credit_Available__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Credit_Exposure__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Credit_Limit_Used__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Credit_Limit__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Customer_Name__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Days_Closed__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Delivery_Instructions__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Delivery_Time_From__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Delivery_Time_To__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Delivery_days__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Distribution_Channel__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "E_mail__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "E_mail_of_the_Sales_Rep__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Geolocation__Latitude__s",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Geolocation__Longitude__s",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Hierarchy_parent__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "House_nr__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "IBAN__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Total_Score__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Indirect_Flag__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Industry__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Language__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LastVisit__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Lead_Time_to_Deliver__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Legal_Name_2__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Legal_Name_3__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Legal_Name__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Market__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Memo__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Method_of_payment__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Nielsen_ID__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Nielsen_number__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Open_From__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Open_To__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Operation__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Approval_image_URL__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Outlet_quality__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Outlet_type__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Partner_Bank_Type__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BIC__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Potential_Annual_Volume__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Previous_Master_Record_Number__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Quality_Score__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Reason_for_pending__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Reasons_to_delete__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Reference_Bank_Details__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Required_Appointment__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SAP_Customer_ID__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SAP_Vendor_ID__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Sales_Area_Order_Block__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Sales_Channel__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Sales_Directorate__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Sales_District__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Sales_Office__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Seasonality__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Social_Connect__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Street_2__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Street_3__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Street__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Surface__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Tax_Number_1__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Tax_Number_2__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Tax_Number_3__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Tax_Number_4__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Term_of_payment__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Territory_ID__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Territory_description__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Under_Contract__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VAT_Exempted_Reason__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Vat_Number__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Visit_Frequency_Days__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Visit_Frequency__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Visit_Status__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Country_to_make_the_link__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Zip__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "allowed_to_pay_contract__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "attachment__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "free_bottle_agreement__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "isRecentlyModified__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Account_Type__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Approval_Action__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Last_Visit_Relation__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Order_transfer_mode__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Out_Frecuency__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PoS_Segment__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Reject_Reason__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Requester_Email__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Requester_Name__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Requester_Note__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Requester_Phone__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Sales_group__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Winning_In__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Image_brand__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Picture_of_Success__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "District__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ImageTags__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "What_Success_Looks_Like__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "New_Shipto_Payer__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Tax__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Tax_type__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Market_subdivision__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SGWS_number__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TDLinx_number__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Terrasse__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "USA_DMAName__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "USA_MarketingGroup__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "USA_OutletSubType__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "USA_OwnershipGroup__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "USA_PrimaryFoodTypeIndicator__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "USA_TargetConsumerDemographics__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Count_of_Account_Territories__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Core_AccountPersonality__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Core_ChannelSegment__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Core_PulseMarketSubdivision__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Core_PulseMarket__c",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "PULSE",
+			"table": "ACCOUNT"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

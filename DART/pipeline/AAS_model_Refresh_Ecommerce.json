@@ -1,0 +1,340 @@
+{
+	"name": "AAS_model_Refresh_Ecommerce",
+	"properties": {
+		"activities": [
+			{
+				"name": "RefreshAasModel",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": {
+						"value": "https://prod-99.westeurope.logic.azure.com:443/workflows/f072f84d4b1a4234919c9418d60681c6/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=kPm1yNz-hGyIQ0ICkkxd74aF_MT_1VzN2d8FuXY2ejc",
+						"type": "Expression"
+					},
+					"method": "POST",
+					"headers": {
+						"Content-Type": "application/json"
+					},
+					"body": {
+						"value": "@concat('{\"aasUrl\":\"',pipeline().parameters.in_model_url,'\",\"aasRefreshBody\":{\"CommitMode\":\"transactional\",\"MaxParallelism\":2,\"Objects\":[],\"RetryCount\":2,\"Type\":\"Full\"}}')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "SetVarRefreshStatusStart",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "RefreshAasModel",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "var_refresh_status",
+					"value": "Start state"
+				}
+			},
+			{
+				"name": "UntilRefreshFinished",
+				"type": "Until",
+				"dependsOn": [
+					{
+						"activity": "SetVarRefreshStatusStart",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@or(equals(variables('var_refresh_status'),'succeeded'),equals(variables('var_refresh_status'),'failed'))",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "WaitForRefresh",
+							"type": "Wait",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"waitTimeInSeconds": 120
+							}
+						},
+						{
+							"name": "GetAasRefreshStatus",
+							"type": "WebActivity",
+							"dependsOn": [
+								{
+									"activity": "WaitForRefresh",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"url": {
+									"value": "@activity('RefreshAasModel').output.headers['location']",
+									"type": "Expression"
+								},
+								"method": "GET",
+								"headers": {
+									"Content-Type": "application/json"
+								},
+								"authentication": {
+									"type": "MSI",
+									"resource": "https://*.asazure.windows.net"
+								}
+							}
+						},
+						{
+							"name": "SetVarRefreshStatus",
+							"type": "SetVariable",
+							"dependsOn": [
+								{
+									"activity": "GetAasRefreshStatus",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "var_refresh_status",
+								"value": {
+									"value": "@activity('GetAasRefreshStatus').output.status",
+									"type": "Expression"
+								}
+							}
+						}
+					],
+					"timeout": "7.00:00:00"
+				}
+			},
+			{
+				"name": "Log ErrorInfo",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "RefreshAasModel",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[LOGS].[ups_ADD_CUBE_REFRESH_LOGGING]",
+					"storedProcedureParameters": {
+						"AffectedRows": {
+							"value": "0",
+							"type": "Int32"
+						},
+						"BatchId": {
+							"value": "0",
+							"type": "Int32"
+						},
+						"CubeName": {
+							"value": {
+								"value": "@pipeline().parameters.CubeName",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"ErrorIndicator": {
+							"value": "0",
+							"type": "Int32"
+						},
+						"ErrorMessage": {
+							"value": {
+								"value": "@string(activity('RefreshAasModel').Error.message)",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"FileId": {
+							"value": "0",
+							"type": "Int32"
+						},
+						"Message": {
+							"value": "NA",
+							"type": "String"
+						},
+						"Status": {
+							"value": "ERROR",
+							"type": "String"
+						},
+						"StepId": {
+							"value": "0",
+							"type": "Int32"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "NAM_COM_DART_SQL",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "IfRefreshFailed",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "UntilRefreshFinished",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@or(or(equals(variables('var_refresh_status'),'failed'), equals(variables('var_refresh_status'),'timedOut')), \nequals(variables('var_refresh_status'),'cancelled'))",
+						"type": "Expression"
+					},
+					"ifTrueActivities": [
+						{
+							"name": "Log Error",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[LOGS].[ups_ADD_CUBE_REFRESH_LOGGING]",
+								"storedProcedureParameters": {
+									"AffectedRows": {
+										"value": "0",
+										"type": "Int32"
+									},
+									"BatchId": {
+										"value": "0",
+										"type": "Int32"
+									},
+									"CubeName": {
+										"value": {
+											"value": "@pipeline().parameters.CubeName",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"ErrorIndicator": {
+										"value": "1",
+										"type": "Int32"
+									},
+									"ErrorMessage": {
+										"value": {
+											"value": "@string(activity('GetAasRefreshStatus').output.messages)",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"FileId": {
+										"value": "0",
+										"type": "Int32"
+									},
+									"Message": {
+										"value": "NA",
+										"type": "String"
+									},
+									"Status": {
+										"value": "ERROR",
+										"type": "String"
+									},
+									"StepId": {
+										"value": "0",
+										"type": "Int32"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "NAM_COM_DART_SQL",
+								"type": "LinkedServiceReference"
+							}
+						},
+						{
+							"name": "Refesh Failed",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [
+								{
+									"activity": "Log Error",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[LOGS].[ups_ADD_CUBE_REFRESH_FAIL]"
+							},
+							"linkedServiceName": {
+								"referenceName": "NAM_COM_DART_SQL",
+								"type": "LinkedServiceReference"
+							}
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"in_model_url": {
+				"type": "string",
+				"defaultValue": "https://eastus.asazure.windows.net/servers/bdhaas2/models/BUSA Ecommerce Sales/refreshes"
+			},
+			"CubeName": {
+				"type": "string",
+				"defaultValue": "BUSA Ecommerce Sales"
+			}
+		},
+		"variables": {
+			"var_refresh_status": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "AAS Refresh"
+		},
+		"annotations": [],
+		"lastPublishTime": "2021-10-13T21:20:10Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,92 @@
+{
+	"name": "GREENBOOK_Fact_Sales_Sql",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "GREENBOOK"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "SEQUENCE_NUMBER",
+				"type": "decimal",
+				"precision": 10,
+				"scale": 0
+			},
+			{
+				"name": "STATE_ID",
+				"type": "decimal",
+				"precision": 2,
+				"scale": 0
+			},
+			{
+				"name": "SALES_DATE",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "SIZE_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "NINE_LITER_CASES",
+				"type": "decimal",
+				"precision": 15,
+				"scale": 3
+			},
+			{
+				"name": "STANDARD_CASES",
+				"type": "decimal",
+				"precision": 15,
+				"scale": 3
+			},
+			{
+				"name": "BOTTLES",
+				"type": "real",
+				"precision": 7
+			},
+			{
+				"name": "FOB_DOLLARS",
+				"type": "decimal",
+				"precision": 15,
+				"scale": 3
+			},
+			{
+				"name": "PHYS_CASES",
+				"type": "decimal",
+				"precision": 15,
+				"scale": 3
+			},
+			{
+				"name": "SHELF_DOLLARS",
+				"type": "decimal",
+				"precision": 15,
+				"scale": 3
+			},
+			{
+				"name": "RETAIL_DOLLARS",
+				"type": "decimal",
+				"precision": 15,
+				"scale": 3
+			},
+			{
+				"name": "SLS_ID",
+				"type": "varchar"
+			},
+			{
+				"name": "CREATED_DATE",
+				"type": "datetime2",
+				"scale": 0
+			}
+		],
+		"typeProperties": {
+			"schema": "GBK",
+			"table": "FACT_SALES"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

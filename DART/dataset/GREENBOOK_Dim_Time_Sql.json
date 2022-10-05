@@ -1,0 +1,112 @@
+{
+	"name": "GREENBOOK_Dim_Time_Sql",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "GREENBOOK"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "DIMDATESK",
+				"type": "varchar"
+			},
+			{
+				"name": "DATE",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "YEAR",
+				"type": "varchar"
+			},
+			{
+				"name": "QUARTER",
+				"type": "varchar"
+			},
+			{
+				"name": "MONTH",
+				"type": "varchar"
+			},
+			{
+				"name": "WEEK",
+				"type": "varchar"
+			},
+			{
+				"name": "DAY",
+				"type": "varchar"
+			},
+			{
+				"name": "CALENDAR_PERIOD",
+				"type": "varchar"
+			},
+			{
+				"name": "CALMONTH_LY",
+				"type": "varchar"
+			},
+			{
+				"name": "CALENDAR_YEAR",
+				"type": "varchar"
+			},
+			{
+				"name": "CALENDAR_QUARTER",
+				"type": "varchar"
+			},
+			{
+				"name": "CALENDAR_MONTH",
+				"type": "varchar"
+			},
+			{
+				"name": "MONTH_NAME",
+				"type": "varchar"
+			},
+			{
+				"name": "FISCAL_YEAR",
+				"type": "decimal",
+				"precision": 34,
+				"scale": 0
+			},
+			{
+				"name": "FISCAL_QUARTER",
+				"type": "varchar"
+			},
+			{
+				"name": "FISCAL_MONTH",
+				"type": "varchar"
+			},
+			{
+				"name": "FISCAL_MONTH_NAME",
+				"type": "varchar"
+			},
+			{
+				"name": "CALENDAR_MONTH_DAY",
+				"type": "varchar"
+			},
+			{
+				"name": "FISCAL_MONTH_DAY",
+				"type": "varchar"
+			},
+			{
+				"name": "FISCAL_MONTH_OF_YEAR_NAME",
+				"type": "varchar"
+			},
+			{
+				"name": "FISCAL_QUARTER_NAME",
+				"type": "varchar"
+			},
+			{
+				"name": "FISCAL_YEAR_NAME",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "GBK",
+			"table": "DIM_TIME"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

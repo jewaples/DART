@@ -1,0 +1,16 @@
+{
+	"name": "MDS_Source_Tables",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "USMIA_MDS_NASQLDB_OnPrem",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "STAGING"
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

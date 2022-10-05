@@ -1,0 +1,78 @@
+{
+	"name": "AS_STG_BILLINGS_RATE",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "SHORT_YEAR_MONTH",
+				"type": "nvarchar"
+			},
+			{
+				"name": "REGION_DISTRIBUTOR_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PRODUCT_FOUR_DIGIT_KEY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ACT_NSV_PER_CASE_FYTD",
+				"type": "decimal",
+				"precision": 32,
+				"scale": 6
+			},
+			{
+				"name": "ACT_GS_PER_CASE_FYTD",
+				"type": "decimal",
+				"precision": 32,
+				"scale": 6
+			},
+			{
+				"name": "BUDGET_NSV_PER_CASE_FYTD",
+				"type": "decimal",
+				"precision": 32,
+				"scale": 6
+			},
+			{
+				"name": "BUDGET_NSV_PER_CASE",
+				"type": "decimal",
+				"precision": 32,
+				"scale": 6
+			},
+			{
+				"name": "BUDGET_GS_PER_CASE_FYTD",
+				"type": "decimal",
+				"precision": 32,
+				"scale": 6
+			},
+			{
+				"name": "BUDGET_GS_PER_CASE",
+				"type": "decimal",
+				"precision": 32,
+				"scale": 6
+			},
+			{
+				"name": "BUDGET_SALES_VOLUME",
+				"type": "decimal",
+				"precision": 32,
+				"scale": 6
+			},
+			{
+				"name": "CREATED_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			}
+		],
+		"typeProperties": {
+			"schema": "STG",
+			"table": "BILLINGS_RATES"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

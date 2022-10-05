@@ -1,0 +1,25 @@
+{
+	"name": "FACT_BILLED_PENDING_ADL",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_Data_Foundation_DataLake",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@concat(formatDateTime(utcnow(),'yyyyMMdd'),'/FACT_BILLED_PENDING.parquet')",
+					"type": "Expression"
+				},
+				"folderPath": "EDW/BILLINGS/FACT_BILLED_PENDING",
+				"fileSystem": "dev"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

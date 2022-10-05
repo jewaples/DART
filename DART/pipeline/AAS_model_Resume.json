@@ -1,0 +1,42 @@
+{
+	"name": "AAS_model_Resume",
+	"properties": {
+		"activities": [
+			{
+				"name": "Resume_AAS",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://management.azure.com/subscriptions/bfdd0a4a-b14b-466c-96f0-47620227e40b/resourceGroups/West-EU-DataDistillery-DEV-RG/providers/Microsoft.AnalysisServices/servers/bdhaas2ssbidev/Resume?api-version=2017-08-01",
+					"method": "POST",
+					"body": {
+						"Dummy": "Dummy"
+					},
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://management.azure.com/"
+					}
+				}
+			}
+		],
+		"variables": {
+			"var_refresh_status": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "AAS Refresh"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-01-06T21:45:31Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

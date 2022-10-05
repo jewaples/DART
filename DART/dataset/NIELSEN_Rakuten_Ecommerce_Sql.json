@@ -1,0 +1,105 @@
+{
+	"name": "NIELSEN_Rakuten_Ecommerce_Sql",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "NIELSEN"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "TIME_PERIOD",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PERIOD_VALUE",
+				"type": "date"
+			},
+			{
+				"name": "CATEGORY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SEGMENT",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MERCHANT",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MANUFACTURER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BRAND",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DOLLARS",
+				"type": "decimal",
+				"precision": 15,
+				"scale": 5
+			},
+			{
+				"name": "UNITS",
+				"type": "decimal",
+				"precision": 15,
+				"scale": 5
+			},
+			{
+				"name": "SAMPLE",
+				"type": "decimal",
+				"precision": 15,
+				"scale": 5
+			},
+			{
+				"name": "ORDERS",
+				"type": "decimal",
+				"precision": 15,
+				"scale": 5
+			},
+			{
+				"name": "DOLLARS_UNIT",
+				"type": "decimal",
+				"precision": 15,
+				"scale": 5
+			},
+			{
+				"name": "DOLLARS_ORDER",
+				"type": "decimal",
+				"precision": 15,
+				"scale": 5
+			},
+			{
+				"name": "UNITS_ORDER",
+				"type": "decimal",
+				"precision": 15,
+				"scale": 5
+			},
+			{
+				"name": "PIPELINE_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SOURCE_FILE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TIMESTAMP",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			}
+		],
+		"typeProperties": {
+			"schema": "NIELSEN",
+			"table": "RAKUTEN_ECOMMERCE"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

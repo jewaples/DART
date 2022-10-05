@@ -1,0 +1,86 @@
+{
+	"name": "DATA LAKE LOAD",
+	"properties": {
+		"activities": [
+			{
+				"name": "GREENBOOK_EDW_Load_ADL",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "RAD_EDW_Daily_Load_ADL",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "GREENBOOK_EDW_Load_ADL",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "EDW_NABCA_Daily_Load_ADL",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ANAPLAN_FACTS_LOAD_ADL",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "EDW_NABCA_Daily_Load_ADL",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "RAD_EDW_Daily_Load_ADL",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "RAD_EDW_Daily_Load_ADL",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "ANAPLAN_FACTS_LOAD_ADL",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "GREENBOOK_EDW_Load_ADL",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ANAPLAN_FACTS_LOAD_ADL",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"folder": {
+			"name": "STAGING"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-03-01T17:58:57Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

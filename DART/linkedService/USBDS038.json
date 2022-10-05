@@ -1,0 +1,18 @@
+{
+	"name": "USBDS038",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"description": "Linked Server to USBDS038",
+		"annotations": [],
+		"type": "FileServer",
+		"typeProperties": {
+			"host": "\\\\usbds038.gva.data\\FTP\\na\\US",
+			"userId": "bl\\usblsqldba",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiIyOWUyNjA2Ni01MWM3LTQ0YWItYjkxYS05YmQ4NzMzM2NhYjIiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+		},
+		"connectVia": {
+			"referenceName": "nlmas005-IRtime",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

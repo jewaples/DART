@@ -1,0 +1,104 @@
+{
+	"name": "Load_from_MDS_to_Parquet",
+	"properties": {
+		"activities": [
+			{
+				"name": "Get_MDS_Tables",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SqlServerSource",
+						"sqlReaderQuery": "  SELECT *\n  FROM(\n  SELECT table_Schema +'.'+ TABLE_NAME AS Table_Name\n  ,TABLE_NAME AS SQL_NAME\n  ,table_Schema AS [SCHEMA_NAME]\n  FROM information_Schema.tables\n  )T\n   WHERE T.TABLE_NAME IN(\n'mdm.CALLED_ON_UNIVERSE',\n'mdm.CUSTOMER_INCLUDED',\n'mdm.NAMIBP_PRODUCT_MD',\n'mdm.NAMIBP_CUSTOMER_MD',\n'mdm.ADVOCACY_ACCOUNT',\n'mdm.BAM_ACCOUNT',\n'mdm.NATIONAL_ACCOUNTS_FRANCHISE',\n'mdm.VIP_ACCOUNT',\n'mdm.TD_ACCOUNT',\n'mdm.CUSTOMER_MARKETING_SEGMENT',\n'mdm.CUSTOMER_INCLUDED_EXTENDED',\n'mdm.FRANCHISE_STATES_DISTRIBUTOR_GROUPING',\n'mdm.TIME_FRAME_METRIC_SLICER',\n'mdm.CHANGE_METRIC_SLICER',\n'mdm.IMAGE',\n'mdm.PRODUCT_FLAGS',\n'mdm.OPS_BP_PRODUCT_GROUPING',\n'mdm.OPS_ORDER_DEADLINES',\n'mdm.OPS_MANUAL_ALLOCATIONS',\n'mdm.OPS_MANUAL_ALLOCATIONS_IPC',\n'mdm.OPS_XREF_DISTRIBUTOR_PLANT',\n'mdm.PLANT',\n'mdm.OPS_MANUAL_ALLOCATIONS_IPC_CONTROL_STATES',\n'mdm.OPS_VMI_SCOPE'\n  )",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "MDS_Source_Tables",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "Copy_Each_MDS_Table_To_Parquet",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Get_MDS_Tables",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Get_MDS_Tables').output.value",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "copy_tables_MDS_Parquet",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "SqlServerSource",
+									"sqlReaderQuery": {
+										"value": "SELECT * FROM @{item().SCHEMA_NAME}.@{item().SQL_NAME}",
+										"type": "Expression"
+									},
+									"partitionOption": "None"
+								},
+								"sink": {
+									"type": "ParquetSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "ParquetWriteSettings"
+									}
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "MDS_Source_Tables",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "Azure_DataLake_Staging_Parquets",
+									"type": "DatasetReference"
+								}
+							]
+						}
+					]
+				}
+			}
+		],
+		"folder": {
+			"name": "STAGING"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-09-22T19:28:39Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

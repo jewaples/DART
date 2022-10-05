@@ -1,0 +1,31 @@
+{
+	"name": "NABCA_Retailsync_File_Storage",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_Data_Foundation_DataLake",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "NABCA COMPETITIVE"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@concat('Retailsync_', formatDateTime(pipeline().parameters.STARTDATE,'yyyy_MM_dd'),'.csv')",
+					"type": "Expression"
+				},
+				"folderPath": "Tdlinx/Retailsync",
+				"fileSystem": "prod"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

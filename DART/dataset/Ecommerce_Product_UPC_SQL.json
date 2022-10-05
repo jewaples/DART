@@ -1,0 +1,41 @@
+{
+	"name": "Ecommerce_Product_UPC_SQL",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "ECOMMERCE"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "MATERIAL",
+				"type": "varchar"
+			},
+			{
+				"name": "TXT",
+				"type": "varchar"
+			},
+			{
+				"name": "BRAND_GROUP",
+				"type": "varchar"
+			},
+			{
+				"name": "UPC_BT",
+				"type": "varchar"
+			},
+			{
+				"name": "UPC_CS",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "STG",
+			"table": "NAMIBP_PRODUCT_UPC"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

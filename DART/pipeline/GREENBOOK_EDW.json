@@ -1,0 +1,456 @@
+{
+	"name": "GREENBOOK_EDW",
+	"properties": {
+		"activities": [
+			{
+				"name": "Fact_Sales_Hana_SqlDB",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Load_Dim_Size",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Load_Dim_Brand",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Load_Dim_Market_sp",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Load_Dim_Time_sp",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SapHanaSource",
+						"query": "WITH SLS_RAW as\n(\n     select SLS.SEQUENCE_NUMBER, SLS.STATE_ID, SLS.SALES_DATE, SLS.NINE_LITER_CASES, SLS.STANDARD_CASES, SLS.SHELF_PRICE, SLS.RETAIL_PRICE\n            ,DOL.SHELF_DOLLAR_VOLUME, DOL.RETAIL_DOLLAR_VOLUME, SLS.CREATEDTS\n       from \"DISTRIBUTORS_USA\".\"NAMIBP_GREEN_BOOK_SALES\" SLS\n  LEFT JOIN \"DISTRIBUTORS_USA\".\"NAMIBP_GREEN_BOOK_DOLVOL\" DOL\n         ON SLS.SEQUENCE_NUMBER = DOL.SEQUENCE_NUMBER\n        AND SLS.STATE_ID = DOL.STATE_ID\n        AND SLS.SALES_DATE = DOL.SALES_DATE\n)\n,\nSLS as\n(\n    select SLS_RAW.SEQUENCE_NUMBER, SLS_RAW.STATE_ID, SLS_RAW.SALES_DATE, SLS_RAW.NINE_LITER_CASES, SLS_RAW.STANDARD_CASES, SLS_RAW.SHELF_PRICE, SLS_RAW.RETAIL_PRICE\n           ,SLS_RAW.SHELF_DOLLAR_VOLUME, SLS_RAW.RETAIL_DOLLAR_VOLUME\n           ,CASE WHEN \"/BIC/ZBRDFULL\" like '%355ML%' THEN '00355' ELSE AO362.\"/BIC/ZSIZENO\" END as SIZE_ID\n           ,cast(AO362.\"/BIC/ZPACKSIZE\" as integer) * cast (SLS_RAW.standard_cases as float) as BOTTLES \n           ,cast(AO362.\"/BIC/ZPACKSIZE\" as integer) * cast (SLS_RAW.standard_cases as float) * SLS_RAW.SHELF_PRICE as SHELF_DOLLARS\n           ,cast(AO362.\"/BIC/ZPACKSIZE\" as integer) * cast (SLS_RAW.standard_cases as float) * SLS_RAW.RETAIL_PRICE as RETAIL_DOLLARS \n           ,CAST(0 AS FLOAT) as FOB_DOLLARS\n          ,CAST(0 AS FLOAT) as PHYS_CASES\n          ,SLS_RAW.CREATEDTS                     \n     from SLS_RAW\n      JOIN \"SAPP30\".\"/BIC/AZOTC_AO362\" AO362\n        ON SLS_RAW.SEQUENCE_NUMBER = cast(AO362.\"/BIC/ZSEQNUM\" as decimal)\n)\n,\nFINAL as\n(\n   select SEQUENCE_NUMBER\n          ,STATE_ID\n          ,to_date(SALES_DATE, 'MM/DD/YYYY') as SALES_DATE\n          ,SIZE_ID\n          ,NINE_LITER_CASES\n          ,STANDARD_CASES\n          ,BOTTLES\n          ,FOB_DOLLARS\n          ,PHYS_CASES\n          ,CASE WHEN SHELF_DOLLAR_VOLUME IS NULL THEN SHELF_DOLLARS ELSE SHELF_DOLLAR_VOLUME END as SHELF_DOLLARS\n          ,CASE WHEN RETAIL_DOLLAR_VOLUME IS NULL THEN RETAIL_DOLLARS ELSE RETAIL_DOLLAR_VOLUME END as RETAIL_DOLLARS\n          ,SHELF_PRICE as SHELF_PRICE_RAW\n          ,CREATEDTS\n     from SLS \n)\nSELECT\n      SEQUENCE_NUMBER\n       ,STATE_ID\n       ,SALES_DATE\n       ,SIZE_ID\n       ,NINE_LITER_CASES\n       ,STANDARD_CASES\n       ,BOTTLES\n       ,to_decimal(SHELF_DOLLARS / nullif(SHELF_PRICE_RAW,0),32,16) as BOTTLES_BASED_ON_SHELF_PRICE_RAW\n       ,FOB_DOLLARS\n       ,PHYS_CASES\n       ,SHELF_DOLLARS\n       ,RETAIL_DOLLARS\n       ,SHELF_PRICE_RAW\n--       ,SHELF_DOLLARS / nullif(BOTTLES,0) as SHELF_PRICE\n       ,cast(SEQUENCE_NUMBER as varchar) ||'|'|| cast(STATE_ID as varchar) ||'|'|| cast(SALES_DATE as varchar) as SLS_ID\n       ,CREATEDTS as \"CREATE_TS\"\n  FROM FINAL\nWHERE SALES_DATE >= to_date('20100101', 'YYYYMMDD')\n   AND STATE_ID <> 62\n",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"preCopyScript": "TRUNCATE TABLE GBK.FACT_SALES",
+						"writeBehavior": "insert",
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "SEQUENCE_NUMBER",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "SEQUENCE_NUMBER",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"name": "STATE_ID",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "STATE_ID",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"name": "SALES_DATE",
+									"type": "DateTime"
+								},
+								"sink": {
+									"name": "SALES_DATE",
+									"type": "DateTime"
+								}
+							},
+							{
+								"source": {
+									"name": "SIZE_ID",
+									"type": "String"
+								},
+								"sink": {
+									"name": "SIZE_ID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "NINE_LITER_CASES",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "NINE_LITER_CASES",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"name": "STANDARD_CASES",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "STANDARD_CASES",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"name": "BOTTLES",
+									"type": "Double"
+								},
+								"sink": {
+									"name": "BOTTLES",
+									"type": "Single"
+								}
+							},
+							{
+								"source": {
+									"name": "BOTTLES_BASED_ON_SHELF_PRICE_RAW",
+									"type": "Double"
+								},
+								"sink": {
+									"name": "BOTTLES_BASED_ON_SHELF_PRICE_RAW",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"name": "FOB_DOLLARS",
+									"type": "Double"
+								},
+								"sink": {
+									"name": "FOB_DOLLARS",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"name": "PHYS_CASES",
+									"type": "Double"
+								},
+								"sink": {
+									"name": "PHYS_CASES",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"name": "SHELF_DOLLARS",
+									"type": "Double"
+								},
+								"sink": {
+									"name": "SHELF_DOLLARS",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"name": "RETAIL_DOLLARS",
+									"type": "Double"
+								},
+								"sink": {
+									"name": "RETAIL_DOLLARS",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"name": "SHELF_PRICE_RAW",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "SHELF_PRICE_RAW",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"name": "SLS_ID",
+									"type": "String"
+								},
+								"sink": {
+									"name": "SLS_ID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "CREATE_TS",
+									"type": "DateTime"
+								},
+								"sink": {
+									"name": "CREATED_DATE",
+									"type": "DateTime"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "GREENBOOK_Dim_Sales_Hana",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "GREENBOOK_Fact_Sales_Sql",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Load_Dim_Size",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT DISTINCT  [/BIC/ZSIZENO] AS SIZE_ID , [/BIC/ZSIZEDESC] AS Size FROM STG.[/BIC/AZOTC_AO362]\nUNION ALL\n/*REMOVE AFTER NABCA FIXES RTD's sizes */\nSELECT '00355', '355 ML'",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"preCopyScript": "TRUNCATE TABLE GBK.DIM_SIZE",
+						"writeBehavior": "insert",
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "SIZE_ID",
+									"type": "String"
+								},
+								"sink": {
+									"name": "SIZE_ID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Size",
+									"type": "String"
+								},
+								"sink": {
+									"name": "SIZE",
+									"type": "String"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "Staging_Sql_Source",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "GREENBOOK_Dim_Size_Sql",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Get MDS tables",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "  SELECT *\n  FROM(\n  SELECT table_Schema +'.'+ TABLE_NAME AS Table_Name\n  ,TABLE_NAME AS SQL_NAME\n  ,table_Schema AS [SCHEMA_NAME]\n  FROM information_Schema.tables\n  )T\n   WHERE T.TABLE_NAME IN(\n'STG.TIME_FRAME_METRIC_SLICER',\n 'STG.TARGET_CATEGORIES',\n'STG.TARGET_COMPETITIVE_SET',\n'STG.TOP_SUPPLIERS',\n'STG.UNMAPPED_BRANDS',\n'STG.WHISKEY_BRANDS_SUB_CATEGORY'\n )\n",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "Staging_Sql_Source",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "Copy_Each_GBK_Table",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Get MDS tables",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Get MDS tables').output.value",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "copy_tables_GBK_Sql_Db",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderQuery": {
+										"value": "SELECT * FROM @{item().SCHEMA_NAME}.@{item().SQL_NAME}",
+										"type": "Expression"
+									},
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"sink": {
+									"type": "AzureSqlSink",
+									"preCopyScript": {
+										"value": "TRUNCATE TABLE GBK.@{item().SQL_Name}",
+										"type": "Expression"
+									},
+									"writeBehavior": "insert",
+									"disableMetricsCollection": false
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "Staging_Sql_Source",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "GREENBOOK_MDS_Sql",
+									"type": "DatasetReference"
+								}
+							]
+						}
+					]
+				}
+			},
+			{
+				"name": "Load_Dim_Brand",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "Copy_Each_GBK_Table",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[GBK].[usp_DIM_BRAND_LOAD]"
+				},
+				"linkedServiceName": {
+					"referenceName": "NAM_COM_DART_SQL",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "Load_Dim_Market_sp",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[GBK].[usp_DIM_MARKET_LOAD]"
+				},
+				"linkedServiceName": {
+					"referenceName": "NAM_COM_DART_SQL",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "Load_Dim_Time_sp",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[GBK].[usp_DIM_TIME_LOAD]"
+				},
+				"linkedServiceName": {
+					"referenceName": "NAM_COM_DART_SQL",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"folder": {
+			"name": "GREENBOOK"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-07-05T23:59:05Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

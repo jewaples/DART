@@ -1,0 +1,113 @@
+{
+	"name": "NIELSEN_IRI_WINE_EDW_LOAD",
+	"properties": {
+		"activities": [
+			{
+				"name": "NIELSEN_WINE_DIM_PERIOD",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "NIELSEN_WINE_DIM_PERIOD",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"STARTDATE": {
+							"value": "@pipeline().parameters.STARTDATE",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "NIELSEN_WINE_DIM_PRODUCT",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "NIELSEN_WINE_DIM_PRODUCT",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"STARTDATE": {
+							"value": "@pipeline().parameters.STARTDATE",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "NIELSEN_WINE__DIM_MARKET",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "NIELSEN_WINE__DIM_MARKET",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"STARTDATE": {
+							"value": "@pipeline().parameters.STARTDATE",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "NIELSEN_WINE_FACT_MARKETS",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "NIELSEN_WINE_DIM_PERIOD",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "NIELSEN_WINE_DIM_PRODUCT",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "NIELSEN_WINE__DIM_MARKET",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "NIELSEN_WINE_FACT_MARKETS",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"STARTDATE": {
+							"value": "@pipeline().parameters.STARTDATE",
+							"type": "Expression"
+						}
+					}
+				}
+			}
+		],
+		"parameters": {
+			"STARTDATE": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "NIELSEN/Wine"
+		},
+		"annotations": [],
+		"lastPublishTime": "2021-11-04T17:52:11Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

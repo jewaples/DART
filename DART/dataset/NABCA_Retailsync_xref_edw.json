@@ -1,0 +1,77 @@
+{
+	"name": "NABCA_Retailsync_xref_edw",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "NABCA COMPETITIVE"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "RCLIENTNO",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RTRANSCD",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RFILEDT",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RTDLINXSCD",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RTDLINXACD",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RTRADECLCD",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RFORMATCD",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RSSTATUSCD",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RASTATUSCD",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RREPLSCD",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RREPLACD",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RCLVERDT",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RSHIPTOACD",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RFILLER",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "NABCA",
+			"table": "XREF_RETAILSYNC"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

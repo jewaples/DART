@@ -1,0 +1,1392 @@
+{
+	"name": "VMI_DWH",
+	"properties": {
+		"activities": [
+			{
+				"name": "Get Config",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "Initialize Execution Log",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": {
+							"value": "SELECT \n     fmd.Id AS [SequenceNumber]\n    ,fmd.ObjectName\n    ,SchemaName = fmd.ObjectSchemaName\n    ,SQLTable = fmd.SourceTargetObject\n    ,Delimiter = fmd.Delimiter\n    ,[FileName] = fmd.[FileName]\n    ,ContainerFolderName = bc_input.MetadataValue\n\t,SFTPFolderName = sftp.MetadataValue\nFROM [VMI].[CFG_PIPELINE_METADATA] pmd\n    INNER JOIN [VMI].[CFG_FILE_METADATA] fmd\n        ON pmd.PipeLineName = fmd.PipeLineName\n    INNER JOIN [VMI].[CFG_PIPELINE_METADATA] bc_input\n\t\tON pmd.PipeLineName = bc_input.PipeLineName \n\t\tAND bc_input.MetadataType = 'Blob Container'\n\t\tAND bc_input.MetadataName = 'InputFolder'\n\tINNER JOIN [VMI].[CFG_PIPELINE_METADATA] sftp\n\t\tON pmd.PipeLineName = sftp.PipeLineName \n\t\tAND sftp.MetadataType = 'SFTP'\n\t\tAND sftp.MetadataName = 'SFTPInputFolder'\nWHERE fmd.FileType = 'Input'\nand pmd.MetadataName = 'InputFolder'\nand pmd.PipeLineName = '@{pipeline().Pipeline}'\nand fmd.ToProcess = 1\nORDER BY [SequenceNumber]",
+							"type": "Expression"
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "VMI_DWH_SQL",
+						"type": "DatasetReference",
+						"parameters": {
+							"SQLName": "NotApplicable",
+							"SchemaName": "NotApplicable"
+						}
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "Filter - SFTP",
+				"type": "Filter",
+				"dependsOn": [
+					{
+						"activity": "Get Metadata - SFTP",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Get Metadata - SFTP').output.childItems",
+						"type": "Expression"
+					},
+					"condition": {
+						"value": "@equals(item().type, 'File')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "For Each File - Landing",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Truncate landing tables",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Filter - SFTP').output.value",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "Get Process Config",
+							"type": "Lookup",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderQuery": {
+										"value": "SELECT \n     fmd.ObjectName\n    ,SchemaName = fmd.ObjectSchemaName\n    ,SQLTable = fmd.SourceTargetObject\n    ,Delimiter = fmd.Delimiter\n    ,[FileName] = fmd.[FileName]\n\t,ContainerFolderName = bc_input.MetadataValue\nFROM [VMI].[CFG_PIPELINE_METADATA] pmd\n    INNER JOIN [VMI].[CFG_FILE_METADATA] fmd\n        ON pmd.PipeLineName = fmd.PipeLineName\n\tINNER JOIN [VMI].[CFG_PIPELINE_METADATA] bc_input\n\t\tON pmd.PipeLineName = bc_input.PipeLineName \n\t\tAND bc_input.MetadataType = 'Blob Container'\n\t\tAND bc_input.MetadataName = 'InputFolder'\nWHERE fmd.FileType = 'Input'\nand pmd.MetadataName = 'InputFolder'\nand pmd.PipeLineName = '@{pipeline().Pipeline}'\nand fmd.[FileName] = '@{concat(substring(item().name,0,sub(length(item().name),18)),'*.csv')}'\nand fmd.ToProcess = 1",
+										"type": "Expression"
+									},
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"dataset": {
+									"referenceName": "VMI_DWH_SQL",
+									"type": "DatasetReference",
+									"parameters": {
+										"SQLName": "NotApplicable",
+										"SchemaName": "NotApplicable"
+									}
+								},
+								"firstRowOnly": true
+							}
+						},
+						{
+							"name": "Load to Landing table",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "Get column mapping",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "DelimitedTextSource",
+									"additionalColumns": [
+										{
+											"name": "FILE_NAME",
+											"value": {
+												"value": "@variables('FileName')",
+												"type": "Expression"
+											}
+										},
+										{
+											"name": "FILE_DATE",
+											"value": {
+												"value": "@variables('FileDate')",
+												"type": "Expression"
+											}
+										}
+									],
+									"storeSettings": {
+										"type": "AzureBlobFSReadSettings",
+										"recursive": false,
+										"enablePartitionDiscovery": false
+									},
+									"formatSettings": {
+										"type": "DelimitedTextReadSettings"
+									}
+								},
+								"sink": {
+									"type": "AzureSqlSink",
+									"disableMetricsCollection": false
+								},
+								"enableStaging": false,
+								"translator": {
+									"value": "@json(activity('Get column mapping').output.firstRow.json_output)",
+									"type": "Expression"
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "VMI_Blob_Storage",
+									"type": "DatasetReference",
+									"parameters": {
+										"FolderName": {
+											"value": "@variables('FilePath')",
+											"type": "Expression"
+										},
+										"Delimiter": {
+											"value": "@activity('Get Process Config').output.firstRow.Delimiter",
+											"type": "Expression"
+										},
+										"FileName": {
+											"value": "@item().name",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "VMI_DWH_SQL",
+									"type": "DatasetReference",
+									"parameters": {
+										"SQLName": {
+											"value": "@activity('Get Process Config').output.firstRow.SQLTable",
+											"type": "Expression"
+										},
+										"SchemaName": {
+											"value": "@activity('Get Process Config').output.firstRow.SchemaName",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						},
+						{
+							"name": "Get column mapping",
+							"type": "Lookup",
+							"dependsOn": [
+								{
+									"activity": "Copy to Blob",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderStoredProcedureName": "[VMI].[SP_CFG_GET_COLUMNMAPPING]",
+									"storedProcedureParameters": {
+										"Schema_Name": {
+											"type": "String",
+											"value": {
+												"value": "@activity('Get Process Config').output.firstRow.SchemaName",
+												"type": "Expression"
+											}
+										},
+										"Table_Name": {
+											"type": "String",
+											"value": {
+												"value": "@activity('Get Process Config').output.firstRow.SQLTable",
+												"type": "Expression"
+											}
+										}
+									},
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"dataset": {
+									"referenceName": "VMI_DWH_SQL",
+									"type": "DatasetReference",
+									"parameters": {
+										"SQLName": "NotApplicable",
+										"SchemaName": "NotApplicable"
+									}
+								},
+								"firstRowOnly": true
+							}
+						},
+						{
+							"name": "Set FileName",
+							"type": "SetVariable",
+							"dependsOn": [
+								{
+									"activity": "Get Process Config",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "FileName",
+								"value": {
+									"value": "@item().name",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Set FileDate",
+							"type": "SetVariable",
+							"dependsOn": [
+								{
+									"activity": "Set FileName",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "FileDate",
+								"value": {
+									"value": "@{substring(item().name,add(lastindexof(variables('FileName'),'_'),1),14)}",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Log Error - Copy to Blob",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [
+								{
+									"activity": "Copy to Blob",
+									"dependencyConditions": [
+										"Failed"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[VMI].[SP_CFG_INITIALIZE_ERROR_LOG]",
+								"storedProcedureParameters": {
+									"ErrorCode": {
+										"value": {
+											"value": "@{activity('Copy to Blob').error.errorCode}",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"ErrorComponentName": {
+										"value": "Copy to Blob",
+										"type": "String"
+									},
+									"ErrorDetails": {
+										"value": {
+											"value": "@{activity('Copy to Blob').error.message}",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"ErrorMessage": {
+										"value": {
+											"value": "@concat('Error encountered while loading the input file ',variables('FileName'),' to the Azure Blob Storage')",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"ExecutionId": {
+										"value": {
+											"value": "@pipeline().RunId",
+											"type": "Expression"
+										},
+										"type": "String"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "NAM_COM_DART_SQL",
+								"type": "LinkedServiceReference"
+							}
+						},
+						{
+							"name": "Log Error - Load to Landing table",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [
+								{
+									"activity": "Load to Landing table",
+									"dependencyConditions": [
+										"Failed"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[VMI].[SP_CFG_INITIALIZE_ERROR_LOG]",
+								"storedProcedureParameters": {
+									"ErrorCode": {
+										"value": {
+											"value": "@{activity('Load to Landing table').error.errorCode}",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"ErrorComponentName": {
+										"value": "Copy to Blob",
+										"type": "String"
+									},
+									"ErrorDetails": {
+										"value": {
+											"value": "@{activity('Load to Landing table').error.message}",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"ErrorMessage": {
+										"value": {
+											"value": "@concat('Error encountered while loading the input file ',variables('FileName'),' to Azure SQL table')",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"ExecutionId": {
+										"value": {
+											"value": "@pipeline().RunId",
+											"type": "Expression"
+										},
+										"type": "String"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "NAM_COM_DART_SQL",
+								"type": "LinkedServiceReference"
+							}
+						},
+						{
+							"name": "Log File - Failed",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [
+								{
+									"activity": "Load to Landing table",
+									"dependencyConditions": [
+										"Failed"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[VMI].[SP_CFG_INITIALIZE_FILE_LOG]",
+								"storedProcedureParameters": {
+									"Action": {
+										"value": "1",
+										"type": "Int32"
+									},
+									"ExecutionId": {
+										"value": {
+											"value": "@pipeline().RunId",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"FileName": {
+										"value": {
+											"value": "@variables('FileName')",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"FileStatus": {
+										"value": "File Upload Failed",
+										"type": "String"
+									},
+									"PipelineName": {
+										"value": {
+											"value": "@pipeline().Pipeline",
+											"type": "Expression"
+										},
+										"type": "String"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "NAM_COM_DART_SQL",
+								"type": "LinkedServiceReference"
+							}
+						},
+						{
+							"name": "Log File - Successful",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [
+								{
+									"activity": "Load to Landing table",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[VMI].[SP_CFG_INITIALIZE_FILE_LOG]",
+								"storedProcedureParameters": {
+									"Action": {
+										"value": "1",
+										"type": "Int32"
+									},
+									"ExecutionId": {
+										"value": {
+											"value": "@pipeline().RunId",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"FileName": {
+										"value": {
+											"value": "@variables('FileName')",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"FileStatus": {
+										"value": "File load landing completed",
+										"type": "String"
+									},
+									"PipelineName": {
+										"value": {
+											"value": "@pipeline().Pipeline",
+											"type": "Expression"
+										},
+										"type": "String"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "NAM_COM_DART_SQL",
+								"type": "LinkedServiceReference"
+							}
+						},
+						{
+							"name": "Copy to Blob",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "Set FilePath",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 2,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "DelimitedTextSource",
+									"storeSettings": {
+										"type": "SftpReadSettings",
+										"recursive": false,
+										"enablePartitionDiscovery": false,
+										"disableChunking": true
+									},
+									"formatSettings": {
+										"type": "DelimitedTextReadSettings"
+									}
+								},
+								"sink": {
+									"type": "DelimitedTextSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "DelimitedTextWriteSettings",
+										"quoteAllText": true,
+										"fileExtension": ".txt"
+									}
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "VMI_DA_SFTP_Folder",
+									"type": "DatasetReference",
+									"parameters": {
+										"FileName": {
+											"value": "@variables('FileName')",
+											"type": "Expression"
+										},
+										"FolderName": {
+											"value": "@activity('Get Config').output.value[0].SFTPFolderName",
+											"type": "Expression"
+										},
+										"Delimiter": {
+											"value": "@activity('Get Config').output.value[0].Delimiter",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "VMI_Blob_Storage",
+									"type": "DatasetReference",
+									"parameters": {
+										"FolderName": {
+											"value": "@variables('FilePath')",
+											"type": "Expression"
+										},
+										"Delimiter": {
+											"value": "@activity('Get Process Config').output.firstRow.Delimiter",
+											"type": "Expression"
+										},
+										"FileName": {
+											"value": "@variables('FileName')",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						},
+						{
+							"name": "Set FilePath",
+							"type": "SetVariable",
+							"dependsOn": [
+								{
+									"activity": "Set FileDate",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "FilePath",
+								"value": {
+									"value": "@concat(activity('Get Process Config').output.firstRow.ContainerFolderName,activity('Get Process Config').output.firstRow.ObjectName,'/',substring(variables('FileDate'),0,4),'/',substring(variables('FileDate'),4,2),'/',substring(variables('FileDate'),6,2))\n",
+									"type": "Expression"
+								}
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "Truncate landing tables",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "Filter - SFTP",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[VMI].[SP_TRUNCATE_LANDING_TABLES]"
+				},
+				"linkedServiceName": {
+					"referenceName": "NAM_COM_DART_SQL",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "Initialize Execution Log",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[VMI].[SP_CFG_INITIALIZE_EXECUTION_LOG]",
+					"storedProcedureParameters": {
+						"Action": {
+							"value": "1",
+							"type": "Int32"
+						},
+						"ExecutionId": {
+							"value": {
+								"value": "@pipeline().RunId",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"ExecutionName": {
+							"value": {
+								"value": "@pipeline().Pipeline",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"ExecutionStatus": {
+							"value": "0",
+							"type": "Int32"
+						},
+						"Trigger_Name": {
+							"value": {
+								"value": "@pipeline().TriggerName",
+								"type": "Expression"
+							},
+							"type": "String"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "NAM_COM_DART_SQL",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "For Each File - Staging",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "For Each File - Landing",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Get Config').output.value",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "Execute master SP - Load Staging table",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[VMI].[SP_MASTER_LOAD_VMI_STG_DATA]",
+								"storedProcedureParameters": {
+									"ObjectName": {
+										"value": {
+											"value": "@item().ObjectName",
+											"type": "Expression"
+										},
+										"type": "String"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "NAM_COM_DART_SQL",
+								"type": "LinkedServiceReference"
+							}
+						},
+						{
+							"name": "Log Error - Load staging table",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [
+								{
+									"activity": "Execute master SP - Load Staging table",
+									"dependencyConditions": [
+										"Failed"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[VMI].[SP_CFG_INITIALIZE_ERROR_LOG]",
+								"storedProcedureParameters": {
+									"ErrorCode": {
+										"value": {
+											"value": "@{activity('Execute master SP - Load Staging table').error.errorCode}",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"ErrorComponentName": {
+										"value": "Execute master SP - Load Staging table",
+										"type": "String"
+									},
+									"ErrorDetails": {
+										"value": {
+											"value": "@{activity('Execute master SP - Load Staging table').error.message}",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"ErrorMessage": {
+										"value": "Error encountered during loading to staging table",
+										"type": "String"
+									},
+									"ExecutionId": {
+										"value": {
+											"value": "@pipeline().RunId",
+											"type": "Expression"
+										},
+										"type": "String"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "NAM_COM_DART_SQL",
+								"type": "LinkedServiceReference"
+							}
+						},
+						{
+							"name": "Fail - Exec master sp",
+							"type": "Fail",
+							"dependsOn": [
+								{
+									"activity": "Log Error - Load staging table",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"message": {
+									"value": "@{activity('Execute master SP - Load Staging table').error.message}",
+									"type": "Expression"
+								},
+								"errorCode": {
+									"value": "@{activity('Execute master SP - Load Staging table').error.errorCode}",
+									"type": "Expression"
+								}
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "Execution Log - Successful",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "For Each File - Staging",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[VMI].[SP_CFG_INITIALIZE_EXECUTION_LOG]",
+					"storedProcedureParameters": {
+						"Action": {
+							"value": "2",
+							"type": "Int32"
+						},
+						"ExecutionId": {
+							"value": {
+								"value": "@pipeline().RunId",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"ExecutionName": {
+							"value": {
+								"value": "@pipeline().Pipeline",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"ExecutionStatus": {
+							"value": "1",
+							"type": "Int32"
+						},
+						"Trigger_Name": {
+							"value": {
+								"value": "@pipeline().TriggerName",
+								"type": "Expression"
+							},
+							"type": "String"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "NAM_COM_DART_SQL",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "Check if files exist",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Get Config",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Get Config').output.value",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "Get Metadata - Check file",
+							"type": "GetMetadata",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataset": {
+									"referenceName": "VMI_DA_SFTP_Folder",
+									"type": "DatasetReference",
+									"parameters": {
+										"FileName": {
+											"value": "@item().FileName",
+											"type": "Expression"
+										},
+										"FolderName": {
+											"value": "@item().SFTPFolderName",
+											"type": "Expression"
+										},
+										"Delimiter": {
+											"value": "@item().Delimiter",
+											"type": "Expression"
+										}
+									}
+								},
+								"fieldList": [
+									"childItems",
+									"itemName"
+								],
+								"storeSettings": {
+									"type": "SftpReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false,
+									"disableChunking": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							}
+						},
+						{
+							"name": "Filter - Check file",
+							"type": "Filter",
+							"dependsOn": [
+								{
+									"activity": "Get Metadata - Check file",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"items": {
+									"value": "@activity('Get Metadata - Check file').output.childItems",
+									"type": "Expression"
+								},
+								"condition": {
+									"value": "@equals(item().type, 'File')",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Check if count is greater than 0",
+							"type": "IfCondition",
+							"dependsOn": [
+								{
+									"activity": "Set FileCount",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"expression": {
+									"value": "@{greater(int(variables('FileCount')),0)}",
+									"type": "Expression"
+								},
+								"ifFalseActivities": [
+									{
+										"name": "Log Error - Missing file",
+										"type": "SqlServerStoredProcedure",
+										"dependsOn": [
+											{
+												"activity": "Raise error - Missing file",
+												"dependencyConditions": [
+													"Failed"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"storedProcedureName": "[VMI].[SP_CFG_INITIALIZE_ERROR_LOG]",
+											"storedProcedureParameters": {
+												"ErrorCode": {
+													"value": "0",
+													"type": "String"
+												},
+												"ErrorComponentName": {
+													"value": "Log Error - Missing file",
+													"type": "String"
+												},
+												"ErrorDetails": {
+													"value": {
+														"value": "@concat('VMI Cube input file ',item().FileName,' does not exist in SFTP folder')",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"ErrorMessage": {
+													"value": {
+														"value": "@concat('Missing input file for ',item().ObjectName)",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"ExecutionId": {
+													"value": {
+														"value": "@pipeline().RunId",
+														"type": "Expression"
+													},
+													"type": "String"
+												}
+											}
+										},
+										"linkedServiceName": {
+											"referenceName": "NAM_COM_DART_SQL",
+											"type": "LinkedServiceReference"
+										}
+									},
+									{
+										"name": "Raise error - Missing file",
+										"type": "Lookup",
+										"dependsOn": [],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"source": {
+												"type": "AzureSqlSource",
+												"sqlReaderQuery": {
+													"value": "IF '@{item().ObjectName}' = 'CustomerLocationMaster' AND DATEPART(W,GETDATE()) NOT IN (1,7)\nBEGIN\nRAISERROR ('Missing file in SFTP', -- Message text.  \n               16, -- Severity.  \n               1 -- State.  \n               );  \nEND\nELSE IF '@{item().ObjectName}' = 'PurchaseOrderHistory' AND DATEPART(W,GETDATE()) NOT IN (1)\nBEGIN\nRAISERROR ('Missing file in SFTP', -- Message text.  \n               16, -- Severity.  \n               1 -- State.  \n               );  \nEND\nELSE IF '@{item().ObjectName}' NOT IN ('CustomerLocationMaster','PurchaseOrderHistory')\nBEGIN\nRAISERROR ('Missing file in SFTP', -- Message text.  \n               16, -- Severity.  \n               1 -- State.  \n               );  \nEND\nELSE\nBEGIN\n\tSELECT 'Process Exemption - File not scheduled to be available' AS [FileStatus]\nEND",
+													"type": "Expression"
+												},
+												"queryTimeout": "02:00:00",
+												"partitionOption": "None"
+											},
+											"dataset": {
+												"referenceName": "VMI_DWH_SQL",
+												"type": "DatasetReference",
+												"parameters": {
+													"SQLName": "NotApplicable",
+													"SchemaName": "NotApplicable"
+												}
+											}
+										}
+									},
+									{
+										"name": "Fail - Missing file",
+										"type": "Fail",
+										"dependsOn": [
+											{
+												"activity": "Log Error - Missing file",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"userProperties": [],
+										"typeProperties": {
+											"message": {
+												"value": "@concat('Missing input file for ',item().ObjectName)",
+												"type": "Expression"
+											},
+											"errorCode": {
+												"value": "0",
+												"type": "Expression"
+											}
+										}
+									}
+								]
+							}
+						},
+						{
+							"name": "Set FileCount",
+							"type": "SetVariable",
+							"dependsOn": [
+								{
+									"activity": "Filter - Check file",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "FileCount",
+								"value": {
+									"value": "@string(activity('Filter - Check file').output.FilteredItemsCount)",
+									"type": "Expression"
+								}
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "Send Alert - Missing File",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Check if files exist",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "VMI_ALERTS",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"Execution_Id": {
+							"value": "@pipeline().RunId",
+							"type": "Expression"
+						},
+						"pipelineName": {
+							"value": "@pipeline().Pipeline",
+							"type": "Expression"
+						},
+						"dataFactoryName": {
+							"value": "@pipeline().DataFactory",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "Send Alert - Landing loading failed",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "For Each File - Landing",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "VMI_ALERTS",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"Execution_Id": {
+							"value": "@pipeline().RunId",
+							"type": "Expression"
+						},
+						"pipelineName": {
+							"value": "@pipeline().Pipeline",
+							"type": "Expression"
+						},
+						"dataFactoryName": {
+							"value": "@pipeline().DataFactory",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "Send Alert - Landing staging failed",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "For Each File - Staging",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "VMI_ALERTS",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"Execution_Id": {
+							"value": "@pipeline().RunId",
+							"type": "Expression"
+						},
+						"pipelineName": {
+							"value": "@pipeline().Pipeline",
+							"type": "Expression"
+						},
+						"dataFactoryName": {
+							"value": "@pipeline().DataFactory",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "Get Metadata - SFTP",
+				"type": "GetMetadata",
+				"dependsOn": [
+					{
+						"activity": "Check if files exist",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "VMI_DA_SFTP_Folder",
+						"type": "DatasetReference",
+						"parameters": {
+							"FileName": {
+								"value": "@replace(activity('Get Config').output.value[0].FileName,activity('Get Config').output.value[0].FileName,'')",
+								"type": "Expression"
+							},
+							"FolderName": {
+								"value": "@activity('Get Config').output.value[0].SFTPFolderName",
+								"type": "Expression"
+							},
+							"Delimiter": {
+								"value": "@activity('Get Config').output.value[0].Delimiter",
+								"type": "Expression"
+							}
+						}
+					},
+					"fieldList": [
+						"itemName",
+						"childItems"
+					],
+					"storeSettings": {
+						"type": "SftpReadSettings",
+						"recursive": true,
+						"enablePartitionDiscovery": false,
+						"disableChunking": false
+					},
+					"formatSettings": {
+						"type": "DelimitedTextReadSettings"
+					}
+				}
+			},
+			{
+				"name": "If executed by sandbox",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "For Each File - Staging",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@equals(pipeline().TriggerName,'Sandbox')",
+						"type": "Expression"
+					},
+					"ifFalseActivities": [
+						{
+							"name": "Execute File Archive",
+							"type": "ExecutePipeline",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"pipeline": {
+									"referenceName": "VMI_FILE_ARCHIVING",
+									"type": "PipelineReference"
+								},
+								"waitOnCompletion": true,
+								"parameters": {
+									"pipeline_ID": {
+										"value": "@pipeline().RunId",
+										"type": "Expression"
+									}
+								}
+							}
+						}
+					]
+				}
+			}
+		],
+		"variables": {
+			"FileName": {
+				"type": "String"
+			},
+			"FileDate": {
+				"type": "String"
+			},
+			"FileCount": {
+				"type": "String"
+			},
+			"FilePath": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "VMI"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-07-14T14:26:12Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

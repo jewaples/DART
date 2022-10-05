@@ -1,0 +1,1259 @@
+{
+	"name": "SPECTRA_EDW",
+	"properties": {
+		"description": "Move files from one folder to another folder",
+		"activities": [
+			{
+				"name": "ForEachFile",
+				"description": "Iterate each file, and move them one by one.",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "FilterFiles",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('FilterFiles').output.value",
+						"type": "Expression"
+					},
+					"batchCount": 20,
+					"activities": [
+						{
+							"name": "File_Lookup",
+							"type": "Lookup",
+							"dependsOn": [
+								{
+									"activity": "Get_SrcMetadata",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderStoredProcedureName": "[STG].[usp_FILE_LOOKUP]",
+									"storedProcedureParameters": {
+										"FILE_NAME": {
+											"type": "String",
+											"value": {
+												"value": "@activity('Get_SrcMetadata').output.itemName",
+												"type": "Expression"
+											}
+										},
+										"TABLE_NAME": {
+											"type": "String",
+											"value": {
+												"value": "@pipeline().parameters.Destination_Table",
+												"type": "Expression"
+											}
+										}
+									},
+									"partitionOption": "None"
+								},
+								"dataset": {
+									"referenceName": "RAD_File_Table_Destination",
+									"type": "DatasetReference"
+								},
+								"firstRowOnly": true
+							}
+						},
+						{
+							"name": "If Condition",
+							"type": "IfCondition",
+							"dependsOn": [
+								{
+									"activity": "File_Lookup",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"expression": {
+									"value": "@activity('File_Lookup').output.firstRow.EXIST",
+									"type": "Expression"
+								},
+								"ifFalseActivities": [
+									{
+										"name": "Copy_File",
+										"description": "Copy a file from the source store to the destination store.",
+										"type": "Copy",
+										"dependsOn": [],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"source": {
+												"type": "FileSystemSource",
+												"recursive": false
+											},
+											"sink": {
+												"type": "AzureBlobFSSink"
+											},
+											"enableStaging": false,
+											"dataIntegrationUnits": 0
+										},
+										"inputs": [
+											{
+												"referenceName": "SPECTRA_File_FTP",
+												"type": "DatasetReference",
+												"parameters": {
+													"path": "@pipeline().parameters.FolderPath_SourceStore",
+													"filename": "@item().name"
+												}
+											}
+										],
+										"outputs": [
+											{
+												"referenceName": "SPECTRA_Bacarspc_File_Azure_Storage",
+												"type": "DatasetReference",
+												"parameters": {
+													"path": "@pipeline().parameters.FolderPath_DestinationStore",
+													"filename": {
+														"value": "@concat('Spectra_', formatDateTime(pipeline().parameters.STARTDATE,'yyyy_MM_dd'),'.zip' )",
+														"type": "Expression"
+													}
+												}
+											}
+										]
+									},
+									{
+										"name": "Insert_Source_Data",
+										"description": "Inserts source file metadata in log table",
+										"type": "SqlServerStoredProcedure",
+										"dependsOn": [],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"storedProcedureName": "[STG].[usp_INSERT_SRC_FILES_SOURCE]",
+											"storedProcedureParameters": {
+												"FILE_NAME": {
+													"value": {
+														"value": "@concat(item().name, formatDateTime(pipeline().parameters.STARTDATE,'yyyy_MM_dd'))",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"SRC_CREATED_DATE": {
+													"value": {
+														"value": "@activity('Get_SrcMetadata').output.lastModified",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"SRC_PATH": {
+													"value": {
+														"value": "@pipeline().parameters.FolderPath_SourceStore",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"SRC_SIZE": {
+													"value": {
+														"value": "@activity('Get_SrcMetadata').output.size",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"TABLE_NAME": {
+													"value": {
+														"value": "@pipeline().parameters.Destination_Table",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"SOURCE": {
+													"value": {
+														"value": "@pipeline().parameters.SOURCE",
+														"type": "Expression"
+													},
+													"type": "String"
+												}
+											}
+										},
+										"linkedServiceName": {
+											"referenceName": "NAM_COM_DART_SQL",
+											"type": "LinkedServiceReference"
+										}
+									},
+									{
+										"name": "Get_AdlMetadata",
+										"type": "GetMetadata",
+										"dependsOn": [
+											{
+												"activity": "Copy_File",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											},
+											{
+												"activity": "Insert_Source_Data",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"dataset": {
+												"referenceName": "SPECTRA_Bacarspc_File_Azure_Storage",
+												"type": "DatasetReference",
+												"parameters": {
+													"path": "@pipeline().parameters.FolderPath_DestinationStore",
+													"filename": {
+														"value": "@concat('Spectra_', formatDateTime(pipeline().parameters.STARTDATE,'yyyy_MM_dd'),'.zip' )",
+														"type": "Expression"
+													}
+												}
+											},
+											"fieldList": [
+												"itemName",
+												"size",
+												"lastModified"
+											]
+										}
+									},
+									{
+										"name": "Validate_Destination_Data",
+										"description": "Inserts source file metadata in log table",
+										"type": "SqlServerStoredProcedure",
+										"dependsOn": [
+											{
+												"activity": "Get_AdlMetadata",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"storedProcedureName": "[STG].[usp_VALIDATE_DST_FILES]",
+											"storedProcedureParameters": {
+												"FILE_NAME": {
+													"value": {
+														"value": "@concat(item().name, formatDateTime(pipeline().parameters.STARTDATE,'yyyy_MM_dd'))",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"DST_CREATED_DATE": {
+													"value": {
+														"value": "@activity('Get_AdlMetadata').output.lastModified",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"DST_PATH": {
+													"value": {
+														"value": "@pipeline().parameters.FolderPath_DestinationStore",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"DST_SIZE": {
+													"value": {
+														"value": "@activity('Get_AdlMetadata').output.size",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"TABLE_NAME": {
+													"value": {
+														"value": "@pipeline().parameters.Destination_Table",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"IS_ZIP": {
+													"value": {
+														"value": "@pipeline().parameters.Is_Zip",
+														"type": "Expression"
+													},
+													"type": "String"
+												}
+											}
+										},
+										"linkedServiceName": {
+											"referenceName": "NAM_COM_DART_SQL",
+											"type": "LinkedServiceReference"
+										}
+									},
+									{
+										"name": "Load_Stg_Spectra_Azure_sql",
+										"type": "Copy",
+										"dependsOn": [
+											{
+												"activity": "Validate_Destination_Data",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"source": {
+												"type": "AzureBlobFSSource",
+												"recursive": true
+											},
+											"sink": {
+												"type": "AzureSqlSink",
+												"preCopyScript": "TRUNCATE TABLE [STG].[STG_SPECTRA]",
+												"sqlWriterStoredProcedureName": "[STG].[usp_LOAD_STG_SPECTRA]",
+												"sqlWriterTableType": "STG.STG_SPECTRA_TYPE",
+												"storedProcedureTableTypeParameterName": "TVP",
+												"disableMetricsCollection": false
+											},
+											"enableStaging": false,
+											"translator": {
+												"type": "TabularTranslator",
+												"mappings": [
+													{
+														"source": {
+															"name": "Prop_0",
+															"type": "String"
+														},
+														"sink": {
+															"name": "VALUE",
+															"type": "String"
+														}
+													}
+												]
+											}
+										},
+										"inputs": [
+											{
+												"referenceName": "SPECTRA_Bacarspc_File_Azure_Storage",
+												"type": "DatasetReference",
+												"parameters": {
+													"path": "@pipeline().parameters.FolderPath_DestinationStore",
+													"filename": "@concat('Spectra_', formatDateTime(pipeline().parameters.STARTDATE,'yyyy_MM_dd'),'.zip' )"
+												}
+											}
+										],
+										"outputs": [
+											{
+												"referenceName": "SPECTRA_Tvp_Stg_Sql",
+												"type": "DatasetReference"
+											}
+										]
+									},
+									{
+										"name": "Copy_Transformed_BD_Datalake",
+										"type": "Copy",
+										"dependsOn": [
+											{
+												"activity": "Load_Stg_Spectra_Azure_sql",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"source": {
+												"type": "AzureSqlSource",
+												"queryTimeout": "02:00:00",
+												"partitionOption": "None"
+											},
+											"sink": {
+												"type": "DelimitedTextSink",
+												"storeSettings": {
+													"type": "AzureBlobFSWriteSettings"
+												},
+												"formatSettings": {
+													"type": "DelimitedTextWriteSettings",
+													"quoteAllText": true,
+													"fileExtension": ".csv"
+												}
+											},
+											"enableStaging": false
+										},
+										"inputs": [
+											{
+												"referenceName": "SPECTRA_Stg_Sql",
+												"type": "DatasetReference"
+											}
+										],
+										"outputs": [
+											{
+												"referenceName": "SPECTRA_Bacarspc_File_Storage",
+												"type": "DatasetReference"
+											}
+										]
+									},
+									{
+										"name": "Load_Fact_Spectra",
+										"type": "Copy",
+										"dependsOn": [
+											{
+												"activity": "Load_Stg_Spectra_Azure_sql",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"source": {
+												"type": "AzureSqlSource",
+												"sqlReaderQuery": "SELECT * FROM [STG].[STG_SPECTRA]",
+												"queryTimeout": "02:00:00",
+												"partitionOption": "None"
+											},
+											"sink": {
+												"type": "AzureSqlSink",
+												"preCopyScript": "TRUNCATE TABLE [RAD].[FACT_SPECTRA]",
+												"writeBehavior": "insert",
+												"disableMetricsCollection": false
+											},
+											"enableStaging": false,
+											"translator": {
+												"type": "TabularTranslator",
+												"mappings": [
+													{
+														"source": {
+															"name": "STDLINXSCD",
+															"type": "String"
+														},
+														"sink": {
+															"name": "STDLINXSCD",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "SFILEDT",
+															"type": "String"
+														},
+														"sink": {
+															"name": "SFILEDT",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "FEMPOP2129",
+															"type": "String"
+														},
+														"sink": {
+															"name": "FEMPOP2129",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "FEMIND2129",
+															"type": "String"
+														},
+														"sink": {
+															"name": "FEMIND2129",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "FEMPOP3044",
+															"type": "String"
+														},
+														"sink": {
+															"name": "FEMPOP3044",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "FEMIND3044",
+															"type": "String"
+														},
+														"sink": {
+															"name": "FEMIND3044",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "FEMPOP4554",
+															"type": "String"
+														},
+														"sink": {
+															"name": "FEMPOP4554",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "FEMIND4554",
+															"type": "String"
+														},
+														"sink": {
+															"name": "FEMIND4554",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "FEMPOP5564",
+															"type": "String"
+														},
+														"sink": {
+															"name": "FEMPOP5564",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "FEMIND5564",
+															"type": "String"
+														},
+														"sink": {
+															"name": "FEMIND5564",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "FEMPOP65",
+															"type": "String"
+														},
+														"sink": {
+															"name": "FEMPOP65",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "FEMIND65",
+															"type": "String"
+														},
+														"sink": {
+															"name": "FEMIND65",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "MALPOP2129",
+															"type": "String"
+														},
+														"sink": {
+															"name": "MALPOP2129",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "MALIND2129",
+															"type": "String"
+														},
+														"sink": {
+															"name": "MALIND2129",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "MALPOP3044",
+															"type": "String"
+														},
+														"sink": {
+															"name": "MALPOP3044",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "MALIND3044",
+															"type": "String"
+														},
+														"sink": {
+															"name": "MALIND3044",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "MALPOP4554",
+															"type": "String"
+														},
+														"sink": {
+															"name": "MALPOP4554",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "MALIND4554",
+															"type": "String"
+														},
+														"sink": {
+															"name": "MALIND4554",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "MALPOP5564",
+															"type": "String"
+														},
+														"sink": {
+															"name": "MALPOP5564",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "MALIND5564",
+															"type": "String"
+														},
+														"sink": {
+															"name": "MALIND5564",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "MALPOP65",
+															"type": "String"
+														},
+														"sink": {
+															"name": "MALPOP65",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "MALIND65",
+															"type": "String"
+														},
+														"sink": {
+															"name": "MALIND65",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "AIPOPL10",
+															"type": "String"
+														},
+														"sink": {
+															"name": "AIPOPL10",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "AIINDL10",
+															"type": "String"
+														},
+														"sink": {
+															"name": "AIINDL10",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "AIPOP1015",
+															"type": "String"
+														},
+														"sink": {
+															"name": "AIPOP1015",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "AIIND1015",
+															"type": "String"
+														},
+														"sink": {
+															"name": "AIIND1015",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "AIPOP1525",
+															"type": "String"
+														},
+														"sink": {
+															"name": "AIPOP1525",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "AIIND1525",
+															"type": "String"
+														},
+														"sink": {
+															"name": "AIIND1525",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "AIPOP2535",
+															"type": "String"
+														},
+														"sink": {
+															"name": "AIPOP2535",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "AIIND2535",
+															"type": "String"
+														},
+														"sink": {
+															"name": "AIIND2535",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "AIPOP3550",
+															"type": "String"
+														},
+														"sink": {
+															"name": "AIPOP3550",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "AIIND3550",
+															"type": "String"
+														},
+														"sink": {
+															"name": "AIIND3550",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "AIPOP5075",
+															"type": "String"
+														},
+														"sink": {
+															"name": "AIPOP5075",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "AIIND5075",
+															"type": "String"
+														},
+														"sink": {
+															"name": "AIIND5075",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "AIPOP75100",
+															"type": "String"
+														},
+														"sink": {
+															"name": "AIPOP75100",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "AIIND75100",
+															"type": "String"
+														},
+														"sink": {
+															"name": "AIIND75100",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "AIPOPG100",
+															"type": "String"
+														},
+														"sink": {
+															"name": "AIPOPG100",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "AIINDG100",
+															"type": "String"
+														},
+														"sink": {
+															"name": "AIINDG100",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "WHTPOP",
+															"type": "String"
+														},
+														"sink": {
+															"name": "WHTPOP",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "WHTIND",
+															"type": "String"
+														},
+														"sink": {
+															"name": "WHTIND",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "BLCKPOP",
+															"type": "String"
+														},
+														"sink": {
+															"name": "BLCKPOP",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "BLCKIND",
+															"type": "String"
+														},
+														"sink": {
+															"name": "BLCKIND",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "ASIANPOP",
+															"type": "String"
+														},
+														"sink": {
+															"name": "ASIANPOP",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "ASIANIND",
+															"type": "String"
+														},
+														"sink": {
+															"name": "ASIANIND",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "HISPPOP",
+															"type": "String"
+														},
+														"sink": {
+															"name": "HISPPOP",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "HISPIND",
+															"type": "String"
+														},
+														"sink": {
+															"name": "HISPIND",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "AMERINDPOP",
+															"type": "String"
+														},
+														"sink": {
+															"name": "AMERINDPOP",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "AMERINDIND",
+															"type": "String"
+														},
+														"sink": {
+															"name": "AMERINDIND",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "HAWAIIPOP",
+															"type": "String"
+														},
+														"sink": {
+															"name": "HAWAIIPOP",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "HAWAIIIND",
+															"type": "String"
+														},
+														"sink": {
+															"name": "HAWAIIIND",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "OTHERPOP",
+															"type": "String"
+														},
+														"sink": {
+															"name": "OTHERPOP",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "OTHERIND",
+															"type": "String"
+														},
+														"sink": {
+															"name": "OTHERIND",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "MEXPOP",
+															"type": "String"
+														},
+														"sink": {
+															"name": "MEXPOP",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "MEXIND",
+															"type": "String"
+														},
+														"sink": {
+															"name": "MEXIND",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "CUBANPOP",
+															"type": "String"
+														},
+														"sink": {
+															"name": "CUBANPOP",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "CUBANIND",
+															"type": "String"
+														},
+														"sink": {
+															"name": "CUBANIND",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "PUERTOPOP",
+															"type": "String"
+														},
+														"sink": {
+															"name": "PUERTOPOP",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "PUERTOIND",
+															"type": "String"
+														},
+														"sink": {
+															"name": "PUERTOIND",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "OTHHISPPOP",
+															"type": "String"
+														},
+														"sink": {
+															"name": "OTHHISPPOP",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "OTHHISPIND",
+															"type": "String"
+														},
+														"sink": {
+															"name": "OTHHISPIND",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "NGHBRHD",
+															"type": "String"
+														},
+														"sink": {
+															"name": "NGHBRHD",
+															"type": "String"
+														}
+													}
+												]
+											}
+										},
+										"inputs": [
+											{
+												"referenceName": "Staging_Sql_Source",
+												"type": "DatasetReference"
+											}
+										],
+										"outputs": [
+											{
+												"referenceName": "SPECTRA_Fact_Spectra",
+												"type": "DatasetReference"
+											}
+										]
+									},
+									{
+										"name": "Delete_ZIP_From_Source_Datalake",
+										"type": "Delete",
+										"dependsOn": [
+											{
+												"activity": "Copy_Transformed_BD_Datalake",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"dataset": {
+												"referenceName": "SPECTRA_Bacarspc_File_Azure_Storage",
+												"type": "DatasetReference",
+												"parameters": {
+													"path": {
+														"value": "@pipeline().parameters.FolderPath_DestinationStore",
+														"type": "Expression"
+													},
+													"filename": {
+														"value": "@concat('Spectra_', formatDateTime(pipeline().parameters.STARTDATE,'yyyy_MM_dd'),'.zip' )",
+														"type": "Expression"
+													}
+												}
+											},
+											"enableLogging": false,
+											"storeSettings": {
+												"type": "AzureBlobFSReadSettings",
+												"recursive": true,
+												"enablePartitionDiscovery": false
+											}
+										}
+									}
+								]
+							}
+						},
+						{
+							"name": "Get_SrcMetadata",
+							"type": "GetMetadata",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataset": {
+									"referenceName": "SPECTRA_File_FTP",
+									"type": "DatasetReference",
+									"parameters": {
+										"path": "@pipeline().parameters.FolderPath_SourceStore",
+										"filename": "@item().name"
+									}
+								},
+								"fieldList": [
+									"itemName",
+									"size",
+									"lastModified"
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "FilterFiles",
+				"description": "Only files will be selected, the sub-folders will not be selected.",
+				"type": "Filter",
+				"dependsOn": [
+					{
+						"activity": "GetFileList",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('GetFileList').output.childItems",
+						"type": "Expression"
+					},
+					"condition": {
+						"value": "@equals(item().name,'BACARSPC.ZIP')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "GetFileList",
+				"type": "GetMetadata",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "SPECTRA_FTP_Folder",
+						"type": "DatasetReference",
+						"parameters": {
+							"FolderPath": "@pipeline().parameters.FolderPath_SourceStore"
+						}
+					},
+					"fieldList": [
+						"itemName",
+						"childItems"
+					]
+				}
+			}
+		],
+		"parameters": {
+			"FolderPath_SourceStore": {
+				"type": "String",
+				"defaultValue": "/"
+			},
+			"FolderPath_DestinationStore": {
+				"type": "String",
+				"defaultValue": "prod/landing/"
+			},
+			"Destination_Table": {
+				"type": "string",
+				"defaultValue": "LOGS.SOURCE_FILES_LOAD_LOG"
+			},
+			"Is_Zip": {
+				"type": "string",
+				"defaultValue": "0"
+			},
+			"STARTDATE": {
+				"type": "string"
+			},
+			"SOURCE": {
+				"type": "string",
+				"defaultValue": "SPECTRA"
+			}
+		},
+		"folder": {
+			"name": "SPECTRA"
+		},
+		"annotations": [],
+		"lastPublishTime": "2021-08-06T17:23:55Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

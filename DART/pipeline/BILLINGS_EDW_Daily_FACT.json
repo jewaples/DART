@@ -1,0 +1,637 @@
+{
+	"name": "BILLINGS_EDW_Daily_FACT",
+	"properties": {
+		"activities": [
+			{
+				"name": "Load Fact Billings",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "BILLINGS_usp_DIM_PRODUCT_LOAD",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SapHanaSource",
+						"query": {
+							"value": "select to_number(CALMONTH||'01') as CALMONTH\n,\"Distributor_Id\" as DISTRIBUTOR_ID\n,\"Item_Id\" as ITEM_ID\n,_BIC_ZPLBILCY as PLANNED_BILLING\n,INV_QTY as INVOICED_QUANTITY\n,ZDELIVQTY as DISPATCH_QUANTITY\n,OPEN_QTY as OPEN_QUANTITY\n,NETVAL_INV as INVOICED_VALUE\n,ZVALUELC as DISPATCH_VALUE\n,ZVALUE_LC as OPEN_SALES_VALUE\n,PL_BILLING_BOT_VAL as BOT_PLANNED_BILLING_VALUE\n,INV_BOT_VAL as BOT_INVOICED_VALUE\n,DISPH_BOT_VAL as BOT_DISPATCH_VALUE\n,OPEN_BOT_VAL as BOT_OPEN_VALUE\n-- ,TOTAL_BOT_VAL as BOT_TOTAL_VALUE --NOT NEEDED\n,PR_BOT as PRICE_BOT_AVERAGE\n,_BIC_ZENDINVCY as ENDING_INVENTORY_VOL\n,TOTAL_QUANTITY_9L as TOTAL_QUANTITY_9L\n,TOTAL_VALUE_LC_9L as TOTAL_VALUE_LC_9L\n,OPEN_QTY_CS as OPEN_QUANTITY_CS\n,DISPATCH_QTY_CS as DISPATCH_QUANTITY_CS\n,INVOICE_QTY_CS as INVOICED_QUANTITY_CS\n,OPEN_VALUE_LC_CS as OPEN_SALES_VALUE_CS\n,DISPATCH_VALUE_LC_CS as DISPATCH_VALUE_CS\n,TOTAL_QUANTITY_CS as TOTAL_QUANTITY_CS\n,TOTAL_VALUE_LC_CS as TOTAL_VALUE_LC_CS\n,ZENDINVCY_CS as ENDING_INVENTORY_VOL_CS\n,ZPLBILCY_CS as PLANNED_BILLING_CS\n,CURRENT_DATE as CREATED_DATE\nfrom \"_SYS_BIC\".\"T_Prod.Distributors_USA.DailySales.Reporting/CV_R_BILLED_PENDING\"\n('PLACEHOLDER' = ('$$I_REF_DATE$$', '202109'), 'PLACEHOLDER' = ('$$I_MONTH_FROM$$','@{formatDateTime(pipeline().parameters.STARTDATE,'yyyy-MM-dd')}' ), 'PLACEHOLDER' = ('$$I_MONTH_TO$$', '@{formatDateTime(pipeline().parameters.ENDDATE,'yyyy-MM-dd')}'))\nwhere 1=1",
+							"type": "Expression"
+						},
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"preCopyScript": {
+							"value": "TRUNCATE TABLE STG.BILLINGS_BILLED_PENDING",
+							"type": "Expression"
+						},
+						"writeBehavior": "insert",
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "CALMONTH",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CALMONTH",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "DISTRIBUTOR_ID",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DISTRIBUTOR_ID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ITEM_ID",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ITEM_ID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "PLANNED_BILLING",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "PLANNED_BILLING",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"name": "INVOICED_QUANTITY",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "INVOICED_QUANTITY",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"name": "DISPATCH_QUANTITY",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "DISPATCH_QUANTITY",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"name": "OPEN_QUANTITY",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "OPEN_QUANTITY",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"name": "INVOICED_VALUE",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "INVOICED_VALUE",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"name": "DISPATCH_VALUE",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "DISPATCH_VALUE",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"name": "OPEN_SALES_VALUE",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "OPEN_SALES_VALUE",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"name": "BOT_PLANNED_BILLING_VALUE",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "BOT_PLANNED_BILLING_VALUE",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"name": "BOT_INVOICED_VALUE",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "BOT_INVOICED_VALUE",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"name": "BOT_DISPATCH_VALUE",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "BOT_DISPATCH_VALUE",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"name": "BOT_OPEN_VALUE",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "BOT_OPEN_VALUE",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"name": "PRICE_BOT_AVERAGE",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "PRICE_BOT_AVERAGE",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"name": "ENDING_INVENTORY_VOL",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "ENDING_INVENTORY_VOL",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"name": "TOTAL_QUANTITY_9L",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "TOTAL_QUANTITY_9L",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"name": "TOTAL_VALUE_LC_9L",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "TOTAL_VALUE_LC_9L",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"name": "OPEN_QUANTITY_CS",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "OPEN_QUANTITY_CS",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"name": "DISPATCH_QUANTITY_CS",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "DISPATCH_QUANTITY_CS",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"name": "INVOICED_QUANTITY_CS",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "INVOICED_QUANTITY_CS",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"name": "OPEN_SALES_VALUE_CS",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "OPEN_SALES_VALUE_CS",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"name": "DISPATCH_VALUE_CS",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "DISPATCH_VALUE_CS",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"name": "TOTAL_QUANTITY_CS",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "TOTAL_QUANTITY_CS",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"name": "TOTAL_VALUE_LC_CS",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "TOTAL_VALUE_LC_CS",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"name": "ENDING_INVENTORY_VOL_CS",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "ENDING_INVENTORY_VOL_CS",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"name": "PLANNED_BILLING_CS",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "PLANNED_BILLING_CS",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"name": "CREATED_DATE",
+									"type": "DateTime"
+								},
+								"sink": {
+									"name": "CREATED_DATE",
+									"type": "DateTime"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "Staging_Billed_Pending_Hana",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "Staging_Billed_Pending_Sql",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Load Fact Rates",
+				"type": "ExecuteSSISPackage",
+				"dependsOn": [
+					{
+						"activity": "Start SSIS IR",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"packageLocation": {
+						"packagePath": "\\\\bdhdlsgen2nam.file.core.windows.net\\ssis\\BILLINGS\\STG_BILLINGS_RATES.dtsx",
+						"type": "File",
+						"typeProperties": {
+							"accessCredential": {
+								"domain": "Azure",
+								"userName": "bdhdlsgen2nam",
+								"password": {
+									"type": "AzureKeyVaultSecret",
+									"store": {
+										"referenceName": "NAM_bdh_AzureKeyVault",
+										"type": "LinkedServiceReference"
+									},
+									"secretName": "NAM-SAS"
+								}
+							}
+						}
+					},
+					"connectVia": {
+						"referenceName": "ssis-nam",
+						"type": "IntegrationRuntimeReference"
+					},
+					"packageConnectionManagers": {
+						"DART": {
+							"Password": {
+								"value": {
+									"type": "AzureKeyVaultSecret",
+									"store": {
+										"referenceName": "NAM_bdh_AzureKeyVault",
+										"type": "LinkedServiceReference"
+									},
+									"secretName": "devDartPassword"
+								}
+							}
+						},
+						"AAS_TM1": {
+							"UserName": {
+								"value": {
+									"type": "AzureKeyVaultSecret",
+									"store": {
+										"referenceName": "NAM_bdh_AzureKeyVault",
+										"type": "LinkedServiceReference"
+									},
+									"secretName": "AppId"
+								}
+							},
+							"Password": {
+								"value": {
+									"type": "AzureKeyVaultSecret",
+									"store": {
+										"referenceName": "NAM_bdh_AzureKeyVault",
+										"type": "LinkedServiceReference"
+									},
+									"secretName": "AppKey"
+								}
+							}
+						}
+					}
+				}
+			},
+			{
+				"name": "Load_Fact_Billed_Pending_sp",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "Stop SSIS IR",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "BILLINGS.usp_FACT_BILLED_PENDING_LOAD"
+				},
+				"linkedServiceName": {
+					"referenceName": "NAM_COM_DART_SQL",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "BILLINGS_usp_DIM_PRODUCT_LOAD",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[BILLINGS].[usp_DIM_PRODUCT_LOAD]"
+				},
+				"linkedServiceName": {
+					"referenceName": "NAM_COM_DART_SQL",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "Load Fact Rates DPnL",
+				"type": "ExecuteSSISPackage",
+				"dependsOn": [
+					{
+						"activity": "Start SSIS IR",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"packageLocation": {
+						"packagePath": "\\\\bdhdlsgen2nam.file.core.windows.net\\ssis\\BILLINGS\\STG_BILLINGS_RATES_DPNL.dtsx",
+						"type": "File",
+						"typeProperties": {
+							"accessCredential": {
+								"domain": "Azure",
+								"userName": "bdhdlsgen2nam",
+								"password": {
+									"type": "AzureKeyVaultSecret",
+									"store": {
+										"referenceName": "NAM_bdh_AzureKeyVault",
+										"type": "LinkedServiceReference"
+									},
+									"secretName": "NAM-SAS"
+								}
+							}
+						}
+					},
+					"connectVia": {
+						"referenceName": "ssis-nam",
+						"type": "IntegrationRuntimeReference"
+					},
+					"packageConnectionManagers": {
+						"DART": {
+							"Password": {
+								"value": {
+									"type": "AzureKeyVaultSecret",
+									"store": {
+										"referenceName": "NAM_bdh_AzureKeyVault",
+										"type": "LinkedServiceReference"
+									},
+									"secretName": "devDartPassword"
+								}
+							}
+						},
+						"AAS_TM1": {
+							"UserName": {
+								"value": {
+									"type": "AzureKeyVaultSecret",
+									"store": {
+										"referenceName": "NAM_bdh_AzureKeyVault",
+										"type": "LinkedServiceReference"
+									},
+									"secretName": "AppId"
+								}
+							},
+							"Password": {
+								"value": {
+									"type": "AzureKeyVaultSecret",
+									"store": {
+										"referenceName": "NAM_bdh_AzureKeyVault",
+										"type": "LinkedServiceReference"
+									},
+									"secretName": "AppKey"
+								}
+							}
+						}
+					}
+				}
+			},
+			{
+				"name": "Start SSIS IR",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Load Fact Billings",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://management.azure.com/subscriptions/bfdd0a4a-b14b-466c-96f0-47620227e40b/resourcegroups/bigdata_hub-eu/providers/Microsoft.DataFactory/factories/bdh-datafactory-dart-nam/integrationruntimes/ssis-nam/start?api-version=2018-06-01",
+					"method": "POST",
+					"body": {
+						"value": "{\"message\":\"Start SSIS Integration Runtime\"}",
+						"type": "Expression"
+					},
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://management.azure.com/"
+					}
+				}
+			},
+			{
+				"name": "Stop SSIS IR",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Load Fact Rates",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Load Fact Rates DPnL",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://management.azure.com/subscriptions/bfdd0a4a-b14b-466c-96f0-47620227e40b/resourcegroups/bigdata_hub-eu/providers/Microsoft.DataFactory/factories/bdh-datafactory-dart-nam/integrationruntimes/ssis-nam/stop?api-version=2018-06-01",
+					"method": "POST",
+					"body": {
+						"value": "{\"message\":\"Stop SSIS Integration Runtime\"}",
+						"type": "Expression"
+					},
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://management.azure.com/"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"STARTDATE": {
+				"type": "string",
+				"defaultValue": "2019-04-01"
+			},
+			"ENDDATE": {
+				"type": "string",
+				"defaultValue": "2030-03-01"
+			}
+		},
+		"folder": {
+			"name": "BILLINGS"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-08-10T11:43:29Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

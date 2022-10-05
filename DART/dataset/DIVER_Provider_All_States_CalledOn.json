@@ -1,0 +1,82 @@
+{
+	"name": "DIVER_Provider_All_States_CalledOn",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "DIVER"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "STATE_FULL",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PREMISE_INDICATOR",
+				"type": "nvarchar"
+			},
+			{
+				"name": "STORE_LICENSEE_NO",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SG_TERR_BUSA",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "ACCTS_SOLD",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "CASES_STANDARD",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "CASES_9L",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "DOLLARS_RETAIL",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "DOLLARS_SHELF",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "TIMESTAMP",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "PIPELINE_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SOURCE_FILE",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "DIVER",
+			"table": "PRODIVER_DART_CALLED_ON"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

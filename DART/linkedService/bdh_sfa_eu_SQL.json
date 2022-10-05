@@ -1,0 +1,11 @@
+{
+	"name": "bdh_sfa_eu_SQL",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureSqlDatabase",
+		"typeProperties": {
+			"connectionString": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=bdh-sql-sfa-eu-dev.database.windows.net;Initial Catalog=bdh-sfa-eu-dev"
+		}
+	}
+}

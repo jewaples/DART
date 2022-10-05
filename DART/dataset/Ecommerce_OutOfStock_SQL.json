@@ -1,0 +1,169 @@
+{
+	"name": "Ecommerce_OutOfStock_SQL",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "ECOMMERCE"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "STORE_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "STORE_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "STORE_TDLINX_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "STORE_DMA",
+				"type": "nvarchar"
+			},
+			{
+				"name": "STORE_MARKET",
+				"type": "nvarchar"
+			},
+			{
+				"name": "STORE_ZIPCODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "STORE_CITY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "STORE_STATE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "STORE_ADDRESS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MASTER_ITEM_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "VERIFIED_UPC",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MASTER_ITEM_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CATALOG_ITEM_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "CATALOG_ITEM_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "COMPANY_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "COMPANY_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "BRAND_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "BRAND_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TOP_LEVEL_CATEGORY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CONTAINER_QTY",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "CONTAINER_TYPE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VOLUME",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "VOLUME_UNITS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VINTAGE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "QUANTITY_LEFT",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "SHOW_IN_CATALOG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "STOCK_STATUS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FEED_TYPE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "INVENTORY_TYPE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "IS_SHIPPING_STORE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MASTER_ITEM_STATE_GMV_L30D",
+				"type": "nvarchar"
+			},
+			{
+				"name": "STORE_SESSIONS_L30D",
+				"type": "nvarchar"
+			},
+			{
+				"name": "REPORT_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "OOS_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			}
+		],
+		"typeProperties": {
+			"schema": "ECOMM",
+			"table": "DRIZLY_OUT_OF_STOCK"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

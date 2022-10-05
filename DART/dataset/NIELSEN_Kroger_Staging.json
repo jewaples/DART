@@ -1,0 +1,78 @@
+{
+	"name": "NIELSEN_Kroger_Staging",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "NIELSEN"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "PRODUCT",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TIME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "GEOGRAPHY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TOTAL_LITERS_UPC_WOCFL",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DOLLAR_SALES",
+				"type": "decimal",
+				"precision": 15,
+				"scale": 3
+			},
+			{
+				"name": "UNIT_SALES",
+				"type": "decimal",
+				"precision": 15,
+				"scale": 3
+			},
+			{
+				"name": "VOLUME_SALES",
+				"type": "decimal",
+				"precision": 15,
+				"scale": 3
+			},
+			{
+				"name": "DOLLAR_SALES_NON_PROJECTED",
+				"type": "decimal",
+				"precision": 15,
+				"scale": 3
+			},
+			{
+				"name": "UNIT_SALES_NON_PROJECTED",
+				"type": "decimal",
+				"precision": 15,
+				"scale": 3
+			},
+			{
+				"name": "VOLUME_SALES_NON_PROJECTED",
+				"type": "decimal",
+				"precision": 15,
+				"scale": 3
+			}
+		],
+		"typeProperties": {
+			"schema": "STG",
+			"table": "STG_KROGER_SALES"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

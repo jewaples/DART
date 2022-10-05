@@ -1,0 +1,61 @@
+{
+	"name": "BART_Tdlinx_Exception_insert",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "BART"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "TDLINX",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SGWS_NUM",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ACCOUNT_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ADDRESS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CITY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "STATE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DISCIPLINE_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZIP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ADDITIONAL_INFORMATION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ACTIVE",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "STG",
+			"table": "STG_ADVOCACY_EXCEPTION"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,17 @@
+{
+	"name": "AzureSqlTPURCHASE_ORDER_HISTORY",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "VMI",
+			"table": "PURCHASE_ORDER_HISTORY"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

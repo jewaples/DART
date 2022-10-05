@@ -1,0 +1,173 @@
+{
+	"name": "PastingtoADLitem",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_Data_Foundation_DataLake",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "LOCATION_ITEM_MASTER.parquet",
+				"folderPath": "VMI Cube/Archive/Parquet",
+				"fileSystem": "prod"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "DIM_DA_LOC_ID",
+				"type": "INT32"
+			},
+			{
+				"name": "DIM_PA_DATE",
+				"type": "DATE"
+			},
+			{
+				"name": "DIM_DA_LOC_ITEM_ID",
+				"type": "INT32"
+			},
+			{
+				"name": "DIM_DA_SIM_ITEM_ID",
+				"type": "INT32"
+			},
+			{
+				"name": "DIM_DIST_UPC",
+				"type": "UTF8"
+			},
+			{
+				"name": "DIM_DIST_CAT_ID",
+				"type": "UTF8"
+			},
+			{
+				"name": "DIM_BUYER_PART_NO",
+				"type": "UTF8"
+			},
+			{
+				"name": "DIM_DIST_UOM",
+				"type": "UTF8"
+			},
+			{
+				"name": "DIM_PA_ORDER_INFO",
+				"type": "UTF8"
+			},
+			{
+				"name": "DIM_SHIPLANE",
+				"type": "UTF8"
+			},
+			{
+				"name": "DIM_USED_ITEM_STATUS",
+				"type": "UTF8"
+			},
+			{
+				"name": "DIM_PA_STATUS",
+				"type": "UTF8"
+			},
+			{
+				"name": "DIM_STATUS_OVRD",
+				"type": "UTF8"
+			},
+			{
+				"name": "DIM_STATUS_OVRD_COMMENTS",
+				"type": "UTF8"
+			},
+			{
+				"name": "DIM_STATUS_OVRD_EXPIRE",
+				"type": "DATE"
+			},
+			{
+				"name": "DIM_CURRENT_SQA",
+				"type": "INT32"
+			},
+			{
+				"name": "DIM_CURRENT_NQA",
+				"type": "INT32"
+			},
+			{
+				"name": "DIM_USED_OP",
+				"type": "INT32"
+			},
+			{
+				"name": "DIM_USED_OP_TYPE",
+				"type": "UTF8"
+			},
+			{
+				"name": "DIM_SAFETY_STOCK",
+				"type": "DECIMAL",
+				"precision": 20,
+				"scale": 4
+			},
+			{
+				"name": "DIM_PLANNER_OVRD_OP",
+				"type": "INT32"
+			},
+			{
+				"name": "DIM_PLANNER_OVRD_COMMENTS",
+				"type": "UTF8"
+			},
+			{
+				"name": "DIM_USED_MIN_OQ",
+				"type": "INT32"
+			},
+			{
+				"name": "DIM_PACK_SIZE_OVERRIDE",
+				"type": "INT32"
+			},
+			{
+				"name": "DIM_BEHAVIOR_GROUP_CODE",
+				"type": "UTF8"
+			},
+			{
+				"name": "DIM_EXCLUDE_FROM_SUGG_ORDERS",
+				"type": "UTF8"
+			},
+			{
+				"name": "DIM_EXCLUDE_FROM_BTT",
+				"type": "UTF8"
+			},
+			{
+				"name": "DIM_MASTER_ITEM_ID",
+				"type": "INT32"
+			},
+			{
+				"name": "DIM_CURR_SHIP_IND",
+				"type": "UTF8"
+			},
+			{
+				"name": "DIM_CURR_SHIP_ITEM_DATE",
+				"type": "DATE"
+			},
+			{
+				"name": "DIM_DATE_CREATED",
+				"type": "DATE"
+			},
+			{
+				"name": "DIM_DATE_LAST_ORDERED",
+				"type": "DATE"
+			},
+			{
+				"name": "DIM_SS_DAYS_OVRD",
+				"type": "UTF8"
+			},
+			{
+				"name": "DIM_MIN_PRESENCE",
+				"type": "UTF8"
+			},
+			{
+				"name": "FILE_DATE",
+				"type": "UTF8"
+			},
+			{
+				"name": "LAST_UPDATE_DATE",
+				"type": "INT96"
+			},
+			{
+				"name": "LAST_UPDATE_BY",
+				"type": "UTF8"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,25 @@
+{
+	"name": "Azure_DataLake_Staging_Parquets",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_Data_Foundation_DataLake",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@concat('STG/',item().SQL_Name,'/',item().SQL_Name,'.parquet')",
+					"type": "Expression"
+				},
+				"folderPath": "landing/MDS",
+				"fileSystem": "prod"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,20 @@
+{
+	"name": "NIELSEN_IRI_File_FTP",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_NIELSEN_IRI_FTP",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "NIELSEN"
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "FtpServerLocation"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

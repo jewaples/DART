@@ -1,0 +1,210 @@
+{
+	"name": "MASTER_PIPELINE_EXECUTION_PLAN",
+	"properties": {
+		"activities": [
+			{
+				"name": "ForEach Priority Execution",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Lookup Priority Process",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Lookup Priority Process').output.value",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "Set variable Priority",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "var_Priority",
+								"value": {
+									"value": "@string(item().PRIORITY)",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Set variable ADF_FLAG",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "var_ADF_FLAG",
+								"value": {
+									"value": "@string(item().ADF_FLAG)",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Switch Cluster Execution",
+							"type": "Switch",
+							"dependsOn": [
+								{
+									"activity": "Set variable Priority",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								},
+								{
+									"activity": "Set variable ADF_FLAG",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"on": {
+									"value": "@string(item().CLUSTER)",
+									"type": "Expression"
+								},
+								"cases": [
+									{
+										"value": "BACARDHI OPS CLONE",
+										"activities": [
+											{
+												"name": "MASTER_PIPELINE_PARALLEL_EXECUTION_CLUSTER_OPS",
+												"type": "ExecutePipeline",
+												"dependsOn": [],
+												"userProperties": [],
+												"typeProperties": {
+													"pipeline": {
+														"referenceName": "MASTER_PIPELINE_PARALLEL_EXECUTION_CLUSTER_BACARDHI_OPS",
+														"type": "PipelineReference"
+													},
+													"waitOnCompletion": true,
+													"parameters": {
+														"var_Priority": {
+															"value": "@variables('var_Priority')",
+															"type": "Expression"
+														},
+														"STARTDATE": {
+															"value": "@variables('STARTDATE')",
+															"type": "Expression"
+														},
+														"var_ADF": {
+															"value": "@variables('var_ADF_FLAG')",
+															"type": "Expression"
+														}
+													}
+												}
+											}
+										]
+									},
+									{
+										"value": "BACARDHI INSIGHTS ROOM",
+										"activities": [
+											{
+												"name": "MASTER_PIPELINE_PARALLEL_EXECUTION_INSIGHTS_ROOM",
+												"type": "ExecutePipeline",
+												"dependsOn": [],
+												"userProperties": [],
+												"typeProperties": {
+													"pipeline": {
+														"referenceName": "MASTER_PIPELINE_PARALLEL_EXECUTION_CLUSTER_BACARDHI_INSIGHTS_ROOM",
+														"type": "PipelineReference"
+													},
+													"waitOnCompletion": true,
+													"parameters": {
+														"var_Priority": {
+															"value": "@variables('var_Priority')",
+															"type": "Expression"
+														},
+														"STARTDATE": {
+															"value": "@variables('STARTDATE')",
+															"type": "Expression"
+														},
+														"var_ADF": {
+															"value": "@variables('var_ADF_FLAG')",
+															"type": "Expression"
+														}
+													}
+												}
+											}
+										]
+									}
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "Lookup Priority Process",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": {
+							"value": "select DISTINCT PRIORITY, ADF_FLAG, REPLACE(REPLACE(UPPER(CLUSTER),'(',''),')','') CLUSTER from CFG.MASTER_PIPELINE_EXECUTION where ACTIVE_FLAG = 'Yes' order by PRIORITY ASC",
+							"type": "Expression"
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "MASTER_PIPELINE_EXECUTIONTABLE",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			}
+		],
+		"variables": {
+			"var_Description": {
+				"type": "String"
+			},
+			"var_Path": {
+				"type": "String"
+			},
+			"var_DB": {
+				"type": "String"
+			},
+			"var_ENV": {
+				"type": "String"
+			},
+			"var_Priority": {
+				"type": "String"
+			},
+			"var_Process": {
+				"type": "String"
+			},
+			"STARTDATE": {
+				"type": "String"
+			},
+			"Error": {
+				"type": "String"
+			},
+			"var_ADF_FLAG": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "MASTER_PIPELINE"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-08-01T17:28:52Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

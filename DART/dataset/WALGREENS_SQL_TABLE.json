@@ -1,0 +1,85 @@
+{
+	"name": "WALGREENS_SQL_TABLE",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "WALGREENS"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "CATEGORY_NUMBER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CATEGORY_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "WEEK",
+				"type": "nvarchar"
+			},
+			{
+				"name": "STORE_NUMBER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ADDRESS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CITY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "STATE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZIP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "WIC",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UPC",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UPC_DESCRIPTION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UNITS_SOLD",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SALES",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FILLER1",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LOAD_DATE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FILE_SET_ID",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "WALGREENS",
+			"table": "WALGREENS_SALES"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

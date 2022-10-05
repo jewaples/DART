@@ -1,0 +1,63 @@
+{
+	"name": "Ecommerce_Active_Stores_Inventory_SQL",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "ECOMMERCE"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "STORE_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "STORE_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ADDRESS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "STORE_TDLINX_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CITY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "STATE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZIP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "INVENTORY_TYPE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SHIPPING_STORE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "REPORT_DATE",
+				"type": "datetime2",
+				"scale": 7
+			}
+		],
+		"typeProperties": {
+			"schema": "ECOMM",
+			"table": "ACTIVE_STORES_INVENTORY"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

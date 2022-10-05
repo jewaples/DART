@@ -1,0 +1,169 @@
+{
+	"name": "SSAS_LOG",
+	"properties": {
+		"activities": [
+			{
+				"name": "Copy Events data",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SqlServerSource",
+						"sqlReaderQuery": "select\n    n.value('(@name)[1]', 'varchar(50)') as EventName,\n    n.value('(@timestamp)[1]', 'datetime2') AS [utc_timestamp],\n    n.value('(data[@name=\"EndTime\"]/value)[1]', 'datetime2') as EndTime,\n    n.value('(data[@name=\"EventClass\"]/value)[1]', 'int') as EventClass,\n    n.value('(data[@name=\"EventSubclass\"]/value)[1]', 'int') as EventSubclass,\n    n.value('(data[@name=\"SPID\"]/value)[1]', 'int') as SPID,\n    n.value('(data[@name=\"Duration\"]/value)[1]', 'int') as Duration,\n       n.value('(data[@name=\"NTUserName\"]/value)[1]', 'nvarchar(128)') as NTUserName,\n       n.value('(data[@name=\"DatabaseName\"]/value)[1]', 'nvarchar(128)') as DatabaseName,\n       n.value('(data[@name=\"ApplicationName\"]/value)[1]', 'nvarchar(128)') as ApplicationName,\n    n.value('(data[@name=\"TextData\"]/value)[1]', 'nvarchar(max)') as TextData\nfrom (select cast(event_data as XML) as event_data\nfrom sys.fn_xe_file_target_read_file('D:\\TraceFiles\\SSAS_Usage_Log*.xel', null, null, null)) ed\ncross apply ed.event_data.nodes('event') as q(n)",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"preCopyScript": "TRUNCATE TABLE LOGS.SSAS_EVENT_LOG",
+						"writeBehavior": "insert",
+						"tableOption": "autoCreate",
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "EventName",
+									"type": "String"
+								},
+								"sink": {
+									"name": "EventName",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "utc_timestamp",
+									"type": "DateTime"
+								},
+								"sink": {
+									"name": "utc_timestamp",
+									"type": "DateTime"
+								}
+							},
+							{
+								"source": {
+									"name": "EndTime",
+									"type": "DateTime"
+								},
+								"sink": {
+									"name": "EndTime",
+									"type": "DateTime"
+								}
+							},
+							{
+								"source": {
+									"name": "EventClass",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "EventClass",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "EventSubclass",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "EventSubclass",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "SPID",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "SPID",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "Duration",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "Duration",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "NTUserName",
+									"type": "String"
+								},
+								"sink": {
+									"name": "NTUserName",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "DatabaseName",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DatabaseName",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ApplicationName",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ApplicationName",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "TextData",
+									"type": "String"
+								},
+								"sink": {
+									"name": "TextData",
+									"type": "String"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "MDS_Source_Tables",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "SSAS_Log_Staging",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"folder": {
+			"name": "STAGING"
+		},
+		"annotations": [],
+		"lastPublishTime": "2021-08-06T17:23:55Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

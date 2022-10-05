@@ -1,0 +1,60 @@
+{
+	"name": "BEP_Dim_Questionnaire",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "BEP"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "QUESTION_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "STANDARDQUARTERLY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "QUESTION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PREMISE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "QUESTION_GROUP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "QUESTION_START",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "QUESTION_END",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "PRODUCT",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "BEP",
+			"table": "DIM_QUESTIONNAIRE"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

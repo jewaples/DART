@@ -1,0 +1,385 @@
+{
+	"name": "RAD_EDW_Weekly_FACT",
+	"properties": {
+		"activities": [
+			{
+				"name": "Lookup_Partition_Years",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": {
+							"value": "TRUNCATE TABLE [RAD].[FACT_SALES];\n\nSELECT distinct ([YEAR]) AS [YEAR]\n FROM [RAD].[DIM_TIME]\n WHERE [YEAR] <=YEAR('@{formatDateTime(pipeline().parameters.STARTDATE,'yyyy-MM-dd')}') ;",
+							"type": "Expression"
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "RAD_Dim_Time_Sql",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "ForEach_Year",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Lookup_Partition_Years",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Lookup_Partition_Years').output.value",
+						"type": "Expression"
+					},
+					"batchCount": 1,
+					"activities": [
+						{
+							"name": "Fact_Sales_Hana_SqlDB",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "SapHanaSource",
+									"query": {
+										"value": "WITH VIP_OUT as\n(\n              select \"/BIC/ZDISTID\" as VIP_DISTRIBUTOR_ID, \"/BIC/ZRSCUST\" as VIP_CUSTOMER_ID, \"/BIC/ZVPID\" as VIP_ID\n                from (\n                        select ROW_NUMBER() over (PARTITION BY ACC.\"/BIC/ZDISTID\", ACC.\"/BIC/ZRSCUST\"  ORDER BY \"/BIC/ZTMSTMP\" desc) as RN\n                               ,* \n                          from SAPP30.\"/BIC/AZOTC_AO172\" ACC\n                         where \"/BIC/ZDISTID\" <> ''\n                     ) t \n               where RN = 1\n)\n,\nOUTDA as\n(\n              select \"/BIC/ZDISTID\" as VIP_DISTRIBUTOR_ID, \"/BIC/ZRSCUST\" as VIP_CUSTOMER_ID\n                from (\n                        select ROW_NUMBER() over (PARTITION BY OUTDA.\"/BIC/ZDISTID\", OUTDA.\"/BIC/ZRSCUST\"  ORDER BY \"/BIC/ZTMSTMP\" desc) as RN\n                               ,* \n                          from SAPP30.\"/BIC/AZOTC_AO152\" OUTDA\n                         where \"/BIC/ZDISTID\" <> ''\n                     ) t \n               where RN = 1\n)\n,\nVIP_ID as\n(\n     select OUTDA.VIP_DISTRIBUTOR_ID, OUTDA.VIP_CUSTOMER_ID, VIP_OUT.VIP_ID\n       from OUTDA\n  LEFT JOIN VIP_OUT\n         ON OUTDA.VIP_DISTRIBUTOR_ID = VIP_OUT.VIP_DISTRIBUTOR_ID \n        AND OUTDA.VIP_CUSTOMER_ID = VIP_OUT.VIP_CUSTOMER_ID \n)\n,\nDIRECT as\n(\n       select ltrim(\"/BIC/ZMATERIAL\", '0') as \"/BIC/ZMATERIAL\",UNIT,map(UOMN1D,0,0,1/UOMN1D) as CONVERSION,BASE_UOM --,UOMN1D as UOMN1D_OLD \n               --,*\n      from SAPP30.\"/BIC/AUOMZMAT100\" \n     where 1=1\n       and UNIT='BOT' \n       and BASE_UOM='CS'\n)\n,\nINDIRECT as\n(\n       select \"/BIC/ZMATERIAL\",UNIT,BASE_UOM,UOMN1D --,*\n      from SAPP30.\"/BIC/AUOMZMAT100\" \n     where 1=1\n)\n,\nFILTER as\n(\n    select INDIRECT.* \n      from INDIRECT\n LEFT JOIN DIRECT\n        ON DIRECT.\"/BIC/ZMATERIAL\" = INDIRECT.\"/BIC/ZMATERIAL\"\n     WHERE DIRECT.\"/BIC/ZMATERIAL\" IS NULL      \n)\n,\nCS as\n(\n     select * from FILTER where UNIT = 'CS'\n)\n,\nNO_CS as\n(\n     select \"/BIC/ZMATERIAL\",UNIT,BASE_UOM\n            ,map(UOMN1D,0,0,1/UOMN1D) as UOMN1D \n       from FILTER where UNIT = 'BOT'\n)\n,\nMAP_CONV as\n(\n     select ltrim(CS.\"/BIC/ZMATERIAL\",'0') as \"/BIC/ZMATERIAL\",NO_CS.UNIT, NO_CS.UOMN1D*CS.UOMN1D as CONVERSION, CS.UNIT as BASE_UOM\n       from CS\n       JOIN NO_CS\n         ON CS.\"/BIC/ZMATERIAL\" = NO_CS.\"/BIC/ZMATERIAL\"\n      WHERE CS.BASE_UOM = NO_CS.BASE_UOM\n)\n,\nCONVERSION as\n(\nselect \"/BIC/ZMATERIAL\" as ZMATERIAL, UNIT, CONVERSION, BASE_UOM from DIRECT\nUNION\nselect \"/BIC/ZMATERIAL\" as ZMATERIAL, UNIT, CONVERSION, BASE_UOM from MAP_CONV\n)\n,\nRATIO as\n(\nselect distinct \"Item Id\" ,\"Product Brand Planning Size Id\"\n       ,CASE WHEN BOTTLES_PER_CASE_1 IS NULL THEN 1 ELSE (CASE WHEN BOTTLES_PER_CASE_1 = 0 THEN 1 ELSE \"Bottles per Case\" / BOTTLES_PER_CASE_1 END) END as RATIO\nfrom (\n     select distinct MD.\"Item Id\"\n--            ,MD_1.\"Item Id\" as ITEM_ID_1\n            ,MD.\"Product Brand Planning Size Id\"\n            ,MD.\"Bottles per Case\"\n            ,MD_1.\"Bottles per Case\" as BOTTLES_PER_CASE_1\n       from DISTRIBUTORS_USA.NAMIBP_PRODUCT_MD MD\n  LEFT JOIN DISTRIBUTORS_USA.NAMIBP_PRODUCT_MD MD_1\n         ON MD.\"Representative Planning IPC\" = MD_1.\"Item Id\"\n    )\n)\n,\nNINEL_CONVERTED as\n(\nselect CASE_QTY*\"Total Case Volume\"/9 as NINEL_CASE_QTY, CASE_QTY\n       ,to_decimal(DEPLETIONS * coalesce(RATIO,1),12,5) as DEPLETIONS \n       ,SAP_CUSTOMER_NUM as \"SAP Customer Code\"\n       ,INVOICE_DT as \"Invoice Date\"\n       ,DISTRIBUTOR_CUSTOMER_NUM as \"Distributor Code\", SAP_MATERIAL_NUM as \"Item Code\"\n       ,NET_UNIT_PRICE as \"Net Unit Price\"\n       ,DISTRIBUTOR_MATERIAL_NUM as \"Distributor Material Number\"\n       ,TRANSACTION_TYPE as \"Transaction Type\"\n       ,DEPLETION_PERIOD as \"Depletion Period\"\n       ,SAP_CUSTOMER_NUM||'|'||DISTRIBUTOR_CUSTOMER_NUM as ACC_KEY\n       ,CASE WHEN SOLD_QTY > 0 THEN DISTRIBUTOR_CUSTOMER_NUM||'-'||\"Product Brand Planning Size Id\" ELSE '' END as \"ConcatAccountAndPlanningSize\", coalesce(\"Product Brand Planning Size Id\",'') as PLAN_SIZE\n       ,CASE WHEN SOLD_QTY > 0 THEN DISTRIBUTOR_CUSTOMER_NUM||'-'||\"Product Brand Size Id\" ELSE '' END as \"ConcatAccountAndBrandSize\"\n       ,SAP_CUSTOMER_NUM||'|'||DISTRIBUTOR_SALESREP_ID as SLSPRSN_KEY, \"Total Case Volume\"\n       ,FIXED_FRONTLINE_UNIT_PRICE4, FIXED_ADDITIONAL_CHARGE_AMT, FIXED_NET_UNIT_PRICE4, FIXED_SPLIT_CASE_UNIT_CHARGE\n       ,to_decimal(CASE WHEN RATIO = 0 THEN 0 ELSE (PRICE_TO_RETAIL/coalesce(RATIO,1)) END,9,2) as PRICE_TO_RETAIL, DISTRIBUTOR_C7_CODE, DEPLETIONS_EXPECTED_FLAG\n       ,FREE_GOOD_FLAG ,VIP_ID ,CREATE_TS\n  from (\n     select CASE WHEN SOLD_QTY_UOM = 'B' THEN SOLD_QTY/PRO.\"Bottles per Case\" ELSE SOLD_QTY END as CASE_QTY\n            ,CASE WHEN SOLD_QTY_UOM = 'B' THEN (SOLD_QTY*CONVERSION.CONVERSION) ELSE SOLD_QTY END as DEPLETIONS\n            ,FRONTLINE_UNIT_PRICE4 * SOLD_QTY as FIXED_FRONTLINE_UNIT_PRICE4\n            ,ADDITIONAL_CHARGE_AMT * SOLD_QTY as FIXED_ADDITIONAL_CHARGE_AMT\n            ,NET_UNIT_PRICE4 * SOLD_QTY as FIXED_NET_UNIT_PRICE4\n            ,SPLIT_CASE_UNIT_CHARGE * SOLD_QTY as FIXED_SPLIT_CASE_UNIT_CHARGE\n            ,CASE WHEN SOLD_QTY_UOM = 'B' THEN map(CONVERSION.CONVERSION,0,0,(NET_UNIT_PRICE - ADDITIONAL_CHARGE_AMT)/CONVERSION.CONVERSION) ELSE NET_UNIT_PRICE - ADDITIONAL_CHARGE_AMT END as PRICE_TO_RETAIL\n            ,SLS.*, PRO.\"Total Case Volume\", PRO.\"Product Brand Planning Size Id\", PRO.\"Product Brand Size Id\", RATIO.RATIO, ltrim(CUS.\"Current Customer Id\",'0') as DISTRIBUTOR_C7_CODE, map(upper(CUS.\"Depletions Expected Flag\"),'X','YES','NO') as DEPLETIONS_EXPECTED_FLAG, RAD_INCLUDE   \n            ,IFNULL(VIP_ID.VIP_ID, SLS.DISTRIBUTOR_CUSTOMER_NUM) as VIP_ID\n       from DISTRIBUTORS_USA.DISTRIBUTOR_SALES SLS\n  LEFT JOIN DISTRIBUTORS_USA.NAMIBP_PRODUCT_MD PRO\n         ON SLS.SAP_MATERIAL_NUM = PRO.\"Item Id\"\n        AND PRO.\"SAP Material Group Code\" IN (100, 200, 300)\n  LEFT JOIN RATIO\n         ON SLS.SAP_MATERIAL_NUM = RATIO.\"Item Id\"    \n  LEFT JOIN VIP_ID\n         ON SLS.SAP_CUSTOMER_NUM = VIP_ID.VIP_DISTRIBUTOR_ID \n        AND SLS.DISTRIBUTOR_CUSTOMER_NUM = VIP_ID.VIP_CUSTOMER_ID         \n  LEFT JOIN CONVERSION\n         ON SLS.SAP_MATERIAL_NUM = CONVERSION.ZMATERIAL \n  LEFT JOIN DISTRIBUTORS_USA.NAMIBP_CUSTOMER_MD CUS\n         ON SLS.SAP_CUSTOMER_NUM = CUS.\"Distributor Id\"\n--        AND upper(CUS.\"Depletions Expected Flag\")=upper('X') \n       JOIN DISTRIBUTORS_USA.CUSTOMER_INCLUDED INCL\n         ON SLS.SAP_CUSTOMER_NUM = INCL.DISTRIBUTOR_ID\n        AND INCL.RAD_INCLUDE = 'Yes'\n       ) \n--   WHERE DEPLETION_PERIOD >= ADD_DAYS(LAST_DAY(ADD_MONTHS(CURRENT_DATE,-7)),1)\n  WHERE DEPLETION_PERIOD >= to_date( @{item().YEAR} ||'-01-01', 'yyyy-mm-dd')\n   AND DEPLETION_PERIOD < add_years(to_date(@{item().YEAR}||'-01-01', 'yyyy-mm-dd'),1)\n)\n,\nFACT_AND_DEALS as\n(\n   select NIN.NINEL_CASE_QTY, NIN.CASE_QTY,NIN.DEPLETIONS, NIN.\"SAP Customer Code\", NIN.\"Invoice Date\", NIN.\"Distributor Code\", NIN.\"Item Code\"\n          ,NIN.\"Net Unit Price\", NIN.\"Distributor Material Number\",NIN.\"Transaction Type\",NIN.\"Depletion Period\", NIN.ACC_KEY\n          ,NIN.\"ConcatAccountAndPlanningSize\", NIN.\"ConcatAccountAndBrandSize\", NIN.SLSPRSN_KEY, NIN.\"Total Case Volume\",NIN.FIXED_FRONTLINE_UNIT_PRICE4\n          ,NIN.FIXED_ADDITIONAL_CHARGE_AMT,NIN.FIXED_NET_UNIT_PRICE4,NIN.FIXED_SPLIT_CASE_UNIT_CHARGE,NIN.PRICE_TO_RETAIL,NIN.FREE_GOOD_FLAG,NIN.VIP_ID\n          ,IFNULL(DLS.\"Deal (C8) ID\", 'X')||'|'||IFNULL(DLS.MONTH,'X')||'|'||NIN.PLAN_SIZE||'|'||coalesce(NIN.DISTRIBUTOR_C7_CODE, 'X') as DEAL_KEY\n\t\t,DISTRIBUTOR_C7_CODE ,NIN.CREATE_TS, NIN.DEPLETIONS_EXPECTED_FLAG\n     from NINEL_CONVERTED NIN     \nLEFT JOIN DISTRIBUTORS_USA.DEALS DLS\n       ON NIN.DISTRIBUTOR_C7_CODE = DLS.\"Distributor (C7) Code\"\n      AND NIN.PLAN_SIZE = DLS.\"Brand Planning Size (P5) Code\"\n      AND to_char(NIN.\"Depletion Period\", 'YYYYMM') = DLS.MONTH\n      AND PRICE_TO_RETAIL >= DLS.\"Lower Bound\" \n      AND PRICE_TO_RETAIL <= DLS.\"Upper Bound\" \n--      limit 10\n)\n,   \nLIM as \n(\n  select CASE WHEN LATEST_MONTH >= 1 AND LATEST_MONTH <= 4 THEN to_date(LATEST_YEAR||'0430', 'yyyymmdd')\n              WHEN LATEST_MONTH >= 5 AND LATEST_MONTH <= 12 THEN to_date(YEAR(ADD_YEARS(ALMOST_FILTER, 1))||'0430', 'yyyymmdd')\n          END as FILTER_DATE from (\n     select max(INVOICE_DT) as LATEST_DATE, to_int(to_char(max(INVOICE_DT), 'MM')) as LATEST_MONTH\n            ,to_char(max(INVOICE_DT), 'YYYY') as LATEST_YEAR, NEXT_DAY(LAST_DAY(max(INVOICE_DT))) as ALMOST_FILTER \n       from DISTRIBUTORS_USA.DISTRIBUTOR_SALES  \n    ) t\n),\nDATE as \n(\n    select DATE_SQL,YEAR,MONTH,CALMONTH,CUS.\"Distributor Id\" as DISTRIBUTOR_ID\n      FROM _SYS_BI.M_TIME_DIMENSION as DimDate \nCROSS JOIN DISTRIBUTORS_USA.NAMIBP_CUSTOMER_MD CUS\n     where DATE_SAP NOT IN ('00010101', '19000101', '99991231')\n),\nDATE_LIM as\n(\n     select DATE.*\n       from DATE\n       JOIN LIM\n         ON DATE.DATE_SQL <= LIM.FILTER_DATE\n--        AND DATE.DATE_SQL >= ADD_DAYS(LAST_DAY(ADD_MONTHS(CURRENT_DATE,-7)),1)\n       AND DATE.DATE_SQL >= to_date( @{item().YEAR} ||'-01-01', 'yyyy-mm-dd')\n\t   AND DATE.DATE_SQL < add_years(to_date(@{item().YEAR}||'-01-01', 'yyyy-mm-dd'),1)  \n),\nGAPS as\n(\n   select --DATE_LIM.*\n          to_number(0) as NINEL_CASE_QTY\n          ,to_number(0) as CASE_QTY\n          ,to_number(0) as DEPLETIONS\n          ,DISTRIBUTOR_ID as \"SAP Customer Code\"\n          ,DATE_LIM.DATE_SQL as \"Invoice Date\"\n          ,MAX(\"Distributor Code\") OVER (PARTITION BY DATE_LIM.DISTRIBUTOR_ID, DATE_LIM.CALMONTH) as \"Distributor Code\"          \n          ,MAX(\"Item Code\") OVER (PARTITION BY DATE_LIM.DISTRIBUTOR_ID, DATE_LIM.CALMONTH) as \"Item Code\"\n          ,to_number(0) as \"Net Unit Price\"\n          ,MAX(\"Distributor Material Number\") OVER (PARTITION BY DATE_LIM.DISTRIBUTOR_ID, DATE_LIM.CALMONTH) as \"Distributor Material Number\"\n          ,MAX(\"Transaction Type\") OVER (PARTITION BY DATE_LIM.DISTRIBUTOR_ID, DATE_LIM.CALMONTH) as \"Transaction Type\"\n          ,MAX(\"Depletion Period\") OVER (PARTITION BY DATE_LIM.DISTRIBUTOR_ID, DATE_LIM.CALMONTH) as \"Depletion Period\"\n          ,MAX(ACC_KEY) OVER (PARTITION BY DATE_LIM.DISTRIBUTOR_ID, DATE_LIM.CALMONTH) as ACC_KEY\n          ,MAX(\"ConcatAccountAndPlanningSize\") OVER (PARTITION BY DATE_LIM.DISTRIBUTOR_ID, DATE_LIM.CALMONTH) as \"ConcatAccountAndPlanningSize\"\n          ,MAX(\"ConcatAccountAndBrandSize\") OVER (PARTITION BY DATE_LIM.DISTRIBUTOR_ID, DATE_LIM.CALMONTH) as \"ConcatAccountAndBrandSize\"\n          ,SLSPRSN_KEY  -- KEPT INTENTIONALLY NULL (DUE TO THE LEFT JOIN), SO IT CAN BE FILTERED LATER\n          ,to_number(0) as \"Total Case Volume\"\n          ,to_number(0) as FIXED_FRONTLINE_UNIT_PRICE4\n          ,to_number(0) as FIXED_ADDITIONAL_CHARGE_AMT\n          ,to_number(0) as FIXED_NET_UNIT_PRICE4\n          ,to_number(0) as FIXED_SPLIT_CASE_UNIT_CHARGE\n          ,to_number(0) as PRICE_TO_RETAIL\n          ,MAX(FREE_GOOD_FLAG) OVER (PARTITION BY DATE_LIM.DISTRIBUTOR_ID, DATE_LIM.CALMONTH) as FREE_GOOD_FLAG\n          ,MAX(VIP_ID) OVER (PARTITION BY DATE_LIM.DISTRIBUTOR_ID, DATE_LIM.CALMONTH) as VIP_ID\n          ,MAX(DEAL_KEY) OVER (PARTITION BY DATE_LIM.DISTRIBUTOR_ID, DATE_LIM.CALMONTH) as DEAL_KEY  \n          ,MAX(DISTRIBUTOR_C7_CODE) OVER (PARTITION BY DATE_LIM.DISTRIBUTOR_ID, DATE_LIM.CALMONTH) as DISTRIBUTOR_C7_CODE\n\t\t,CURRENT_DATE AS CREATE_TS\n\t\t,MAX(DEPLETIONS_EXPECTED_FLAG) OVER (PARTITION BY DATE_LIM.DISTRIBUTOR_ID, DATE_LIM.CALMONTH) as DEPLETIONS_EXPECTED_FLAG\t  \n     from DATE_LIM\nLEFT JOIN FACT_AND_DEALS FAD\n       ON DATE_LIM.DATE_SQL = FAD.\"Invoice Date\"\n      AND DATE_LIM.DISTRIBUTOR_ID = FAD.\"SAP Customer Code\"\n--      limit 10\n)\n   SELECT * FROM GAPS WHERE SLSPRSN_KEY IS NULL AND \"Depletion Period\" IS NOT NULL\n   UNION ALL\n   SELECT * FROM FACT_AND_DEALS\n--    WHERE  \"Depletion Period\" >= ADD_DAYS(LAST_DAY(ADD_MONTHS(CURRENT_DATE,-7)),1)\n   WHERE \"Depletion Period\" >= to_date( @{item().YEAR} ||'-01-01', 'yyyy-mm-dd')\n\tAND \"Depletion Period\" < add_years(to_date(@{item().YEAR}||'-01-01', 'yyyy-mm-dd'),1)",
+										"type": "Expression"
+									},
+									"partitionOption": "None"
+								},
+								"sink": {
+									"type": "AzureSqlSink",
+									"writeBehavior": "insert",
+									"disableMetricsCollection": false
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"mappings": [
+										{
+											"source": {
+												"name": "NINEL_CASE_QTY",
+												"type": "String"
+											},
+											"sink": {
+												"name": "NINEL_CASE_QTY",
+												"type": "Decimal"
+											}
+										},
+										{
+											"source": {
+												"name": "CASE_QTY",
+												"type": "String"
+											},
+											"sink": {
+												"name": "CASE_QTY",
+												"type": "Decimal"
+											}
+										},
+										{
+											"source": {
+												"name": "SAP Customer Code",
+												"type": "String"
+											},
+											"sink": {
+												"name": "SAP_CUSTOMER_CODE",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "Invoice Date",
+												"type": "DateTime"
+											},
+											"sink": {
+												"name": "INVOICE_DATE",
+												"type": "DateTime"
+											}
+										},
+										{
+											"source": {
+												"name": "Distributor Code",
+												"type": "String"
+											},
+											"sink": {
+												"name": "DISTRIBUTOR_CODE",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "Item Code",
+												"type": "String"
+											},
+											"sink": {
+												"name": "ITEM_CODE",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "Net Unit Price",
+												"type": "String"
+											},
+											"sink": {
+												"name": "NET_UNIT_PRICE",
+												"type": "Decimal"
+											}
+										},
+										{
+											"source": {
+												"name": "Distributor Material Number",
+												"type": "String"
+											},
+											"sink": {
+												"name": "DISTRIBUTOR_MATERIAL_NUMBER",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "Transaction Type",
+												"type": "String"
+											},
+											"sink": {
+												"name": "TRANSACTION_TYPE",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "Depletion Period",
+												"type": "DateTime"
+											},
+											"sink": {
+												"name": "DEPLETION_PERIOD",
+												"type": "DateTime"
+											}
+										},
+										{
+											"source": {
+												"name": "ACC_KEY",
+												"type": "String"
+											},
+											"sink": {
+												"name": "ACC_KEY",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "ConcatAccountAndPlanningSize",
+												"type": "String"
+											},
+											"sink": {
+												"name": "CONCAT_ACCOUNT_AND_PLANNING_SIZE",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "SLSPRSN_KEY",
+												"type": "String"
+											},
+											"sink": {
+												"name": "SLSPRSN_KEY",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "Total Case Volume",
+												"type": "String"
+											},
+											"sink": {
+												"name": "TOTAL_CASE_VOLUME",
+												"type": "Decimal"
+											}
+										},
+										{
+											"source": {
+												"name": "FIXED_FRONTLINE_UNIT_PRICE4",
+												"type": "String"
+											},
+											"sink": {
+												"name": "FIXED_FRONTLINE_UNIT_PRICE4",
+												"type": "Decimal"
+											}
+										},
+										{
+											"source": {
+												"name": "FIXED_ADDITIONAL_CHARGE_AMT",
+												"type": "String"
+											},
+											"sink": {
+												"name": "FIXED_ADDITIONAL_CHARGE_AMT",
+												"type": "Decimal"
+											}
+										},
+										{
+											"source": {
+												"name": "FIXED_NET_UNIT_PRICE4",
+												"type": "String"
+											},
+											"sink": {
+												"name": "FIXED_NET_UNIT_PRICE4",
+												"type": "Decimal"
+											}
+										},
+										{
+											"source": {
+												"name": "FIXED_SPLIT_CASE_UNIT_CHARGE",
+												"type": "String"
+											},
+											"sink": {
+												"name": "FIXED_SPLIT_CASE_UNIT_CHARGE",
+												"type": "Decimal"
+											}
+										},
+										{
+											"source": {
+												"name": "FREE_GOOD_FLAG",
+												"type": "String"
+											},
+											"sink": {
+												"name": "FREE_GOOD_FLAG",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "VIP_ID",
+												"type": "String"
+											},
+											"sink": {
+												"name": "VIP_ID",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "DEAL_KEY",
+												"type": "String"
+											},
+											"sink": {
+												"name": "DEAL_KEY",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "CREATE_TS",
+												"type": "DateTime"
+											},
+											"sink": {
+												"name": "CREATED_DATE",
+												"type": "DateTime"
+											}
+										},
+										{
+											"source": {
+												"name": "ConcatAccountAndBrandSize",
+												"type": "String"
+											},
+											"sink": {
+												"name": "CONCAT_ACCOUNT_AND_BRAND_SIZE",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "DEPLETIONS",
+												"type": "String"
+											},
+											"sink": {
+												"name": "DEPLETIONS",
+												"type": "Decimal"
+											}
+										},
+										{
+											"source": {
+												"name": "PRICE_TO_RETAIL",
+												"type": "String"
+											},
+											"sink": {
+												"name": "PRICE_TO_RETAIL",
+												"type": "Decimal"
+											}
+										},
+										{
+											"source": {
+												"name": "DISTRIBUTOR_C7_CODE",
+												"type": "String"
+											},
+											"sink": {
+												"name": "DISTRIBUTOR_C7_CODE",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "DEPLETIONS_EXPECTED_FLAG",
+												"type": "String"
+											},
+											"sink": {
+												"name": "DEPLETIONS_EXPECTED_FLAG",
+												"type": "String"
+											}
+										}
+									]
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "RAD_Fact_Sales_Hana",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "RAD_Fact_Sales_Sql",
+									"type": "DatasetReference"
+								}
+							]
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"STARTDATE": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "RAD"
+		},
+		"annotations": [],
+		"lastPublishTime": "2021-12-15T17:45:42Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

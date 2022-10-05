@@ -1,0 +1,50 @@
+{
+	"name": "PBI_Log_Staging",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "STAGING"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "EVENT_TIME",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "USER_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "OPERATION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "OBJECT_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "WORKSPACE_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CLIENT_IP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "USER_AGENT",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "LOGS",
+			"table": "PBI_EVENT_STAGING"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,111 @@
+{
+	"name": "ParquetLOCATION_ITEM_MASTER",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_Data_Foundation_DataLake",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "LOCATION_ITEM_MASTER.parquet",
+				"folderPath": "EDW/BILLINGS/STG_VMI_LOCATION_ITEM_MASTER/CURRENT",
+				"fileSystem": "prod"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "CUS_DIST_NAME",
+				"type": "UTF8"
+			},
+			{
+				"name": "CUS_DA_DIST_ID",
+				"type": "UTF8"
+			},
+			{
+				"name": "CUS_DIVISION",
+				"type": "UTF8"
+			},
+			{
+				"name": "CUS_DA_LOC_ID",
+				"type": "INT32"
+			},
+			{
+				"name": "CUS_LOC_NAME",
+				"type": "UTF8"
+			},
+			{
+				"name": "CUS_LOC_STATUS",
+				"type": "UTF8"
+			},
+			{
+				"name": "CUS_DIST_OWN_LOC_ID",
+				"type": "UTF8"
+			},
+			{
+				"name": "CUS_EDI_LOC_ID",
+				"type": "UTF8"
+			},
+			{
+				"name": "CUS_SUPP_LOC_ID",
+				"type": "UTF8"
+			},
+			{
+				"name": "CUS_SHIPLANE",
+				"type": "UTF8"
+			},
+			{
+				"name": "CUS_TOT_LEADTIME",
+				"type": "INT32"
+			},
+			{
+				"name": "CUS_SHIP_METHOD",
+				"type": "UTF8"
+			},
+			{
+				"name": "CUS_HUB_ID",
+				"type": "UTF8"
+			},
+			{
+				"name": "CUS_LOC_ORD_INFO",
+				"type": "UTF8"
+			},
+			{
+				"name": "CUS_SL_ORDER_INFO",
+				"type": "UTF8"
+			},
+			{
+				"name": "CUS_SL_SS_DAYS",
+				"type": "INT32"
+			},
+			{
+				"name": "CUS_SL_PICK",
+				"type": "INT32"
+			},
+			{
+				"name": "CUS_SL_TRANSIT",
+				"type": "INT32"
+			},
+			{
+				"name": "CUS_SL_RECEIPT",
+				"type": "INT32"
+			},
+			{
+				"name": "FILE_DATE",
+				"type": "UTF8"
+			},
+			{
+				"name": "LAST_UPDATE_DATE",
+				"type": "INT96"
+			},
+			{
+				"name": "LAST_UPDATE_BY",
+				"type": "UTF8"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

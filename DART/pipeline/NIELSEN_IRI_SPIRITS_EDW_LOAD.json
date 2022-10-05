@@ -1,0 +1,75 @@
+{
+	"name": "NIELSEN_IRI_SPIRITS_EDW_LOAD",
+	"properties": {
+		"activities": [
+			{
+				"name": "Load Dim Period",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "NIELSEN_IRI_DIM_PERIOD",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"STARTDATE": {
+							"value": "@pipeline().parameters.STARTDATE",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "Load Dim Product",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "NIELSEN_IRI_DIM_PRODUCT",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"STARTDATE": {
+							"value": "@pipeline().parameters.STARTDATE",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "Load Dim Market",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "NIELSEN_IRI_DIM_MARKET",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"STARTDATE": {
+							"value": "@pipeline().parameters.STARTDATE",
+							"type": "Expression"
+						}
+					}
+				}
+			}
+		],
+		"parameters": {
+			"STARTDATE": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "NIELSEN/Spirits"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-02-18T02:14:53Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

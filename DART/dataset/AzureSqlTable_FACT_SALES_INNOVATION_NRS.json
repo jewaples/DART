@@ -1,0 +1,83 @@
+{
+	"name": "AzureSqlTable_FACT_SALES_INNOVATION_NRS",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "INNOVATION"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ID",
+				"type": "uniqueidentifier"
+			},
+			{
+				"name": "PC3_DISTRIBUTOR",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PC3_DISTRIBUTOR_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "NRS_CUSTOMER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "I3_INNOVATION_PRODUCT",
+				"type": "nvarchar"
+			},
+			{
+				"name": "P4_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "P4_BRAND_SIZE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PERIOD",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VOLUMES_9L",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "POD",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "SPPD",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "NSV",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "GP",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "TIMESTAMP",
+				"type": "datetime2",
+				"scale": 7
+			}
+		],
+		"typeProperties": {
+			"schema": "INNO",
+			"table": "FACT_SALES_INNOVATION_NRS"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,89 @@
+{
+	"name": "Hillebrand_Logs",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "TIMESTAMP",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "PIPELINE_NAME",
+				"type": "varchar"
+			},
+			{
+				"name": "PIPELINE_RUN_ID",
+				"type": "varchar"
+			},
+			{
+				"name": "JOB_ID",
+				"type": "varchar"
+			},
+			{
+				"name": "ACTIVITY_RUN_ID",
+				"type": "varchar"
+			},
+			{
+				"name": "EXECUTION_START_TIME",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "EXECUTION_END_TIME",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "ERROR_ERROR_CODE",
+				"type": "varchar"
+			},
+			{
+				"name": "ERROR_MESSAGES",
+				"type": "varchar"
+			},
+			{
+				"name": "ERROR_FAILURE_TYPE",
+				"type": "varchar"
+			},
+			{
+				"name": "ERROR_TARGET",
+				"type": "varchar"
+			},
+			{
+				"name": "EXECUTION_DETAILS",
+				"type": "varchar"
+			},
+			{
+				"name": "STATUS_CODE",
+				"type": "varchar"
+			},
+			{
+				"name": "EXECUTION_STATUS",
+				"type": "varchar"
+			},
+			{
+				"name": "DURATION",
+				"type": "time",
+				"scale": 7
+			},
+			{
+				"name": "RECOVERY_STATUS",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "STG",
+			"table": "HILLEBRAND_LOGS"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

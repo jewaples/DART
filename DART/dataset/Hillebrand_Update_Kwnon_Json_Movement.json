@@ -1,0 +1,21 @@
+{
+	"name": "Hillebrand_Update_Kwnon_Json_Movement",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_Data_Foundation_DataLake",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "hillebrand_Movement_Kwnon_json",
+				"folderPath": "EDW/BILLINGS/HILLEBRAND/API_PROCESS/HILLEBRANDUPDATEKNOWN",
+				"fileSystem": "prod"
+			}
+		},
+		"schema": {}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

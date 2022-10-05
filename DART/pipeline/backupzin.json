@@ -1,0 +1,1638 @@
+{
+	"name": "backupzin",
+	"properties": {
+		"activities": [
+			{
+				"name": "SHIPMENTS_ID",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"sink": {
+						"type": "JsonSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "JsonWriteSettings"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "$['id']"
+								},
+								"sink": {
+									"name": "ID",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"path": "$['modifiedTimeStamp']"
+								},
+								"sink": {
+									"name": "MODIFIED_TIME_STAMP",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"path": "$['status']"
+								},
+								"sink": {
+									"name": "STATUS",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['shipFromPartyName']"
+								},
+								"sink": {
+									"name": "SHIP_FROM_PARTY_NAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['shipFromLocation']['cityName']"
+								},
+								"sink": {
+									"name": "SHIP_FROM_LOCATION_CITY_NAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['shipFromLocation']['cityCode']"
+								},
+								"sink": {
+									"name": "SHIP_FROM_LOCATION_CITY_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['shipFromLocation']['countryName']"
+								},
+								"sink": {
+									"name": "SHIP_FROM_LOCATION_COUNTRY_NAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['shipFromLocation']['countryCode']"
+								},
+								"sink": {
+									"name": "SHIP_FROM_LOCATION_COUNTRY_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['shipFromLocation']['countrySubEntityName']"
+								},
+								"sink": {
+									"name": "SHIP_FROM_LOCATION_COUNTRY_SUB_ENTITY_NAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['shipFromLocation']['countrySubEntityCode']"
+								},
+								"sink": {
+									"name": "SHIP_FROM_LOCATION_COUNTRY_SUB_ENTITY_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['shipFromLocationStatus']"
+								},
+								"sink": {
+									"name": "SHIP_FROM_LOCATION_STATUS",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['estimatedDepartureDate']"
+								},
+								"sink": {
+									"name": "ESTIMATED_DEPARTURE_DATE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['actualDepartureDate']"
+								},
+								"sink": {
+									"name": "ACTUAL_DEPARTURE_DATE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['departureDate']"
+								},
+								"sink": {
+									"name": "DEPARTURE_DATE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['shipToPartyName']"
+								},
+								"sink": {
+									"name": "SHIP_TO_PARTY_NAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['shipToLocation']['cityName']"
+								},
+								"sink": {
+									"name": "SHIP_TO_LOCATION_CITY_NAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['shipToLocation']['cityCode']"
+								},
+								"sink": {
+									"name": "SHIP_TO_LOCATION_CITY_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['shipToLocation']['countryName']"
+								},
+								"sink": {
+									"name": "SHIP_TO_LOCATION_COUNTRY_NAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['shipToLocation']['countryCode']"
+								},
+								"sink": {
+									"name": "SHIP_TO_LOCATION_COUNTRY_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['shipToLocation']['countrySubEntityName']"
+								},
+								"sink": {
+									"name": "SHIP_TO_LOCATION_COUNTRY_SUB_ENTITY_NAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['shipToLocation']['countrySubEntityCode']"
+								},
+								"sink": {
+									"name": "SHIP_TO_LOCATION_COUNTRY_SUB_ENTITY_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['shipToLocationStatus']"
+								},
+								"sink": {
+									"name": "SHIP_TO_LOCATION_STATUS",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['estimatedArrivalDate']"
+								},
+								"sink": {
+									"name": "ESTIMATED_ARRIVAL_DATE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['actualArrivalDate']"
+								},
+								"sink": {
+									"name": "ACTUAL_ARRIVAL_DATE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['arrivalDate']"
+								},
+								"sink": {
+									"name": "ARRIVAL_DATE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['soldBy']"
+								},
+								"sink": {
+									"name": "SOLD_BY",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['soldTo']"
+								},
+								"sink": {
+									"name": "SOLD_TO",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['references'][0]['reference']"
+								},
+								"sink": {
+									"name": "REFERENCE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['references'][0]['role']"
+								},
+								"sink": {
+									"name": "ROLE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['otherReferences'][0]"
+								},
+								"sink": {
+									"name": "OTHER_REFERENCES",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['equipment']['number']"
+								},
+								"sink": {
+									"name": "EQUIPMENT_NUMBER",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['equipment']['classification']"
+								},
+								"sink": {
+									"name": "EQUIPMENT_CLASSIFICATION",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['equipment']['type']"
+								},
+								"sink": {
+									"name": "EQUIPMENT_TYPE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['equipment']['grossWeight']"
+								},
+								"sink": {
+									"name": "EQUIPMENT_GROSS_WEIGHT",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"path": "$['equipment']['grossWeightUnit']"
+								},
+								"sink": {
+									"name": "EQUIPMENT_GROSS_WEIGHT_UNIT",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['equipment']['transportReferences'][0]"
+								},
+								"sink": {
+									"name": "EQUIPMENT_TRANSPORT_REFERENCES",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['equipment']['sealNumbers'][0]"
+								},
+								"sink": {
+									"name": "EQUIPMENT_SEAL_NUMBERS",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['progress']"
+								},
+								"sink": {
+									"name": "PROGRESS",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"path": "$['totalPackages']"
+								},
+								"sink": {
+									"name": "TOTAL_PACKAGES",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"path": "$['palletisation']"
+								},
+								"sink": {
+									"name": "PALLETISATION",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['grossWeight']"
+								},
+								"sink": {
+									"name": "GROSS_WEIGHT",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"path": "$['grossWeightUnit']"
+								},
+								"sink": {
+									"name": "GROSS_WEIGHT_UNIT",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['lastEvent']['_links']['href']"
+								},
+								"sink": {
+									"name": "LASTEVENT_LINKS_HREF",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['lastEvent']['_links']['rel']"
+								},
+								"sink": {
+									"name": "LASTEVENT_LINKS_REL",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['lastEvent']['id']"
+								},
+								"sink": {
+									"name": "LASTEVENT_LINKS_ID",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"path": "$['lastEvent']['code']"
+								},
+								"sink": {
+									"name": "LASTEVENT_LINKS_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['lastEvent']['category']"
+								},
+								"sink": {
+									"name": "LASTEVENT_LINKS_CATEGORY",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['lastEvent']['date']"
+								},
+								"sink": {
+									"name": "LASTEVENT_LINKS_DATE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['lastEvent']['lastUpdate']"
+								},
+								"sink": {
+									"name": "LASTEVENT_LINKS_LASTUPDATE",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"path": "$['lastEvent']['text']"
+								},
+								"sink": {
+									"name": "LASTEVENT_LINKS_TEXT",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['lastEvent']['template']"
+								},
+								"sink": {
+									"name": "LASTEVENT_LINKS_TEMPLATE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['lastEvent']['templateVariables'][0]['name']"
+								},
+								"sink": {
+									"name": "LASTEVENT_NAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['lastEvent']['templateVariables'][0]['value']"
+								},
+								"sink": {
+									"name": "LASTEVENT_VALUE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['lastEvent']['templateVariables'][0]['dataType']"
+								},
+								"sink": {
+									"name": "LASTEVENT_DATATYPE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['lastEvent']['templateVariables'][0]['resource']['_links']['href']"
+								},
+								"sink": {
+									"name": "LASTEVENT_HREF",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['lastEvent']['templateVariables'][0]['resource']['_links']['rel']"
+								},
+								"sink": {
+									"name": "LASTEVENT_REL",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['lastEvent']['templateVariables'][0]['resource']['id']"
+								},
+								"sink": {
+									"name": "LASTEVENT_ID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['lastEvent']['templateVariables'][0]['resource']['type']"
+								},
+								"sink": {
+									"name": "LASTEVENT_TYPE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['lastEvent']['templateVariables'][0]['primary']"
+								},
+								"sink": {
+									"name": "LASTEVENT_PRIMARY",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['hsCodes'][0]"
+								},
+								"sink": {
+									"name": "HS_CODES",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['onTimeStatus']"
+								},
+								"sink": {
+									"name": "ON_TIME_STATUS",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['emission']['calculation']"
+								},
+								"sink": {
+									"name": "EMISSION_CALCULATION",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['emission']['unit']"
+								},
+								"sink": {
+									"name": "EMISSION_UNIT",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['emission']['type']"
+								},
+								"sink": {
+									"name": "EMISSION_TYPE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['emission']['value']"
+								},
+								"sink": {
+									"name": "EMISSION_VALUE",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"path": "$['incoterm']['incoterm']"
+								},
+								"sink": {
+									"name": "INCOTERM_INCOTERM",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['incoterm']['locationCode']"
+								},
+								"sink": {
+									"name": "INCOTERM_LOCATION_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['incoterm']['locationName']"
+								},
+								"sink": {
+									"name": "INCOTERM_LOCATION_NAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['commodity']"
+								},
+								"sink": {
+									"name": "COMMODITY",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['readyDate']"
+								},
+								"sink": {
+									"name": "READY_DATE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['insured']"
+								},
+								"sink": {
+									"name": "INSURED",
+									"type": "Boolean"
+								}
+							},
+							{
+								"source": {
+									"path": "$['mainModality']"
+								},
+								"sink": {
+									"name": "MAIN_MODALITY",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['booking']['number']"
+								},
+								"sink": {
+									"name": "BOOKING_NUMBER",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['booking']['dateTime']"
+								},
+								"sink": {
+									"name": "BOOKING_DATE_TIME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['booking']['carrier']['name']"
+								},
+								"sink": {
+									"name": "CARRIER_NAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['booking']['carrier']['scac']"
+								},
+								"sink": {
+									"name": "CARRIER_SCAC",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['booking']['billOfLadingNumbers'][0]['number']"
+								},
+								"sink": {
+									"name": "BOOKING_BLNUMBER_NUMBER",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['booking']['billOfLadingNumbers'][0]['type']"
+								},
+								"sink": {
+									"name": "BOOKING_BLNUMBER_TYPE",
+									"type": "String"
+								}
+							}
+						],
+						"collectionReference": ""
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "Hillebrand_Json_Shipments_Ingest",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "Sink_DataLake_dev_EDW_HILLEBRAND",
+						"type": "DatasetReference",
+						"parameters": {
+							"FileName": "STG_SHIPMENTS_IDS"
+						}
+					}
+				]
+			},
+			{
+				"name": "LEGS",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "SHIPMENTS_ID",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"sink": {
+						"type": "JsonSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "JsonWriteSettings"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "$['items'][0]['fromLocation']['_links']['href']"
+								},
+								"sink": {
+									"name": "FROMLOCATION_LINKS_HREF",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['fromLocation']['_links']['rel']"
+								},
+								"sink": {
+									"name": "FROMLOCATION_LINKS_REL",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['fromLocation']['sequenceNumber']"
+								},
+								"sink": {
+									"name": "FROMLOCATION_SEQUENCE_NUMBER",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['fromLocation']['coordinate']['latitude']"
+								},
+								"sink": {
+									"name": "FROMLOCATION_LATITUDE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['fromLocation']['coordinate']['longitude']"
+								},
+								"sink": {
+									"name": "FROMLOCATION_LONGITUDE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['fromLocation']['address']['cityName']"
+								},
+								"sink": {
+									"name": "FROMLOCATION_CITY_NAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['fromLocation']['address']['cityCode']"
+								},
+								"sink": {
+									"name": "FROMLOCATION_CITY_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['fromLocation']['address']['countryName']"
+								},
+								"sink": {
+									"name": "FROMLOCATION_COUNTRY_NAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['fromLocation']['address']['countryCode']"
+								},
+								"sink": {
+									"name": "FROMLOCATION_COUNTRY_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['fromLocation']['address']['countrySubEntityName']"
+								},
+								"sink": {
+									"name": "FROMLOCATION_COUNTRY_SUBENTITY_NAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['fromLocation']['address']['countrySubEntityCode']"
+								},
+								"sink": {
+									"name": "FROMLOCATION_COUNTRY_SUBENTITY_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['fromLocation']['departureDate']"
+								},
+								"sink": {
+									"name": "FROMLOCATION_DEPARTURE_DATE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['toLocation']['_links']['href']"
+								},
+								"sink": {
+									"name": "TOLOCATION_LINKS_HREF",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['toLocation']['_links']['rel']"
+								},
+								"sink": {
+									"name": "TOLOCATION_LINKS_REL",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['toLocation']['sequenceNumber']"
+								},
+								"sink": {
+									"name": "TOLOCATION_SEQUENCE_NUMBER",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['toLocation']['coordinate']['latitude']"
+								},
+								"sink": {
+									"name": "TOLOCATION_LATITUDE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['toLocation']['coordinate']['longitude']"
+								},
+								"sink": {
+									"name": "TOLOCATION_LONGITUDE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['toLocation']['address']['cityName']"
+								},
+								"sink": {
+									"name": "TOLOCATION_CITY_NAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['toLocation']['address']['cityCode']"
+								},
+								"sink": {
+									"name": "TOLOCATION_CITY_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['toLocation']['address']['countryName']"
+								},
+								"sink": {
+									"name": "TOLOCATION_COUNTRY_NAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['toLocation']['address']['countryCode']"
+								},
+								"sink": {
+									"name": "TOLOCATION_COUNTRY_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['toLocation']['address']['countrySubEntityName']"
+								},
+								"sink": {
+									"name": "TOLOCATION_COUNTRY_SUBENTITY_NAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['toLocation']['address']['countrySubEntityCode']"
+								},
+								"sink": {
+									"name": "TOLOCATION_COUNTRY_SUBENTITY_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['toLocation']['arrivalDate']"
+								},
+								"sink": {
+									"name": "TOLOCATION_ARRIVAL_DATE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['toLocation']['departureDate']"
+								},
+								"sink": {
+									"name": "TOLOCATION_DEPARTURE_DATE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['modality']"
+								},
+								"sink": {
+									"name": "MODALITY",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['status']"
+								},
+								"sink": {
+									"name": "STATUS",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['handledBy']"
+								},
+								"sink": {
+									"name": "HANDLE_BY",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['equipment']['number']"
+								},
+								"sink": {
+									"name": "EQUIPMENT_NUMBER",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['equipment']['classification']"
+								},
+								"sink": {
+									"name": "EQUIPMENT_CLASSIFICATION",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['equipment']['type']"
+								},
+								"sink": {
+									"name": "EQUIPMENT_TYPE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['equipment']['transportReferences'][0]"
+								},
+								"sink": {
+									"name": "EQUIPMENT_TRANSPORT_REFERENCES",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['equipment']['grossWeight']"
+								},
+								"sink": {
+									"name": "EQUIPMENT_GROSS_WEIGHT",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['equipment']['grossWeightUnit']"
+								},
+								"sink": {
+									"name": "EQUIPMENT_GROSS_WEIGHT_UNIT",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['equipment']['sealNumbers'][0]"
+								},
+								"sink": {
+									"name": "EQUIPMENT_SEAL_NUMBERS",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['emission']['calculation']"
+								},
+								"sink": {
+									"name": "EMISSION_CALCULATION",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['emission']['unit']"
+								},
+								"sink": {
+									"name": "EMISSION_UNIT",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['emission']['type']"
+								},
+								"sink": {
+									"name": "EMISSION_TYPE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['emission']['value']"
+								},
+								"sink": {
+									"name": "EMISSION_VALUE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['distance']['distance']"
+								},
+								"sink": {
+									"name": "DISTANCE_DISTANCE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['distance']['unit']"
+								},
+								"sink": {
+									"name": "DISTANCE_UNIT",
+									"type": "String"
+								}
+							}
+						],
+						"collectionReference": ""
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "Hillebrand_Json_Shipments_Legs_Ingest",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "Sink_DataLake_dev_EDW_HILLEBRAND",
+						"type": "DatasetReference",
+						"parameters": {
+							"FileName": "STG_SHIPMENTS_IDS_LEGS"
+						}
+					}
+				]
+			},
+			{
+				"name": "CONTACTS",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "LEGS",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"sink": {
+						"type": "JsonSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "JsonWriteSettings"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "$['items'][0]['fromLocation']['_links']['href']"
+								},
+								"sink": {
+									"name": "FROMLOCATION_LINKS_HREF",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['fromLocation']['_links']['rel']"
+								},
+								"sink": {
+									"name": "FROMLOCATION_LINKS_REL",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['fromLocation']['sequenceNumber']"
+								},
+								"sink": {
+									"name": "FROMLOCATION_SEQUENCE_NUMBER",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['fromLocation']['coordinate']['latitude']"
+								},
+								"sink": {
+									"name": "FROMLOCATION_LATITUDE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['fromLocation']['coordinate']['longitude']"
+								},
+								"sink": {
+									"name": "FROMLOCATION_LONGITUDE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['fromLocation']['address']['cityName']"
+								},
+								"sink": {
+									"name": "FROMLOCATION_CITY_NAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['fromLocation']['address']['cityCode']"
+								},
+								"sink": {
+									"name": "FROMLOCATION_CITY_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['fromLocation']['address']['countryName']"
+								},
+								"sink": {
+									"name": "FROMLOCATION_COUNTRY_NAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['fromLocation']['address']['countryCode']"
+								},
+								"sink": {
+									"name": "FROMLOCATION_COUNTRY_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['fromLocation']['address']['countrySubEntityName']"
+								},
+								"sink": {
+									"name": "FROMLOCATION_COUNTRY_SUBENTITY_NAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['fromLocation']['address']['countrySubEntityCode']"
+								},
+								"sink": {
+									"name": "FROMLOCATION_COUNTRY_SUBENTITY_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['fromLocation']['departureDate']"
+								},
+								"sink": {
+									"name": "FROMLOCATION_DEPARTURE_DATE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['toLocation']['_links']['href']"
+								},
+								"sink": {
+									"name": "TOLOCATION_LINKS_HREF",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['toLocation']['_links']['rel']"
+								},
+								"sink": {
+									"name": "TOLOCATION_LINKS_REL",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['toLocation']['sequenceNumber']"
+								},
+								"sink": {
+									"name": "TOLOCATION_SEQUENCE_NUMBER",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['toLocation']['coordinate']['latitude']"
+								},
+								"sink": {
+									"name": "TOLOCATION_LATITUDE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['toLocation']['coordinate']['longitude']"
+								},
+								"sink": {
+									"name": "TOLOCATION_LONGITUDE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['toLocation']['address']['cityName']"
+								},
+								"sink": {
+									"name": "TOLOCATION_CITY_NAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['toLocation']['address']['cityCode']"
+								},
+								"sink": {
+									"name": "TOLOCATION_CITY_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['toLocation']['address']['countryName']"
+								},
+								"sink": {
+									"name": "TOLOCATION_COUNTRY_NAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['toLocation']['address']['countryCode']"
+								},
+								"sink": {
+									"name": "TOLOCATION_COUNTRY_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['toLocation']['address']['countrySubEntityName']"
+								},
+								"sink": {
+									"name": "TOLOCATION_COUNTRY_SUBENTITY_NAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['toLocation']['address']['countrySubEntityCode']"
+								},
+								"sink": {
+									"name": "TOLOCATION_COUNTRY_SUBENTITY_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['toLocation']['arrivalDate']"
+								},
+								"sink": {
+									"name": "TOLOCATION_ARRIVAL_DATE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['toLocation']['departureDate']"
+								},
+								"sink": {
+									"name": "TOLOCATION_DEPARTURE_DATE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['modality']"
+								},
+								"sink": {
+									"name": "MODALITY",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['status']"
+								},
+								"sink": {
+									"name": "STATUS",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['handledBy']"
+								},
+								"sink": {
+									"name": "HANDLE_BY",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['equipment']['number']"
+								},
+								"sink": {
+									"name": "EQUIPMENT_NUMBER",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['equipment']['classification']"
+								},
+								"sink": {
+									"name": "EQUIPMENT_CLASSIFICATION",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['equipment']['type']"
+								},
+								"sink": {
+									"name": "EQUIPMENT_TYPE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['equipment']['transportReferences'][0]"
+								},
+								"sink": {
+									"name": "EQUIPMENT_TRANSPORT_REFERENCES",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['equipment']['grossWeight']"
+								},
+								"sink": {
+									"name": "EQUIPMENT_GROSS_WEIGHT",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['equipment']['grossWeightUnit']"
+								},
+								"sink": {
+									"name": "EQUIPMENT_GROSS_WEIGHT_UNIT",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['equipment']['sealNumbers'][0]"
+								},
+								"sink": {
+									"name": "EQUIPMENT_SEAL_NUMBERS",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['emission']['calculation']"
+								},
+								"sink": {
+									"name": "EMISSION_CALCULATION",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['emission']['unit']"
+								},
+								"sink": {
+									"name": "EMISSION_UNIT",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['emission']['type']"
+								},
+								"sink": {
+									"name": "EMISSION_TYPE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['emission']['value']"
+								},
+								"sink": {
+									"name": "EMISSION_VALUE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['distance']['distance']"
+								},
+								"sink": {
+									"name": "DISTANCE_DISTANCE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['items'][0]['distance']['unit']"
+								},
+								"sink": {
+									"name": "DISTANCE_UNIT",
+									"type": "String"
+								}
+							}
+						],
+						"collectionReference": ""
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "Hillebrand_Json_Shipments_Contacts_Ingest",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "Sink_DataLake_dev_EDW_HILLEBRAND",
+						"type": "DatasetReference",
+						"parameters": {
+							"FileName": "STG_SHIPMENTS_IDS_CONTACTS"
+						}
+					}
+				]
+			}
+		],
+		"folder": {
+			"name": "HILLEBRAND"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-06-07T14:26:48Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

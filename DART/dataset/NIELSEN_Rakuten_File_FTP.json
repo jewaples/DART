@@ -1,0 +1,117 @@
+{
+	"name": "NIELSEN_Rakuten_File_FTP",
+	"properties": {
+		"description": "It describes the file in the data source store. ",
+		"linkedServiceName": {
+			"referenceName": "NAM_NIELSEN_IRI_FTP",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"path": {
+				"type": "String",
+				"defaultValue": "/"
+			},
+			"filename": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "NIELSEN"
+		},
+		"annotations": [],
+		"type": "FileShare",
+		"structure": [
+			{
+				"name": "Time Period",
+				"type": "String"
+			},
+			{
+				"name": "Period Value",
+				"type": "String"
+			},
+			{
+				"name": "Category",
+				"type": "String"
+			},
+			{
+				"name": "Segment",
+				"type": "String"
+			},
+			{
+				"name": "Merchant",
+				"type": "String"
+			},
+			{
+				"name": "Manufacturer",
+				"type": "String"
+			},
+			{
+				"name": "Brand",
+				"type": "String"
+			},
+			{
+				"name": "Dollars",
+				"type": "String"
+			},
+			{
+				"name": "Units",
+				"type": "String"
+			},
+			{
+				"name": "Sample",
+				"type": "String"
+			},
+			{
+				"name": "Orders",
+				"type": "String"
+			},
+			{
+				"name": "Dollars/Unit",
+				"type": "String"
+			},
+			{
+				"name": "Dollars/Order",
+				"type": "String"
+			},
+			{
+				"name": "Units/Order",
+				"type": "String"
+			},
+			{
+				"name": "PIPELINE_ID",
+				"type": "String"
+			},
+			{
+				"name": "SOURCE_FILE",
+				"type": "String"
+			}
+		],
+		"typeProperties": {
+			"format": {
+				"type": "TextFormat",
+				"columnDelimiter": ",",
+				"rowDelimiter": "",
+				"treatEmptyAsNull": true,
+				"skipLineCount": 0,
+				"firstRowAsHeader": false
+			},
+			"fileName": {
+				"value": "@dataset().filename",
+				"type": "Expression"
+			},
+			"folderPath": {
+				"value": "@dataset().path",
+				"type": "Expression"
+			},
+			"key": {
+				"value": "@dataset().filename",
+				"type": "Expression"
+			},
+			"bucketName": {
+				"value": "@dataset().path",
+				"type": "Expression"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

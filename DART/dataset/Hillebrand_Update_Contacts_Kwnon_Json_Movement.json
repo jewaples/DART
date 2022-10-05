@@ -1,0 +1,21 @@
+{
+	"name": "Hillebrand_Update_Contacts_Kwnon_Json_Movement",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_Data_Foundation_DataLake",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "hillebrand_Movement_Contacts_Kwnon_json",
+				"folderPath": "EDW/BILLINGS/HILLEBRAND/API_PROCESS/HILLEBRANDUPDATECONTACTSKNOWN",
+				"fileSystem": "prod"
+			}
+		},
+		"schema": {}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

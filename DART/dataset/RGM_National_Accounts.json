@@ -1,0 +1,41 @@
+{
+	"name": "RGM_National_Accounts",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_RGM_Analytics_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "RAD"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "NATIONAL_ACCOUNT_FRANCHISE_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "NATIONAL_ACCOUNT_AREA_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "NATIONAL_ACCOUNT_SEGMENT_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "NATIONAL_ACCOUNT_DIVISION_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "NATIONAL_ACCOUNT_FRANCHISE_OWNER",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "NATIONAL_ACCOUNTS_FRANCHISE"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

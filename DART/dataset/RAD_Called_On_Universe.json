@@ -1,0 +1,139 @@
+{
+	"name": "RAD_Called_On_Universe",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "RAD"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "MUID",
+				"type": "uniqueidentifier"
+			},
+			{
+				"name": "VersionName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VersionNumber",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Version_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "VersionFlag",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Name",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Code",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ChangeTrackingMask",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "State",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Store_Licensee_Ind",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Store_Licensee_No",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Store_Licensee_Name",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TERR_TATL",
+				"type": "decimal",
+				"precision": 38,
+				"scale": 0
+			},
+			{
+				"name": "TERR_TATL_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TERR_AWSSP",
+				"type": "decimal",
+				"precision": 38,
+				"scale": 0
+			},
+			{
+				"name": "TERR_AWSSP_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TERR_LANTERN",
+				"type": "decimal",
+				"precision": 38,
+				"scale": 0
+			},
+			{
+				"name": "TERR_LANTERN_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "EnterDateTime",
+				"type": "datetime2",
+				"scale": 3
+			},
+			{
+				"name": "EnterUserName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "EnterVersionNumber",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "LastChgDateTime",
+				"type": "datetime2",
+				"scale": 3
+			},
+			{
+				"name": "LastChgUserName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LastChgVersionNumber",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ValidationStatus",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "RAD",
+			"table": "CALLED_ON_UNIVERSE"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

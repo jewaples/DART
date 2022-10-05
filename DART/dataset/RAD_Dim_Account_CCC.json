@@ -1,0 +1,422 @@
+{
+	"name": "RAD_Dim_Account_CCC",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "RAD"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "VIP_DISTRIBUTOR_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VIP_CUSTOMER_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VIP_ACCOUNT_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VIP_ACCOUNT_NAME_2",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VIP_STREET_ADDRESS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VIP_STREET_ADDRESS_2",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VIP_CITY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VIP_STATE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VIP_ZIP_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VIP_COUNTY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VIP_COUNTRY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VIP_CHANNEL_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VIP_SUB_CHANNEL_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "STATUS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MALT",
+				"type": "nvarchar"
+			},
+			{
+				"name": "WINE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SPIRIT",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VIP_TDLINX_OUTLET_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ACC_KEY_FINAL",
+				"type": "varchar"
+			},
+			{
+				"name": "VIP_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VIP_LAST_DAY_OF_SALES",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "VIP_NABCA_ACCOUNT_LICENSEE_NUMBER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TOTAL_VIP_DISTRIBUTOR_ROUTE",
+				"type": "varchar"
+			},
+			{
+				"name": "VIP_DISTRIBUTOR_ROUTE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VIP_DISTRIBUTOR_ROUTE_SECONDARY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VIP_PREMISE_TYPE",
+				"type": "varchar"
+			},
+			{
+				"name": "VIP_LATITUDE",
+				"type": "varchar"
+			},
+			{
+				"name": "VIP_LONGITUDE",
+				"type": "varchar"
+			},
+			{
+				"name": "TDLINX_ACCOUNT",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TDLINX_ACCOUNT_NAME_INDEX",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TDLINX_OUTLET_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TDLINX_OUTLET_STREET_ADDRESS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TDLINX_CITY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TDLINX_COUNTY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TDLINX_MARKET_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TDLINX_STATE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TDLINX_ZIP_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TDLINX_CHAIN_INDICATOR",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TDLINX_CHANNEL_SELECTOR",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TDLINX_COMPANY_SIZE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TDLINX_COMPANY_SIZE_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TOTAL_TDLINX_CHANNELS",
+				"type": "varchar"
+			},
+			{
+				"name": "TDLINX_TRADE_CHANNEL",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TDLINX_TRADE_CHANNEL_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TDLINX_TRADE_SUB_CHANNEL",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TDLINX_TRADE_SUB_CHANNEL_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TDLINX_OUTLET_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TDLINX_PREMISE_TYPE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TDLINX_MARKET_AREA",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TDLINX_MARKET_AREA_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TDLINX_MARKET_AREA_RANK",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TDLINX_METRO_STAT_AREA",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TDLINX_METRO_STAT_AREA_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TDLINX_METRO_STAT_AREA_RANK",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VIP_CLASS_OF_TRADE_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TDLINX_OUTLET_NUMBER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TDLINX_OUTLET_STATUS_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TDLINX_OUTLET_LIQUOR_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TDLINX_OUTLET_WINE_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TDLINX_WAREHOUSE_INDICATOR",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VOLUME_CLASSIFICATION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "HIGH_PROOF_FLAG",
+				"type": "varchar"
+			},
+			{
+				"name": "TDLINX_ULTIMATE_OWNER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TOTAL_NATIONAL_ACCOUNTS_DIVISIONS",
+				"type": "varchar"
+			},
+			{
+				"name": "NATIONAL_ACCOUNT_FRANCHISE_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "NATIONAL_ACCOUNT_AREA_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "NATIONAL_ACCOUNT_SEGMENT_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "NATIONAL_ACCOUNT_DIVISION_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "NATIONAL_ACCOUNT_FRANCHISE_OWNER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TOTAL_ACCOUNTS",
+				"type": "varchar"
+			},
+			{
+				"name": "ACCOUNT_BUSINESS_UNIT",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ACCOUNT_SUPER_REGION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ACCOUNT_REGION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ACCOUNT_MARKET",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DISTRIBUTOR",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TOTAL_BAM_ACCOUNTS",
+				"type": "varchar"
+			},
+			{
+				"name": "BAM_TERRITORY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BAM_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TOTAL_CUSTOMER_MARKETING_SEGMENT",
+				"type": "varchar"
+			},
+			{
+				"name": "CUSTOMER_MARKETING_SEGMENT",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ADVOCACY_ACCOUNT_CHANNEL",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ADVOCACY_LLC_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ADVOCACY_PRIMARY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ADVOCACY_ACCOUNT_ADDRESS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ADVOCACY_ACCOUNT_CITY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ADVOCACY_ACCOUNT_ZIP_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ADVOCACY_DEDICATION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TDLINX_OUTLET_STORE_VOLUME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TDLINX_OUTLET_WEEKLY_VOLUME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TDLINX_OUTLET_FULL_TIME_EMPLOYEE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TDLINX_OUTLET_NUM_CHECKOUTS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RAM_ATTRIBUTE_VALUE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RAM_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RAM_EMAIL",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RAM_MANAGER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AFAM_LOCATION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AFAM_FUNDING",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AFAM_REGION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TDLINX_OUTLET_AREA_SELLING_SPACE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AFAM_PROGRAM",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "RAD",
+			"table": "DIM_ACCOUNT_CCC"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

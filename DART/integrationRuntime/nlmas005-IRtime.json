@@ -1,0 +1,13 @@
+{
+	"name": "nlmas005-IRtime",
+	"properties": {
+		"type": "SelfHosted",
+		"description": "Shared IR",
+		"typeProperties": {
+			"linkedInfo": {
+				"resourceId": "/subscriptions/bfdd0a4a-b14b-466c-96f0-47620227e40b/resourcegroups/West-EU-DataDistillery-DEV-RG/providers/Microsoft.DataFactory/factories/bdh-datafactory-dhi-dev/integrationruntimes/nlmas005-IRtime",
+				"authorizationType": "Rbac"
+			}
+		}
+	}
+}

@@ -1,0 +1,267 @@
+{
+	"name": "Master_Load_Ecommerce_EDW",
+	"properties": {
+		"activities": [
+			{
+				"name": "ECOMMERCE_DRIZLY_SALES",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Load Products UPC table",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ECOMMERCE_DRIZLY_SALES",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"STARTDATE": {
+							"value": "@pipeline().parameters.STARTDATE",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "LOAD_DRIZLY_EDW",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ECOMMERCE_DRIZLY_SALES",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ECOMMERCE_DRIZLY_EDW_LOAD",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "LOAD_INSTACART_SALES",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Load Products UPC table",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ECOMMERCE_INSTACART_SALES",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"STARTDATE": {
+							"value": "@pipeline().parameters.STARTDATE",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "LOAD_INSTACART_EDW",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "LOAD_INSTACART_SALES",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ECOMMERCE_INSTACART_EDW_LOAD",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Update ECOMMERCE_EXPORT",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "LOAD_MINIBAR_EDW",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "ECOMMERCE_NIELSEN_EDW_LOAD",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[ECOMM].[usp_UPDATE_ECOMMERCE_EXPORT]"
+				},
+				"linkedServiceName": {
+					"referenceName": "NAM_COM_DART_SQL",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "Load ECOMMERCE_ACTIVE_STORES",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ECOMMERCE_ACTIVE_STORES_INV",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"STARTDATE": {
+							"value": "@pipeline().parameters.STARTDATE",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "Load Products UPC table",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Ecommerce_Product_IPC_Load",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "ECOMMERCE_MINIBAR_SALES",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "LOAD_DRIZLY_EDW",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "LOAD_INSTACART_EDW",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ECOMMERCE_MINIBAR_SALES",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"STARTDATE": {
+							"value": "@pipeline().parameters.STARTDATE",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "LOAD_MINIBAR_EDW",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ECOMMERCE_MINIBAR_SALES",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ECOMMERCE_MINIBAR_EDW_LOAD",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "AAS_model_Refresh_Ecommerce",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Update ECOMMERCE_EXPORT",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "AAS_model_Refresh_Ecommerce",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "ECOMMERCE_NIELSEN_EDW_LOAD",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "LOAD_INSTACART_EDW",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ECOMMERCE_NIELSEN_EDW_LOAD",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"parameters": {
+			"STARTDATE": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "ECOMMERCE"
+		},
+		"annotations": [],
+		"lastPublishTime": "2021-11-29T18:23:06Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

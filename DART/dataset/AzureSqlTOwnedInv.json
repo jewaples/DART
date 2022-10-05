@@ -1,0 +1,269 @@
+{
+	"name": "AzureSqlTOwnedInv",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "BILLINGS"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "0APO_LOCNO",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0APO_LOCNO___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0APO_LOCNO__0APO_LOCTYP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0APO_LOCNO__0APO_LOCTYP___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0APO_LOCNO__0COUNTRY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0APO_LOCNO__0COUNTRY___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0APO_LPROD",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0APO_LPROD__0APO_BESKZ",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0APO_LPROD__0APO_BESKZ___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0APO_PROD",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0APO_PROD___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0APO_PROD__0APO_ATTPR5",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0APO_PROD__0APO_ATTPR5___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0APO_PROD__0MATL_GROUP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0APO_PROD__0MATL_GROUP___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0APO_PROD__0MATL_TYPE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0APO_PROD__0MATL_TYPE___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0APO_PROD__0PROD_HIER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0APO_PROD__0PROD_HIER___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0APO_PROD__ZMATHIER1",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0APO_PROD__ZMATHIER1___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0APO_PROD__ZMATHIER2",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0APO_PROD__ZMATHIER2___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0APO_PROD__ZMATHIER3",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0APO_PROD__ZMATHIER3___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0APO_PROD__ZMATHIER4",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0APO_PROD__ZMATHIER4___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0APO_PROD__ZMATHIER5",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0APO_PROD__ZMATHIER5___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0APO_PROD__ZMATPRCAT",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0APO_PROD__ZMATPRCAT___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0BASE_UOM",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0BASE_UOM___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0CALMONTH",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0CALYEAR",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZAPO_DCRD",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZAPO_LAG2",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZAPO_LAG2___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZAPO_MCRD",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZAPO_WCRD",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZAPO_YCRD",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZDATAKIND",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZDATAKIND___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0CALDAY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0CALWEEK",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0MAT_PLANT__0DISMM",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0MAT_PLANT__0DISMM___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0MAT_PLANT__ZMMSTA",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0MAT_PLANT__ZMMSTA___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZAPO_LAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZAPO_LAG___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0FISCYEAR",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSTOCKD_CS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZCITRAN_CS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZCTSHIP_CS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZCAPSHIP_CS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZDMDTO_CS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSTOCKD_9L",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZCITRAN_9L",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZCTSHIP_9L",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZCAPSHIP_9L",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZDMDTO_9L ",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "STG",
+			"table": "STG_OWNED_INVENTORY"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,101 @@
+{
+	"name": "RAD_Metric_Slicer",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "RAD"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "MUID",
+				"type": "uniqueidentifier"
+			},
+			{
+				"name": "VersionName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VersionNumber",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Version_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "VersionFlag",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Name",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Code",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ChangeTrackingMask",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "TIME_FRAME_SELECTOR",
+				"type": "nvarchar"
+			},
+			{
+				"name": "METRIC",
+				"type": "nvarchar"
+			},
+			{
+				"name": "EnterDateTime",
+				"type": "datetime2",
+				"scale": 3
+			},
+			{
+				"name": "EnterUserName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "EnterVersionNumber",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "LastChgDateTime",
+				"type": "datetime2",
+				"scale": 3
+			},
+			{
+				"name": "LastChgUserName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LastChgVersionNumber",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ValidationStatus",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "RAD",
+			"table": "TIME_FRAME_METRIC_SLICER"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

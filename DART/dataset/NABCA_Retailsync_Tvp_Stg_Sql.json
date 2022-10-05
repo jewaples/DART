@@ -1,0 +1,25 @@
+{
+	"name": "NABCA_Retailsync_Tvp_Stg_Sql",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "NABCA COMPETITIVE"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "VALUE",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "",
+			"table": "TVP"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

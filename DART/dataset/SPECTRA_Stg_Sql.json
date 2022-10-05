@@ -1,0 +1,265 @@
+{
+	"name": "SPECTRA_Stg_Sql",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "SPECTRA"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "STDLINXSCD",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SFILEDT",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FEMPOP2129",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FEMIND2129",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FEMPOP3044",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FEMIND3044",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FEMPOP4554",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FEMIND4554",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FEMPOP5564",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FEMIND5564",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FEMPOP65",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FEMIND65",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MALPOP2129",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MALIND2129",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MALPOP3044",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MALIND3044",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MALPOP4554",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MALIND4554",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MALPOP5564",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MALIND5564",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MALPOP65",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MALIND65",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AIPOPL10",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AIINDL10",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AIPOP1015",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AIIND1015",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AIPOP1525",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AIIND1525",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AIPOP2535",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AIIND2535",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AIPOP3550",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AIIND3550",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AIPOP5075",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AIIND5075",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AIPOP75100",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AIIND75100",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AIPOPG100",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AIINDG100",
+				"type": "nvarchar"
+			},
+			{
+				"name": "WHTPOP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "WHTIND",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BLCKPOP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BLCKIND",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ASIANPOP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ASIANIND",
+				"type": "nvarchar"
+			},
+			{
+				"name": "HISPPOP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "HISPIND",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AMERINDPOP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AMERINDIND",
+				"type": "nvarchar"
+			},
+			{
+				"name": "HAWAIIPOP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "HAWAIIIND",
+				"type": "nvarchar"
+			},
+			{
+				"name": "OTHERPOP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "OTHERIND",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MEXPOP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MEXIND",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CUBANPOP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CUBANIND",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PUERTOPOP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PUERTOIND",
+				"type": "nvarchar"
+			},
+			{
+				"name": "OTHHISPPOP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "OTHHISPIND",
+				"type": "nvarchar"
+			},
+			{
+				"name": "NGHBRHD",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "STG",
+			"table": "STG_SPECTRA"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

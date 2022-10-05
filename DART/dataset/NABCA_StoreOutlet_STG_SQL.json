@@ -1,0 +1,149 @@
+{
+	"name": "NABCA_StoreOutlet_STG_SQL",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "NABCA COMPETITIVE"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "STDLINXSCD",
+				"type": "nvarchar"
+			},
+			{
+				"name": "STRANSCD",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SMODCHGIND",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SFILEDT",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SSTATUSIND",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SNAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SNO",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SSTREETADD",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SCITY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SST",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SZIP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SPLACENM",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SSTCD",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SCNTCD",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SCNTRYNM",
+				"type": "nvarchar"
+			},
+			{
+				"name": "STRADECLCD",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SFORMATCD",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SNOSTRCD",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SCHAININD",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SFILLER1",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SGAS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SHIVOLCIG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SPHARM",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SLIQUOR",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SWINE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SBEER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SONPREM",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SFOODTYPE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SCLINICS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SSNAPWIC",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SFUTURE1",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SFILLER8",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "STG",
+			"table": "STG_STOREOUTLET"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

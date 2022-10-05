@@ -1,0 +1,1721 @@
+{
+	"name": "BEP_EDW",
+	"properties": {
+		"description": "Move files from one folder to another folder",
+		"activities": [
+			{
+				"name": "ForEachFile",
+				"description": "Iterate each file, and move them one by one.",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "FilterFiles",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('FilterFiles').output.value",
+						"type": "Expression"
+					},
+					"batchCount": 20,
+					"activities": [
+						{
+							"name": "File_Lookup",
+							"type": "Lookup",
+							"dependsOn": [
+								{
+									"activity": "Get_SrcMetadata",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderStoredProcedureName": "[STG].[usp_FILE_LOOKUP]",
+									"storedProcedureParameters": {
+										"FILE_NAME": {
+											"type": "String",
+											"value": {
+												"value": "@activity('Get_SrcMetadata').output.itemName",
+												"type": "Expression"
+											}
+										},
+										"TABLE_NAME": {
+											"type": "String",
+											"value": {
+												"value": "@pipeline().parameters.Destination_Table",
+												"type": "Expression"
+											}
+										}
+									},
+									"partitionOption": "None"
+								},
+								"dataset": {
+									"referenceName": "Staging_Sql_Source",
+									"type": "DatasetReference"
+								},
+								"firstRowOnly": true
+							}
+						},
+						{
+							"name": "If Condition",
+							"type": "IfCondition",
+							"dependsOn": [
+								{
+									"activity": "File_Lookup",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"expression": {
+									"value": "@activity('File_Lookup').output.firstRow.EXIST",
+									"type": "Expression"
+								},
+								"ifFalseActivities": [
+									{
+										"name": "Insert_Source_Data",
+										"description": "Inserts source file metadata in log table",
+										"type": "SqlServerStoredProcedure",
+										"dependsOn": [],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"storedProcedureName": "[STG].[usp_INSERT_SRC_FILES]",
+											"storedProcedureParameters": {
+												"FILE_NAME": {
+													"value": {
+														"value": "@item().name",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"SRC_CREATED_DATE": {
+													"value": {
+														"value": "@activity('Get_SrcMetadata').output.lastModified",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"SRC_PATH": {
+													"value": {
+														"value": "@pipeline().parameters.FolderPath_SourceQuestion",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"SRC_SIZE": {
+													"value": {
+														"value": "@activity('Get_SrcMetadata').output.size",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"TABLE_NAME": {
+													"value": {
+														"value": "@pipeline().parameters.Destination_Table",
+														"type": "Expression"
+													},
+													"type": "String"
+												}
+											}
+										},
+										"linkedServiceName": {
+											"referenceName": "NAM_COM_DART_SQL",
+											"type": "LinkedServiceReference"
+										}
+									},
+									{
+										"name": "Validate_Destination_Data",
+										"description": "Inserts source file metadata in log table",
+										"type": "SqlServerStoredProcedure",
+										"dependsOn": [
+											{
+												"activity": "Load_Questionnaire",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"storedProcedureName": "[STG].[usp_VALIDATE_DST_FILES]",
+											"storedProcedureParameters": {
+												"FILE_NAME": {
+													"value": {
+														"value": "@item().name",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"DST_CREATED_DATE": {
+													"value": {
+														"value": "@pipeline().parameters.STARTDATE",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"DST_PATH": {
+													"value": {
+														"value": "@pipeline().parameters.FolderPath_DestinationQuestion",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"DST_SIZE": {
+													"value": {
+														"value": "@activity('Get_SrcMetadata').output.size",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"TABLE_NAME": {
+													"value": {
+														"value": "@pipeline().parameters.Destination_Table",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"IS_ZIP": {
+													"value": {
+														"value": "@pipeline().parameters.Is_Zip",
+														"type": "Expression"
+													},
+													"type": "String"
+												}
+											}
+										},
+										"linkedServiceName": {
+											"referenceName": "NAM_COM_DART_SQL",
+											"type": "LinkedServiceReference"
+										}
+									},
+									{
+										"name": "Load_Questionnaire",
+										"type": "Copy",
+										"dependsOn": [
+											{
+												"activity": "Insert_Source_Data",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"source": {
+												"type": "DelimitedTextSource",
+												"storeSettings": {
+													"type": "AzureBlobFSReadSettings",
+													"recursive": false,
+													"enablePartitionDiscovery": false
+												},
+												"formatSettings": {
+													"type": "DelimitedTextReadSettings"
+												}
+											},
+											"sink": {
+												"type": "AzureSqlSink",
+												"writeBehavior": "insert",
+												"disableMetricsCollection": false
+											},
+											"enableStaging": false,
+											"translator": {
+												"type": "TabularTranslator",
+												"mappings": [
+													{
+														"source": {
+															"name": "b_question_id",
+															"type": "String"
+														},
+														"sink": {
+															"name": "QUESTION_ID",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "b_standardquarterly",
+															"type": "String"
+														},
+														"sink": {
+															"name": "STANDARDQUARTERLY",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "b_question",
+															"type": "String"
+														},
+														"sink": {
+															"name": "QUESTION",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "premise",
+															"type": "String"
+														},
+														"sink": {
+															"name": "PREMISE",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "b_question_group",
+															"type": "String"
+														},
+														"sink": {
+															"name": "QUESTION_GROUP",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "b_question_start",
+															"type": "String"
+														},
+														"sink": {
+															"name": "QUESTION_START",
+															"type": "DateTime"
+														}
+													},
+													{
+														"source": {
+															"name": "b_question_end",
+															"type": "String"
+														},
+														"sink": {
+															"name": "QUESTION_END",
+															"type": "DateTime"
+														}
+													},
+													{
+														"source": {
+															"name": "b_product",
+															"type": "String"
+														},
+														"sink": {
+															"name": "PRODUCT",
+															"type": "String"
+														}
+													}
+												]
+											}
+										},
+										"inputs": [
+											{
+												"referenceName": "BEP_Source_File",
+												"type": "DatasetReference",
+												"parameters": {
+													"path": {
+														"value": "@pipeline().parameters.FolderPath_SourceQuestion",
+														"type": "Expression"
+													},
+													"filename": "@item().name"
+												}
+											}
+										],
+										"outputs": [
+											{
+												"referenceName": "BEP_Dim_Questionnaire",
+												"type": "DatasetReference"
+											}
+										]
+									}
+								]
+							}
+						},
+						{
+							"name": "Get_SrcMetadata",
+							"type": "GetMetadata",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataset": {
+									"referenceName": "BEP_Source_File",
+									"type": "DatasetReference",
+									"parameters": {
+										"path": "@pipeline().parameters.FolderPath_SourceQuestion",
+										"filename": "@item().name"
+									}
+								},
+								"fieldList": [
+									"itemName",
+									"lastModified",
+									"size"
+								],
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "FilterFiles",
+				"description": "Only files will be selected, the sub-folders will not be selected.",
+				"type": "Filter",
+				"dependsOn": [
+					{
+						"activity": "Questionnarie_GetFileList",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Questionnarie_GetFileList').output.childItems",
+						"type": "Expression"
+					},
+					"condition": {
+						"value": "@endswith(item().name,'.csv')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Questionnarie_GetFileList",
+				"type": "GetMetadata",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "BEP_Source_Dir",
+						"type": "DatasetReference",
+						"parameters": {
+							"FolderPath": "@pipeline().parameters.FolderPath_SourceQuestion"
+						}
+					},
+					"fieldList": [
+						"itemName",
+						"childItems"
+					],
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"recursive": true
+					},
+					"formatSettings": {
+						"type": "DelimitedTextReadSettings"
+					}
+				}
+			},
+			{
+				"name": "ForEachFile_copy",
+				"description": "Iterate each file, and move them one by one.",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "FilterFiles_copy",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('FilterFiles_copy').output.value",
+						"type": "Expression"
+					},
+					"batchCount": 20,
+					"activities": [
+						{
+							"name": "File_Lookup_copy",
+							"type": "Lookup",
+							"dependsOn": [
+								{
+									"activity": "Get_SrcMetadata_copy",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderStoredProcedureName": "[STG].[usp_FILE_LOOKUP]",
+									"storedProcedureParameters": {
+										"FILE_NAME": {
+											"type": "String",
+											"value": {
+												"value": "@activity('Get_SrcMetadata_copy').output.itemName",
+												"type": "Expression"
+											}
+										},
+										"TABLE_NAME": {
+											"type": "String",
+											"value": {
+												"value": "@pipeline().parameters.Destination_Table",
+												"type": "Expression"
+											}
+										}
+									},
+									"partitionOption": "None"
+								},
+								"dataset": {
+									"referenceName": "Staging_Sql_Source",
+									"type": "DatasetReference"
+								},
+								"firstRowOnly": true
+							}
+						},
+						{
+							"name": "If Condition_copy",
+							"type": "IfCondition",
+							"dependsOn": [
+								{
+									"activity": "File_Lookup_copy",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"expression": {
+									"value": "@activity('File_Lookup_copy').output.firstRow.EXIST",
+									"type": "Expression"
+								},
+								"ifFalseActivities": [
+									{
+										"name": "Insert_Source_Data_copy",
+										"description": "Inserts source file metadata in log table",
+										"type": "SqlServerStoredProcedure",
+										"dependsOn": [],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"storedProcedureName": "[STG].[usp_INSERT_SRC_FILES_SOURCE]",
+											"storedProcedureParameters": {
+												"FILE_NAME": {
+													"value": {
+														"value": "@item().name",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"SRC_CREATED_DATE": {
+													"value": {
+														"value": "@activity('Get_SrcMetadata_copy').output.lastModified",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"SRC_PATH": {
+													"value": {
+														"value": "@pipeline().parameters.FolderPath_SourceResponse",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"SRC_SIZE": {
+													"value": {
+														"value": "@activity('Get_SrcMetadata_copy').output.size",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"TABLE_NAME": {
+													"value": {
+														"value": "@pipeline().parameters.Destination_Table",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"SOURCE": {
+													"value": {
+														"value": "@pipeline().parameters.SOURCE",
+														"type": "Expression"
+													},
+													"type": "String"
+												}
+											}
+										},
+										"linkedServiceName": {
+											"referenceName": "NAM_COM_DART_SQL",
+											"type": "LinkedServiceReference"
+										}
+									},
+									{
+										"name": "Validate_Destination_Data_copy",
+										"description": "Inserts source file metadata in log table",
+										"type": "SqlServerStoredProcedure",
+										"dependsOn": [
+											{
+												"activity": "Load_Fact_Response",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"storedProcedureName": "[STG].[usp_VALIDATE_DST_FILES]",
+											"storedProcedureParameters": {
+												"FILE_NAME": {
+													"value": {
+														"value": "@item().name",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"DST_CREATED_DATE": {
+													"value": {
+														"value": "@pipeline().parameters.STARTDATE",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"DST_PATH": {
+													"value": {
+														"value": "@pipeline().parameters.FolderPath_DestinationResponse",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"DST_SIZE": {
+													"value": {
+														"value": "@activity('Get_SrcMetadata_copy').output.size",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"TABLE_NAME": {
+													"value": {
+														"value": "@pipeline().parameters.Destination_Table",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"IS_ZIP": {
+													"value": {
+														"value": "@pipeline().parameters.Is_Zip",
+														"type": "Expression"
+													},
+													"type": "String"
+												}
+											}
+										},
+										"linkedServiceName": {
+											"referenceName": "NAM_COM_DART_SQL",
+											"type": "LinkedServiceReference"
+										}
+									},
+									{
+										"name": "Load_Fact_Response",
+										"type": "Copy",
+										"dependsOn": [
+											{
+												"activity": "Insert_Source_Data_copy",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"source": {
+												"type": "DelimitedTextSource",
+												"storeSettings": {
+													"type": "AzureBlobFSReadSettings",
+													"recursive": false,
+													"enablePartitionDiscovery": false
+												},
+												"formatSettings": {
+													"type": "DelimitedTextReadSettings"
+												}
+											},
+											"sink": {
+												"type": "AzureSqlSink",
+												"writeBehavior": "insert",
+												"disableMetricsCollection": false
+											},
+											"enableStaging": false,
+											"translator": {
+												"type": "TabularTranslator",
+												"mappings": [
+													{
+														"source": {
+															"name": "site",
+															"type": "String"
+														},
+														"sink": {
+															"name": "SITE",
+															"type": "Int32"
+														}
+													},
+													{
+														"source": {
+															"name": "company_name",
+															"type": "String"
+														},
+														"sink": {
+															"name": "COMPANY_NAME",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "campaign_id",
+															"type": "String"
+														},
+														"sink": {
+															"name": "CAMPAIGN_ID",
+															"type": "Int32"
+														}
+													},
+													{
+														"source": {
+															"name": "version_identifier",
+															"type": "String"
+														},
+														"sink": {
+															"name": "VERSION_IDENTIFIER",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "version_number",
+															"type": "String"
+														},
+														"sink": {
+															"name": "VERSION_NUMBER",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "campaign_name",
+															"type": "String"
+														},
+														"sink": {
+															"name": "CAMPAIGN_NAME",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "task_id",
+															"type": "String"
+														},
+														"sink": {
+															"name": "TASK_ID",
+															"type": "Int32"
+														}
+													},
+													{
+														"source": {
+															"name": "task_version_identifier",
+															"type": "String"
+														},
+														"sink": {
+															"name": "TASK_VERSION_IDENTIFIER",
+															"type": "Int32"
+														}
+													},
+													{
+														"source": {
+															"name": "task_version_number",
+															"type": "String"
+														},
+														"sink": {
+															"name": "TASK_VERSION_NUMBER",
+															"type": "Int32"
+														}
+													},
+													{
+														"source": {
+															"name": "task_type",
+															"type": "String"
+														},
+														"sink": {
+															"name": "TASK_TYPE",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "task_title",
+															"type": "String"
+														},
+														"sink": {
+															"name": "TASK_TITLE",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "task_position",
+															"type": "String"
+														},
+														"sink": {
+															"name": "TASK_POSITION",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "parent_task_id",
+															"type": "String"
+														},
+														"sink": {
+															"name": "PARENT_TASK_ID",
+															"type": "Int32"
+														}
+													},
+													{
+														"source": {
+															"name": "parent_task_value",
+															"type": "String"
+														},
+														"sink": {
+															"name": "PARENT_TASK_VALUE",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "b_question_id",
+															"type": "String"
+														},
+														"sink": {
+															"name": "B_QUESTION_ID",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "calendar_year",
+															"type": "String"
+														},
+														"sink": {
+															"name": "CALENDAR_YEAR",
+															"type": "Int32"
+														}
+													},
+													{
+														"source": {
+															"name": "fiscal_year",
+															"type": "String"
+														},
+														"sink": {
+															"name": "FISCAL_YEAR",
+															"type": "Int32"
+														}
+													},
+													{
+														"source": {
+															"name": "b_standard_quarterly",
+															"type": "String"
+														},
+														"sink": {
+															"name": "B_STANDARD_QUARTERLY",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "busa_segment",
+															"type": "String"
+														},
+														"sink": {
+															"name": "BUSA_SEGMENT",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "premise2",
+															"type": "String"
+														},
+														"sink": {
+															"name": "PREMISE2",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "section_title",
+															"type": "String"
+														},
+														"sink": {
+															"name": "SECTION_TITLE",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "place_id",
+															"type": "String"
+														},
+														"sink": {
+															"name": "PLACE_ID",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "custom_place_id",
+															"type": "String"
+														},
+														"sink": {
+															"name": "CUSTOM_PLACE_ID",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "place_name",
+															"type": "String"
+														},
+														"sink": {
+															"name": "PLACE_NAME",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "place_address",
+															"type": "String"
+														},
+														"sink": {
+															"name": "PLACE_ADDRESS",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "place_city",
+															"type": "String"
+														},
+														"sink": {
+															"name": "PLACE_CITY",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "place_state",
+															"type": "String"
+														},
+														"sink": {
+															"name": "PLACE_STATE",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "postal_code",
+															"type": "String"
+														},
+														"sink": {
+															"name": "POSTAL_CODE",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "place_status",
+															"type": "String"
+														},
+														"sink": {
+															"name": "PLACE_STATUS",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "lat",
+															"type": "String"
+														},
+														"sink": {
+															"name": "LAT",
+															"type": "Decimal"
+														}
+													},
+													{
+														"source": {
+															"name": "lon",
+															"type": "String"
+														},
+														"sink": {
+															"name": "LON",
+															"type": "Decimal"
+														}
+													},
+													{
+														"source": {
+															"name": "tdlinx_id",
+															"type": "String"
+														},
+														"sink": {
+															"name": "TDLINX_ID",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "premise_code",
+															"type": "String"
+														},
+														"sink": {
+															"name": "PREMISE_CODE",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "rtm_channel_name",
+															"type": "String"
+														},
+														"sink": {
+															"name": "RTM_CHANNEL_NAME",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "customer_marketing_segment",
+															"type": "String"
+														},
+														"sink": {
+															"name": "CUSTOMER_MARKETING_SEGMENT",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "user_id",
+															"type": "String"
+														},
+														"sink": {
+															"name": "USER_ID",
+															"type": "Int32"
+														}
+													},
+													{
+														"source": {
+															"name": "email",
+															"type": "String"
+														},
+														"sink": {
+															"name": "EMAIL",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "first_name",
+															"type": "String"
+														},
+														"sink": {
+															"name": "FIRST_NAME",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "last_name",
+															"type": "String"
+														},
+														"sink": {
+															"name": "LAST_NAME",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "full_name",
+															"type": "String"
+														},
+														"sink": {
+															"name": "FULL_NAME",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "division",
+															"type": "String"
+														},
+														"sink": {
+															"name": "DIVISION",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "position",
+															"type": "String"
+														},
+														"sink": {
+															"name": "POSITION",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "team",
+															"type": "String"
+														},
+														"sink": {
+															"name": "TEAM",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "territory",
+															"type": "String"
+														},
+														"sink": {
+															"name": "TERRITORY",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "personnel_id",
+															"type": "String"
+														},
+														"sink": {
+															"name": "PERSONNEL_ID",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "personnel_no",
+															"type": "String"
+														},
+														"sink": {
+															"name": "PERSONNEL_NO",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "unique_personnel_id",
+															"type": "String"
+														},
+														"sink": {
+															"name": "UNIQUE_PERSONNEL_ID",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "user_role",
+															"type": "String"
+														},
+														"sink": {
+															"name": "USER_ROLE",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "mission_response_id",
+															"type": "String"
+														},
+														"sink": {
+															"name": "MISSION_RESPONSE_ID",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "task_response_id",
+															"type": "String"
+														},
+														"sink": {
+															"name": "TASK_RESPONSE_ID",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "short_str",
+															"type": "String"
+														},
+														"sink": {
+															"name": "SHORT_STR",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "int_val",
+															"type": "String"
+														},
+														"sink": {
+															"name": "INT_VAL",
+															"type": "Int32"
+														}
+													},
+													{
+														"source": {
+															"name": "float_val",
+															"type": "String"
+														},
+														"sink": {
+															"name": "FLOAT_VAL",
+															"type": "Decimal"
+														}
+													},
+													{
+														"source": {
+															"name": "filepicker",
+															"type": "String"
+														},
+														"sink": {
+															"name": "FILEPICKER",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "s3",
+															"type": "String"
+														},
+														"sink": {
+															"name": "S3",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "completed_at",
+															"type": "String"
+														},
+														"sink": {
+															"name": "COMPLETED_AT",
+															"type": "DateTime"
+														}
+													},
+													{
+														"source": {
+															"name": "year_completed_at",
+															"type": "String"
+														},
+														"sink": {
+															"name": "YEAR_COMPLETED_AT",
+															"type": "Int32"
+														}
+													},
+													{
+														"source": {
+															"name": "quarter_completed_at",
+															"type": "String"
+														},
+														"sink": {
+															"name": "QUARTER_COMPLETED_AT",
+															"type": "Int32"
+														}
+													},
+													{
+														"source": {
+															"name": "month_completed_at",
+															"type": "String"
+														},
+														"sink": {
+															"name": "MONTH_COMPLETED_AT",
+															"type": "Int32"
+														}
+													},
+													{
+														"source": {
+															"name": "day_completed_at",
+															"type": "String"
+														},
+														"sink": {
+															"name": "DAY_COMPLETED_AT",
+															"type": "Int32"
+														}
+													},
+													{
+														"source": {
+															"name": "hour_completed_at",
+															"type": "String"
+														},
+														"sink": {
+															"name": "HOUR_COMPLETED_AT",
+															"type": "Int32"
+														}
+													},
+													{
+														"source": {
+															"name": "minute_completed_at",
+															"type": "String"
+														},
+														"sink": {
+															"name": "MINUTE_COMPLETED_AT",
+															"type": "Int32"
+														}
+													}
+												]
+											}
+										},
+										"inputs": [
+											{
+												"referenceName": "BEP_Source_File",
+												"type": "DatasetReference",
+												"parameters": {
+													"path": {
+														"value": "@pipeline().parameters.FolderPath_SourceResponse",
+														"type": "Expression"
+													},
+													"filename": "@item().name"
+												}
+											}
+										],
+										"outputs": [
+											{
+												"referenceName": "BEP_Fact_Response",
+												"type": "DatasetReference"
+											}
+										]
+									},
+									{
+										"name": "Load_Fact_Response_Archive",
+										"type": "Copy",
+										"dependsOn": [
+											{
+												"activity": "Validate_Destination_Data_copy",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"source": {
+												"type": "DelimitedTextSource",
+												"storeSettings": {
+													"type": "AzureBlobFSReadSettings",
+													"recursive": false,
+													"enablePartitionDiscovery": false
+												},
+												"formatSettings": {
+													"type": "DelimitedTextReadSettings"
+												}
+											},
+											"sink": {
+												"type": "DelimitedTextSink",
+												"storeSettings": {
+													"type": "AzureBlobFSWriteSettings"
+												},
+												"formatSettings": {
+													"type": "DelimitedTextWriteSettings",
+													"quoteAllText": true,
+													"fileExtension": ".csv"
+												}
+											},
+											"enableStaging": false
+										},
+										"inputs": [
+											{
+												"referenceName": "BEP_Source_File",
+												"type": "DatasetReference",
+												"parameters": {
+													"path": {
+														"value": "@pipeline().parameters.FolderPath_SourceResponse",
+														"type": "Expression"
+													},
+													"filename": "@item().name"
+												}
+											}
+										],
+										"outputs": [
+											{
+												"referenceName": "BEP_Source_Dir",
+												"type": "DatasetReference",
+												"parameters": {
+													"FolderPath": {
+														"value": "@concat(pipeline().parameters.FolderPath_SourceResponse,'/' ,'Archive' )",
+														"type": "Expression"
+													}
+												}
+											}
+										]
+									},
+									{
+										"name": "Delete_From_Source",
+										"type": "Delete",
+										"dependsOn": [
+											{
+												"activity": "Validate_Destination_Data_Archive",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"dataset": {
+												"referenceName": "BEP_Source_File",
+												"type": "DatasetReference",
+												"parameters": {
+													"path": "@pipeline().parameters.FolderPath_SourceResponse",
+													"filename": "@item().name"
+												}
+											},
+											"enableLogging": false,
+											"storeSettings": {
+												"type": "AzureBlobFSReadSettings",
+												"recursive": true,
+												"enablePartitionDiscovery": false
+											}
+										}
+									},
+									{
+										"name": "Get_AdlMetadata",
+										"type": "GetMetadata",
+										"dependsOn": [
+											{
+												"activity": "Load_Fact_Response_Archive",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"dataset": {
+												"referenceName": "BEP_Source_File",
+												"type": "DatasetReference",
+												"parameters": {
+													"path": "@concat(pipeline().parameters.FolderPath_SourceResponse,'/' ,'Archive' )",
+													"filename": "@item().name"
+												}
+											},
+											"fieldList": [
+												"itemName",
+												"lastModified",
+												"size"
+											],
+											"storeSettings": {
+												"type": "AzureBlobFSReadSettings",
+												"recursive": true
+											},
+											"formatSettings": {
+												"type": "DelimitedTextReadSettings"
+											}
+										}
+									},
+									{
+										"name": "Validate_Destination_Data_Archive",
+										"description": "Inserts source file metadata in log table",
+										"type": "SqlServerStoredProcedure",
+										"dependsOn": [
+											{
+												"activity": "Get_AdlMetadata",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"storedProcedureName": "[STG].[usp_VALIDATE_DST_FILES_ARCHIVE]",
+											"storedProcedureParameters": {
+												"FILE_NAME": {
+													"value": {
+														"value": "@item().name",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"DST_PATH_ARCHIVE": {
+													"value": {
+														"value": "@concat(pipeline().parameters.FolderPath_SourceResponse,'/' ,'Archive' )",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"DST_SIZE_ARCHIVE": {
+													"value": {
+														"value": "@activity('Get_AdlMetadata').output.size",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"TABLE_NAME": {
+													"value": {
+														"value": "@pipeline().parameters.Destination_Table",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"IS_ZIP": {
+													"value": {
+														"value": "@pipeline().parameters.Is_Zip",
+														"type": "Expression"
+													},
+													"type": "String"
+												}
+											}
+										},
+										"linkedServiceName": {
+											"referenceName": "NAM_COM_DART_SQL",
+											"type": "LinkedServiceReference"
+										}
+									}
+								]
+							}
+						},
+						{
+							"name": "Get_SrcMetadata_copy",
+							"type": "GetMetadata",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataset": {
+									"referenceName": "BEP_Source_File",
+									"type": "DatasetReference",
+									"parameters": {
+										"path": "@pipeline().parameters.FolderPath_SourceResponse",
+										"filename": "@item().name"
+									}
+								},
+								"fieldList": [
+									"itemName",
+									"lastModified",
+									"size"
+								],
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "FilterFiles_copy",
+				"description": "Only files will be selected, the sub-folders will not be selected.",
+				"type": "Filter",
+				"dependsOn": [
+					{
+						"activity": "Response_GetFileList",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Response_GetFileList').output.childItems",
+						"type": "Expression"
+					},
+					"condition": {
+						"value": "@endswith(item().name,'.csv')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Response_GetFileList",
+				"type": "GetMetadata",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "NIELSEN_Source_Dir",
+						"type": "DatasetReference",
+						"parameters": {
+							"FolderPath": "@pipeline().parameters.FolderPath_SourceResponse"
+						}
+					},
+					"fieldList": [
+						"itemName",
+						"childItems"
+					],
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"recursive": true
+					},
+					"formatSettings": {
+						"type": "DelimitedTextReadSettings"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"FolderPath_SourceQuestion": {
+				"type": "String",
+				"defaultValue": "prod/Bep/Questionnaire"
+			},
+			"FolderPath_DestinationQuestion": {
+				"type": "String",
+				"defaultValue": "BEP.DIM_QUESTIONNAIRE"
+			},
+			"Destination_Table": {
+				"type": "string",
+				"defaultValue": "LOGS.SOURCE_FILES_LOAD_LOG"
+			},
+			"Is_Zip": {
+				"type": "string",
+				"defaultValue": "0"
+			},
+			"STARTDATE": {
+				"type": "string"
+			},
+			"FolderPath_SourceResponse": {
+				"type": "string",
+				"defaultValue": "prod/Bep/Response"
+			},
+			"FolderPath_DestinationResponse": {
+				"type": "string",
+				"defaultValue": "BEP.FACT_RESPONSE"
+			},
+			"SOURCE": {
+				"type": "string",
+				"defaultValue": "BEP"
+			}
+		},
+		"folder": {
+			"name": "BEP"
+		},
+		"annotations": [],
+		"lastPublishTime": "2021-08-06T17:23:56Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

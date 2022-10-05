@@ -1,0 +1,22 @@
+{
+	"name": "RAD_XREF_WORING_DAYS_CALENDAR_PARQUET",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_Data_Foundation_DataLake",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "XREF_WORKING_DAYS_CALENDAR.parquet",
+				"folderPath": "EDW/RAD/XREF_WORKING_DAYS_CALENDAR",
+				"fileSystem": "prod"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,47 @@
+{
+	"name": "SPECTRA_File_FTP",
+	"properties": {
+		"description": "It describes the file in the data source store. ",
+		"linkedServiceName": {
+			"referenceName": "NAM_Spectra_Ftp",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"path": {
+				"type": "String",
+				"defaultValue": "/"
+			},
+			"filename": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "SPECTRA"
+		},
+		"annotations": [],
+		"type": "FileShare",
+		"typeProperties": {
+			"compression": {
+				"type": "ZipDeflate",
+				"level": "Optimal"
+			},
+			"fileName": {
+				"value": "@dataset().filename",
+				"type": "Expression"
+			},
+			"folderPath": {
+				"value": "@dataset().path",
+				"type": "Expression"
+			},
+			"key": {
+				"value": "@dataset().filename",
+				"type": "Expression"
+			},
+			"bucketName": {
+				"value": "@dataset().path",
+				"type": "Expression"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

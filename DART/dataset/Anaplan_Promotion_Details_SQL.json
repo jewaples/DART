@@ -1,0 +1,172 @@
+{
+	"name": "Anaplan_Promotion_Details_SQL",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "RAD"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "PROMOTIONS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PROMOTIONS_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "INPUT_VERSIONS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "NUM_OF_OFFERS",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "DISCOUNT",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "PLANNED_RED_RATE",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "OVERRIDE_TO_ZERO",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PLANNED_RED_RATE_FINAL",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "PLANNED_DISCOUNT_SPEND",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "ACTUAL_DISCOUNT_SPEND",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "ACT_FCST",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "CLOSED_PROGRAM",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CBU",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VENDOR",
+				"type": "nvarchar"
+			},
+			{
+				"name": "START_MONTH",
+				"type": "nvarchar"
+			},
+			{
+				"name": "END_MONTH",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BUDGETED",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PORTFOLIO",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PORTFOLIO_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BRAND",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BRAND_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PROMO_IDENTIFIER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CREATIVE_TYPE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PROGRAM_TYPE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PROGRAM_DETAIL",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PROMOTION_DESCRIPTION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PROMO_GROUP_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MARKET",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MARKET_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FUNDING_SOURCE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PROGRAMS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PROGRAM_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ISSUEDATE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "EXPDATE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PROGRAM_DATES",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FISCAL_YEAR",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "RAD",
+			"table": "NAMIBP_ANAPLAN_SC_DETAILS"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

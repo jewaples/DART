@@ -1,0 +1,39 @@
+{
+	"name": "METRIXLAB_BRAND_FILTER",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "Brand_Filter_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Brand",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Brand_Group",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Category",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Default_",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "METRIX",
+			"table": "METRIXLAB_BRAND_FILTER"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

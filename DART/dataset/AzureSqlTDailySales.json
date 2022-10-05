@@ -1,0 +1,693 @@
+{
+	"name": "AzureSqlTDailySales",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "BILLINGS"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "0ACT_GI_DTE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0BILLTOPRTY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0BILLTOPRTY___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0CALMONTH2",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0COMP_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0COMP_CODE___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0CONF_DATE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0DELIV_ITEM",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0DELIV_NUMB",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0DISTR_CHAN",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0DISTR_CHAN___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0DIVISION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0DIVISION___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0DOC_CURRCY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0DOC_CURRCY___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0DOC_NUMBER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0DOC_NUMBER___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0FORWAGENT",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0FORWAGENT___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0GI_DATE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0GT_BSTKD",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0ORD_REASON",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0ORD_REASON___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0PAYER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0PAYER___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0PLANT",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0PLANT___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0REF_DOC_NO",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0S_ORD_ITEM",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0SALES_GRP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0SALES_GRP___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0SALES_UNIT",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0SALES_UNIT___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0SALESORG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0SALESORG___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0SHIP_POINT",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0SHIP_POINT___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0SHIP_TO",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0SHIP_TO___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0SHIP_TO__0COUNTRY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0SHIP_TO__0COUNTRY___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0SHIP_TO__ZSAP_CUS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0SHIP_TO__ZSAP_CUS___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0SOLD_TO",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0SOLD_TO___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0SOLD_TO__0IND_CODE_1",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0SOLD_TO__0IND_CODE_1___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0STOR_LOC",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0STOR_LOC___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZBCKRCODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZBCKRCODE___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZDISPATCH__0BILL_DATE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZDISPATCH__0BILL_ITEM",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZDISPATCH__0BILL_NUM",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZDISPATCH__0BILL_TYPE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZDISPATCH__0BILL_TYPE___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZDISPATCH__ZBILSTATS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZDISPATCH__ZBILSTATS___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZERNAM",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZERNAM___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZFISQUAR",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZMATERIAL",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZMATERIAL___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZMATERIAL__0MATL_GROUP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZMATERIAL__0MATL_GROUP___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZMATERIAL__0MATL_TYPE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZMATERIAL__0MATL_TYPE___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZMATERIAL__ZBRFOREM",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZMATERIAL__ZMATHIER1",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZMATERIAL__ZMATHIER1___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZMATERIAL__ZMATHIER2",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZMATERIAL__ZMATHIER2___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZMATERIAL__ZMATHIER3",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZMATERIAL__ZMATHIER3___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZMATERIAL__ZMATHIER4",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZMATERIAL__ZMATHIER4___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZMATERIAL__ZMATHIER5",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZMATERIAL__ZMATHIER5___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZODLV_STS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZODLV_STS___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZPLGOISDA",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZPOD_DATE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZPODFPER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZPODMONTH",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZPODQUAR",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZPODWEEK",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZREDEDHDR",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZREQSHDAT",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSHIPTO_S__0SALES_GRP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSHIPTO_S__0SALES_GRP___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSHIPTO_S__0SALES_OFF",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSHIPTO_S__0SALES_OFF___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSHIPTO_S__ZONOFFTRA",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSHIPTO_S__ZONOFFTRA___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSHIPTO_S__ZTRCHDET",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSHIPTO_S__ZTRCHDET___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOCRETON",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__0CUST_GROUP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__0CUST_GROUP___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__0CUST_GRP1",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__0CUST_GRP1___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__0CUST_GRP2",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__0CUST_GRP2___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__0CUST_GRP3",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__0CUST_GRP3___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__0CUST_GRP4",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__0CUST_GRP4___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__0CUST_GRP5",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__0CUST_GRP5___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__0SALES_DIST",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__0SALES_DIST___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__0SALES_GRP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__0SALES_GRP___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__0SALES_OFF",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__0SALES_OFF___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__ZACTSEGCO",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__ZACTSEGCO___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__ZCHIER3",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__ZCHIER3___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__ZCUSTHL1",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__ZCUSTHL1___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__ZCUSTHL2",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__ZCUSTHL2___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__ZCUSTHL3",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__ZCUSTHL3___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__ZCUSTHL4",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__ZCUSTHL4___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__ZCUSTHL5",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__ZCUSTHL5___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__ZCUSTHL6",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__ZCUSTHL6___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__ZCUSTHL7",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__ZCUSTHL7___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__ZCUSTHL8",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__ZCUSTHL8___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__ZCUSTHL9",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__ZCUSTHL9___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__ZISLACOD2",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__ZISLACOD2___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__ZL4SALOFF",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__ZNATREG2",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__ZNATREG2___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__ZONOFFTRA",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__ZONOFFTRA___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__ZPICTSUCC",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__ZPICTSUCC___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__ZPRICEGR",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__ZPRICEGR___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__ZREPCOMHI",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__ZREPCOMHI___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__ZSEGMCOD2",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__ZSEGMCOD2___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__ZTARVISFR",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__ZTARVISFR___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__ZTOPHIER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__ZTOPHIER___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__ZTRCHDET",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOLDTO_S__ZTRCHDET___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSOMTH",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSORDTYPE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZSORDTYPE___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZZCMGST",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZZCMGST___T",
+				"type": "nvarchar"
+			},
+			{
+				"name": "0BASE_UOM",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TOTAL_QUANTITY_9L",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TOTAL_QUANTITY_CS",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "STG",
+			"table": "STG_DAILY_SALES"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

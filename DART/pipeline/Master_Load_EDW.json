@@ -1,0 +1,340 @@
+{
+	"name": "Master_Load_EDW",
+	"properties": {
+		"activities": [
+			{
+				"name": "Load Staging",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Load_Staging",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Load Greenbook",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Load Staging",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "GREENBOOK_EDW",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Get Week Day",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "Load Staging",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": {
+							"value": "SELECT DATEPART(dw,'@{formatDateTime(pipeline().parameters.STARTDATE,'yyyy-MM-dd')}')  AS DAY",
+							"type": "Expression"
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "RAD_Dim_Time_Sql",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "Load RAD Anaplan RGM",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "Get Week Day",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@equals(activity('Get Week Day').output.firstRow.DAY,7)",
+						"type": "Expression"
+					},
+					"ifFalseActivities": [
+						{
+							"name": "Load RAD Daily DIM",
+							"type": "ExecutePipeline",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"pipeline": {
+									"referenceName": "RAD_EDW_Daily_DIM",
+									"type": "PipelineReference"
+								},
+								"waitOnCompletion": true,
+								"parameters": {
+									"STARTDATE": {
+										"value": "@pipeline().parameters.STARTDATE",
+										"type": "Expression"
+									}
+								}
+							}
+						},
+						{
+							"name": "Load Anaplan Daily",
+							"type": "ExecutePipeline",
+							"dependsOn": [
+								{
+									"activity": "Load RAD Daily FACT",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"pipeline": {
+									"referenceName": "ANAPLAN_FACTS_LOAD_Daily",
+									"type": "PipelineReference"
+								},
+								"waitOnCompletion": true,
+								"parameters": {
+									"STARTDATE": {
+										"value": "@pipeline().parameters.STARTDATE",
+										"type": "Expression"
+									}
+								}
+							}
+						},
+						{
+							"name": "Load RAD Daily FACT",
+							"type": "ExecutePipeline",
+							"dependsOn": [
+								{
+									"activity": "Load RAD Daily DIM",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"pipeline": {
+									"referenceName": "RAD_EDW_Daily_FACT",
+									"type": "PipelineReference"
+								},
+								"waitOnCompletion": true,
+								"parameters": {
+									"STARTDATE": {
+										"value": "@pipeline().parameters.STARTDATE",
+										"type": "Expression"
+									}
+								}
+							}
+						},
+						{
+							"name": "Load NABCA Licensee",
+							"type": "ExecutePipeline",
+							"dependsOn": [
+								{
+									"activity": "Load Anaplan Daily",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"pipeline": {
+									"referenceName": "EDW_NABCA_Daily",
+									"type": "PipelineReference"
+								},
+								"waitOnCompletion": true,
+								"parameters": {
+									"STARTDATE": {
+										"value": "@pipeline().parameters.STARTDATE",
+										"type": "Expression"
+									}
+								}
+							}
+						},
+						{
+							"name": "RGM_Analytics_Daily",
+							"type": "ExecutePipeline",
+							"dependsOn": [
+								{
+									"activity": "Load NABCA Licensee",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"pipeline": {
+									"referenceName": "RGM_Analytics_Daily",
+									"type": "PipelineReference"
+								},
+								"waitOnCompletion": true,
+								"parameters": {
+									"STARTDATE": {
+										"value": "@pipeline().parameters.STARTDATE",
+										"type": "Expression"
+									}
+								}
+							}
+						},
+						{
+							"name": "Load Data Lake",
+							"type": "ExecutePipeline",
+							"dependsOn": [
+								{
+									"activity": "RGM_Analytics_Daily",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"pipeline": {
+									"referenceName": "DATA LAKE LOAD",
+									"type": "PipelineReference"
+								},
+								"waitOnCompletion": true
+							}
+						}
+					],
+					"ifTrueActivities": [
+						{
+							"name": "Load Anaplan Weekly",
+							"type": "ExecutePipeline",
+							"dependsOn": [
+								{
+									"activity": "Load RAD FACT Weekly",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"pipeline": {
+									"referenceName": "ANAPLAN_FACTS_LOAD_Weekly",
+									"type": "PipelineReference"
+								},
+								"waitOnCompletion": true,
+								"parameters": {
+									"STARTDATE": {
+										"value": "@pipeline().parameters.STARTDATE",
+										"type": "Expression"
+									}
+								}
+							}
+						},
+						{
+							"name": "Busine Sales Extract",
+							"type": "ExecutePipeline",
+							"dependsOn": [
+								{
+									"activity": "Load RAD FACT Weekly",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"pipeline": {
+									"referenceName": "Cognac_Sales_Extracts",
+									"type": "PipelineReference"
+								},
+								"waitOnCompletion": true
+							}
+						},
+						{
+							"name": "Load RAD DIM Weekly",
+							"type": "ExecutePipeline",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"pipeline": {
+									"referenceName": "RAD_EDW_Daily_DIM",
+									"type": "PipelineReference"
+								},
+								"waitOnCompletion": true,
+								"parameters": {
+									"STARTDATE": {
+										"value": "@pipeline().parameters.STARTDATE",
+										"type": "Expression"
+									}
+								}
+							}
+						},
+						{
+							"name": "Load RAD FACT Weekly",
+							"type": "ExecutePipeline",
+							"dependsOn": [
+								{
+									"activity": "Load RAD DIM Weekly",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"pipeline": {
+									"referenceName": "RAD_EDW_Weekly_FACT",
+									"type": "PipelineReference"
+								},
+								"waitOnCompletion": true,
+								"parameters": {
+									"STARTDATE": {
+										"value": "@pipeline().parameters.STARTDATE",
+										"type": "Expression"
+									}
+								}
+							}
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"STARTDATE": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-07-20T15:46:48Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

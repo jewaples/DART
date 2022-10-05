@@ -1,0 +1,745 @@
+{
+	"name": "Pulse_User_Source_ADL",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "bdhdlsgen21_DataLake",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "PULSE"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "User.csv",
+				"folderPath": "Pulse",
+				"fileSystem": "prod"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "Id",
+				"type": "String"
+			},
+			{
+				"name": "Username",
+				"type": "String"
+			},
+			{
+				"name": "LastName",
+				"type": "String"
+			},
+			{
+				"name": "FirstName",
+				"type": "String"
+			},
+			{
+				"name": "MiddleName",
+				"type": "String"
+			},
+			{
+				"name": "Suffix",
+				"type": "String"
+			},
+			{
+				"name": "Name",
+				"type": "String"
+			},
+			{
+				"name": "CompanyName",
+				"type": "String"
+			},
+			{
+				"name": "Division",
+				"type": "String"
+			},
+			{
+				"name": "Department",
+				"type": "String"
+			},
+			{
+				"name": "Title",
+				"type": "String"
+			},
+			{
+				"name": "Street",
+				"type": "String"
+			},
+			{
+				"name": "City",
+				"type": "String"
+			},
+			{
+				"name": "State",
+				"type": "String"
+			},
+			{
+				"name": "PostalCode",
+				"type": "String"
+			},
+			{
+				"name": "Country",
+				"type": "String"
+			},
+			{
+				"name": "Latitude",
+				"type": "String"
+			},
+			{
+				"name": "Longitude",
+				"type": "String"
+			},
+			{
+				"name": "GeocodeAccuracy",
+				"type": "String"
+			},
+			{
+				"name": "Email",
+				"type": "String"
+			},
+			{
+				"name": "EmailPreferencesAutoBcc",
+				"type": "String"
+			},
+			{
+				"name": "EmailPreferencesAutoBccStayInTouch",
+				"type": "String"
+			},
+			{
+				"name": "EmailPreferencesStayInTouchReminder",
+				"type": "String"
+			},
+			{
+				"name": "SenderEmail",
+				"type": "String"
+			},
+			{
+				"name": "SenderName",
+				"type": "String"
+			},
+			{
+				"name": "Signature",
+				"type": "String"
+			},
+			{
+				"name": "StayInTouchSubject",
+				"type": "String"
+			},
+			{
+				"name": "StayInTouchSignature",
+				"type": "String"
+			},
+			{
+				"name": "StayInTouchNote",
+				"type": "String"
+			},
+			{
+				"name": "Phone",
+				"type": "String"
+			},
+			{
+				"name": "Fax",
+				"type": "String"
+			},
+			{
+				"name": "MobilePhone",
+				"type": "String"
+			},
+			{
+				"name": "Alias",
+				"type": "String"
+			},
+			{
+				"name": "CommunityNickname",
+				"type": "String"
+			},
+			{
+				"name": "BadgeText",
+				"type": "String"
+			},
+			{
+				"name": "IsActive",
+				"type": "String"
+			},
+			{
+				"name": "TimeZoneSidKey",
+				"type": "String"
+			},
+			{
+				"name": "UserRoleId",
+				"type": "String"
+			},
+			{
+				"name": "LocaleSidKey",
+				"type": "String"
+			},
+			{
+				"name": "ReceivesInfoEmails",
+				"type": "String"
+			},
+			{
+				"name": "ReceivesAdminInfoEmails",
+				"type": "String"
+			},
+			{
+				"name": "EmailEncodingKey",
+				"type": "String"
+			},
+			{
+				"name": "DefaultCurrencyIsoCode",
+				"type": "String"
+			},
+			{
+				"name": "CurrencyIsoCode",
+				"type": "String"
+			},
+			{
+				"name": "ProfileId",
+				"type": "String"
+			},
+			{
+				"name": "UserType",
+				"type": "String"
+			},
+			{
+				"name": "LanguageLocaleKey",
+				"type": "String"
+			},
+			{
+				"name": "EmployeeNumber",
+				"type": "String"
+			},
+			{
+				"name": "DelegatedApproverId",
+				"type": "String"
+			},
+			{
+				"name": "ManagerId",
+				"type": "String"
+			},
+			{
+				"name": "LastLoginDate",
+				"type": "String"
+			},
+			{
+				"name": "CreatedDate",
+				"type": "String"
+			},
+			{
+				"name": "CreatedById",
+				"type": "String"
+			},
+			{
+				"name": "LastModifiedDate",
+				"type": "String"
+			},
+			{
+				"name": "LastModifiedById",
+				"type": "String"
+			},
+			{
+				"name": "SystemModstamp",
+				"type": "String"
+			},
+			{
+				"name": "OfflineTrialExpirationDate",
+				"type": "String"
+			},
+			{
+				"name": "OfflinePdaTrialExpirationDate",
+				"type": "String"
+			},
+			{
+				"name": "UserPermissionsMarketingUser",
+				"type": "String"
+			},
+			{
+				"name": "UserPermissionsOfflineUser",
+				"type": "String"
+			},
+			{
+				"name": "UserPermissionsAvantgoUser",
+				"type": "String"
+			},
+			{
+				"name": "UserPermissionsCallCenterAutoLogin",
+				"type": "String"
+			},
+			{
+				"name": "UserPermissionsSFContentUser",
+				"type": "String"
+			},
+			{
+				"name": "UserPermissionsKnowledgeUser",
+				"type": "String"
+			},
+			{
+				"name": "UserPermissionsInteractionUser",
+				"type": "String"
+			},
+			{
+				"name": "UserPermissionsSupportUser",
+				"type": "String"
+			},
+			{
+				"name": "ForecastEnabled",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesActivityRemindersPopup",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesEventRemindersCheckboxDefault",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesTaskRemindersCheckboxDefault",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesReminderSoundOff",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesDisableAllFeedsEmail",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesDisableFollowersEmail",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesDisableProfilePostEmail",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesDisableChangeCommentEmail",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesDisableLaterCommentEmail",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesDisProfPostCommentEmail",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesApexPagesDeveloperMode",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesReceiveNoNotificationsAsApprover",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesReceiveNotificationsAsDelegatedApprover",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesHideCSNGetChatterMobileTask",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesDisableMentionsPostEmail",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesDisMentionsCommentEmail",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesHideCSNDesktopTask",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesHideChatterOnboardingSplash",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesHideSecondChatterOnboardingSplash",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesDisCommentAfterLikeEmail",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesDisableLikeEmail",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesSortFeedByComment",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesDisableMessageEmail",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesDisableBookmarkEmail",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesDisableSharePostEmail",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesEnableAutoSubForFeeds",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesDisableFileShareNotificationsForApi",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesShowTitleToExternalUsers",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesShowManagerToExternalUsers",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesShowEmailToExternalUsers",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesShowWorkPhoneToExternalUsers",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesShowMobilePhoneToExternalUsers",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesShowFaxToExternalUsers",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesShowStreetAddressToExternalUsers",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesShowCityToExternalUsers",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesShowStateToExternalUsers",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesShowPostalCodeToExternalUsers",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesShowCountryToExternalUsers",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesShowProfilePicToGuestUsers",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesShowTitleToGuestUsers",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesShowCityToGuestUsers",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesShowStateToGuestUsers",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesShowPostalCodeToGuestUsers",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesShowCountryToGuestUsers",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesHideInvoicesRedirectConfirmation",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesHideStatementsRedirectConfirmation",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesHideS1BrowserUI",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesDisableEndorsementEmail",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesPathAssistantCollapsed",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesCacheDiagnostics",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesShowEmailToGuestUsers",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesShowManagerToGuestUsers",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesShowWorkPhoneToGuestUsers",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesShowMobilePhoneToGuestUsers",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesShowFaxToGuestUsers",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesShowStreetAddressToGuestUsers",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesLightningExperiencePreferred",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesPreviewLightning",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesHideEndUserOnboardingAssistantModal",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesHideLightningMigrationModal",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesHideSfxWelcomeMat",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesHideBiggerPhotoCallout",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesGlobalNavBarWTShown",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesGlobalNavGridMenuWTShown",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesCreateLEXAppsWTShown",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesFavoritesWTShown",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesRecordHomeSectionCollapseWTShown",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesRecordHomeReservedWTShown",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesFavoritesShowTopFavorites",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesExcludeMailAppAttachments",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesSuppressTaskSFXReminders",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesSuppressEventSFXReminders",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesPreviewCustomTheme",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesHasCelebrationBadge",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesUserDebugModePref",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesSRHOverrideActivities",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesNewLightningReportRunPageEnabled",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesNativeEmailClient",
+				"type": "String"
+			},
+			{
+				"name": "UserPreferencesHideBrowseProductRedirectConfirmation",
+				"type": "String"
+			},
+			{
+				"name": "ContactId",
+				"type": "String"
+			},
+			{
+				"name": "AccountId",
+				"type": "String"
+			},
+			{
+				"name": "CallCenterId",
+				"type": "String"
+			},
+			{
+				"name": "Extension",
+				"type": "String"
+			},
+			{
+				"name": "FederationIdentifier",
+				"type": "String"
+			},
+			{
+				"name": "AboutMe",
+				"type": "String"
+			},
+			{
+				"name": "FullPhotoUrl",
+				"type": "String"
+			},
+			{
+				"name": "SmallPhotoUrl",
+				"type": "String"
+			},
+			{
+				"name": "IsExtIndicatorVisible",
+				"type": "String"
+			},
+			{
+				"name": "OutOfOfficeMessage",
+				"type": "String"
+			},
+			{
+				"name": "MediumPhotoUrl",
+				"type": "String"
+			},
+			{
+				"name": "DigestFrequency",
+				"type": "String"
+			},
+			{
+				"name": "DefaultGroupNotificationFrequency",
+				"type": "String"
+			},
+			{
+				"name": "LastViewedDate",
+				"type": "String"
+			},
+			{
+				"name": "LastReferencedDate",
+				"type": "String"
+			},
+			{
+				"name": "BannerPhotoUrl",
+				"type": "String"
+			},
+			{
+				"name": "SmallBannerPhotoUrl",
+				"type": "String"
+			},
+			{
+				"name": "MediumBannerPhotoUrl",
+				"type": "String"
+			},
+			{
+				"name": "IsProfilePhotoActive",
+				"type": "String"
+			},
+			{
+				"name": "IndividualId",
+				"type": "String"
+			},
+			{
+				"name": "Market__c",
+				"type": "String"
+			},
+			{
+				"name": "Delegated_Manager_Approver_Active__c",
+				"type": "String"
+			},
+			{
+				"name": "Delegated_Manager_Approver__c",
+				"type": "String"
+			},
+			{
+				"name": "APXT_Redlining__Contract_Agreement_Role__c",
+				"type": "String"
+			},
+			{
+				"name": "DB_Region__c",
+				"type": "String"
+			},
+			{
+				"name": "Count__c",
+				"type": "String"
+			},
+			{
+				"name": "Discipline__c",
+				"type": "String"
+			},
+			{
+				"name": "District__c",
+				"type": "String"
+			},
+			{
+				"name": "Market_Subdivision__c",
+				"type": "String"
+			},
+			{
+				"name": "USA_Markets__c",
+				"type": "String"
+			},
+			{
+				"name": "USA_StateAssignment__c",
+				"type": "String"
+			},
+			{
+				"name": "Core_PulseMarketSubdivision__c",
+				"type": "String"
+			},
+			{
+				"name": "Core_PulseMarket__c",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,314 @@
+{
+	"name": "NIELSEN_STG_Fact_Market_Sql",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "NIELSEN"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "MARKET_KEY",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "PRODUCT_KEY",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "PERIOD_KEY",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "$_USD",
+				"type": "decimal",
+				"precision": 13,
+				"scale": 3
+			},
+			{
+				"name": "BASE_$",
+				"type": "decimal",
+				"precision": 13,
+				"scale": 3
+			},
+			{
+				"name": "INCR_$",
+				"type": "decimal",
+				"precision": 13,
+				"scale": 3
+			},
+			{
+				"name": "UNITS",
+				"type": "decimal",
+				"precision": 13,
+				"scale": 3
+			},
+			{
+				"name": "9L_EQ",
+				"type": "decimal",
+				"precision": 13,
+				"scale": 3
+			},
+			{
+				"name": "BASE_9L_EQ",
+				"type": "decimal",
+				"precision": 13,
+				"scale": 3
+			},
+			{
+				"name": "INCR_9L_EQ",
+				"type": "decimal",
+				"precision": 13,
+				"scale": 3
+			},
+			{
+				"name": "NO_PROMO_$",
+				"type": "decimal",
+				"precision": 13,
+				"scale": 3
+			},
+			{
+				"name": "DISP_W/O_FEAT_$",
+				"type": "decimal",
+				"precision": 13,
+				"scale": 3
+			},
+			{
+				"name": "DISP_W/O_FEAT_BASE_$",
+				"type": "decimal",
+				"precision": 13,
+				"scale": 3
+			},
+			{
+				"name": "DISP_W/O_FEAT_INCR_$",
+				"type": "decimal",
+				"precision": 13,
+				"scale": 3
+			},
+			{
+				"name": "FEAT_W/O_DISP_$",
+				"type": "decimal",
+				"precision": 13,
+				"scale": 3
+			},
+			{
+				"name": "FEAT_W/O_DISP_BASE_$",
+				"type": "decimal",
+				"precision": 13,
+				"scale": 3
+			},
+			{
+				"name": "FEAT_W/O_DISP_INCR_$",
+				"type": "decimal",
+				"precision": 13,
+				"scale": 3
+			},
+			{
+				"name": "FEAT_&_DISP_$",
+				"type": "decimal",
+				"precision": 13,
+				"scale": 3
+			},
+			{
+				"name": "FEAT_&_DISP_BASE_$",
+				"type": "decimal",
+				"precision": 13,
+				"scale": 3
+			},
+			{
+				"name": "FEAT_&_DISP_INCR_$",
+				"type": "decimal",
+				"precision": 13,
+				"scale": 3
+			},
+			{
+				"name": "PRICE_DECR_ONLY_$",
+				"type": "decimal",
+				"precision": 13,
+				"scale": 3
+			},
+			{
+				"name": "PRICE_DECR_ONLY_BASE_$",
+				"type": "decimal",
+				"precision": 13,
+				"scale": 3
+			},
+			{
+				"name": "PRICE_DECR_ONLY_INCR_$",
+				"type": "decimal",
+				"precision": 13,
+				"scale": 3
+			},
+			{
+				"name": "NO_PROMO_UNITS",
+				"type": "decimal",
+				"precision": 13,
+				"scale": 3
+			},
+			{
+				"name": "DISP_W/O_FEAT_UNITS",
+				"type": "decimal",
+				"precision": 13,
+				"scale": 3
+			},
+			{
+				"name": "FEAT_W/O_DISP_UNITS",
+				"type": "decimal",
+				"precision": 13,
+				"scale": 3
+			},
+			{
+				"name": "FEAT_&_DISP_UNITS",
+				"type": "decimal",
+				"precision": 13,
+				"scale": 3
+			},
+			{
+				"name": "PRICE_DECR_ONLY_UNITS",
+				"type": "decimal",
+				"precision": 13,
+				"scale": 3
+			},
+			{
+				"name": "NO_PROMO_9L_EQ",
+				"type": "decimal",
+				"precision": 13,
+				"scale": 3
+			},
+			{
+				"name": "DISP_W/O_FEAT_9L_EQ",
+				"type": "decimal",
+				"precision": 13,
+				"scale": 3
+			},
+			{
+				"name": "DISP_W/O_FEAT_BASE_9L_EQ",
+				"type": "decimal",
+				"precision": 13,
+				"scale": 3
+			},
+			{
+				"name": "DISP_W/O_FEAT_INCR_9L_EQ",
+				"type": "decimal",
+				"precision": 13,
+				"scale": 3
+			},
+			{
+				"name": "FEAT_W/O_DISP_9L_EQ",
+				"type": "decimal",
+				"precision": 13,
+				"scale": 3
+			},
+			{
+				"name": "FEAT_W/O_DISP_BASE_9L_EQ",
+				"type": "decimal",
+				"precision": 13,
+				"scale": 3
+			},
+			{
+				"name": "FEAT_W/O_DISP_INCR_9L_EQ",
+				"type": "decimal",
+				"precision": 13,
+				"scale": 3
+			},
+			{
+				"name": "FEAT_&_DISP_9L_EQ",
+				"type": "decimal",
+				"precision": 13,
+				"scale": 3
+			},
+			{
+				"name": "FEAT_&_DISP_BASE_9L_EQ",
+				"type": "decimal",
+				"precision": 13,
+				"scale": 3
+			},
+			{
+				"name": "FEAT_&_DISP_INCR_9L_EQ",
+				"type": "decimal",
+				"precision": 13,
+				"scale": 3
+			},
+			{
+				"name": "PRICE_DECR_ONLY_9L_EQ",
+				"type": "decimal",
+				"precision": 13,
+				"scale": 3
+			},
+			{
+				"name": "PRICE_DECR_ONLY_BASE_9L_EQ",
+				"type": "decimal",
+				"precision": 13,
+				"scale": 3
+			},
+			{
+				"name": "PRICE_DECR_ONLY_INCR_9L_EQ",
+				"type": "decimal",
+				"precision": 13,
+				"scale": 3
+			},
+			{
+				"name": "NUMBER_OF_STORES",
+				"type": "decimal",
+				"precision": 13,
+				"scale": 3
+			},
+			{
+				"name": "9L_EQ_/_%ACV_WHERE_DIST_-_BA_SPIRITS_SHARE",
+				"type": "decimal",
+				"precision": 13,
+				"scale": 3
+			},
+			{
+				"name": "$_/_%ACV_WHERE_DIST_-_BA_SPIRITS_SHARE",
+				"type": "decimal",
+				"precision": 13,
+				"scale": 3
+			},
+			{
+				"name": "%ACV_WHERE_DIST_-_BA_SPIRITS_SHARE",
+				"type": "decimal",
+				"precision": 13,
+				"scale": 3
+			},
+			{
+				"name": "NUMBER_OF_STORES_SELLING",
+				"type": "decimal",
+				"precision": 13,
+				"scale": 3
+			},
+			{
+				"name": "AVG_750ML_EQ_PRICE",
+				"type": "decimal",
+				"precision": 13,
+				"scale": 3
+			},
+			{
+				"name": "PIPELINE_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SOURCE_FILE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TIMESTAMP",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			}
+		],
+		"typeProperties": {
+			"schema": "STG",
+			"table": "NIELSEN_SPIRITS_UPC_FCT"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

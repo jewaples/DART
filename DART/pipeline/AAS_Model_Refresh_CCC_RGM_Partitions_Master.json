@@ -1,0 +1,86 @@
+{
+	"name": "AAS_Model_Refresh_CCC_RGM_Partitions_Master",
+	"properties": {
+		"activities": [
+			{
+				"name": "Refresh_Partition_FY2021",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Refresh_Partition_FY2023-2022",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "AAS_Model_Refresh_CCC_RGM_Partitions_2021",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Refresh_Partition_FY2020-2019",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Refresh_Partition_FY2021",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "AAS_Model_Refresh_CCC_RMG_Partitions_2020_2019",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Refresh_Partition_FY2018-2017",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Refresh_Partition_FY2020-2019",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "AAS_Model_Refresh_CCC_RMG_Partitions_2018_2017",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Refresh_Partition_FY2023-2022",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "AAS_Model_Refresh_CCC_RGM_Partitions_2023_2022",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"folder": {
+			"name": "AAS Refresh"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-05-03T11:57:50Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

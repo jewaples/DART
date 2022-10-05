@@ -1,0 +1,103 @@
+{
+	"name": "RAD_Fact_Anaplan_Snapshot",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "RAD"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "DEPLETION_PERIOD",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "PERIOD",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "SNAPSHOT_ID",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "Item_Id",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DISTRIBUTOR",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CHANNEL",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FISCAL_YEAR",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "FISCAL_PERIOD",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "TIMESTAMP_PRIOR_LE",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "TIMESTAMP_SNAPSHOT",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "VOL_SNAPSHOT_CS",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "VOL_SNAPSHOT_9L",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "NSV_SNAPSHOT",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "GS_SNAPSHOT",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "DISCOUNT_SNAPSHOT",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "DISCOUNT_TOTAL_SNAPSHOT",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "DISCOUNT_SCANS_SNAPSHOT",
+				"type": "float",
+				"precision": 15
+			}
+		],
+		"typeProperties": {
+			"schema": "RAD",
+			"table": "FACT_ANAPLAN_SNAPSHOT"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

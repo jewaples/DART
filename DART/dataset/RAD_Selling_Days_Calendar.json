@@ -1,0 +1,50 @@
+{
+	"name": "RAD_Selling_Days_Calendar",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "RAD"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "DISTID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DATE_SQL",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "SELLING_DAYS",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "DATE_SQL_LY_FROM",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "DATE_SQL_LY_TO",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "DATE_SQL_LY_FROM_FIRST_DAY",
+				"type": "datetime2",
+				"scale": 7
+			}
+		],
+		"typeProperties": {
+			"schema": "RAD",
+			"table": "SELLING_DAYS_CALENDAR"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

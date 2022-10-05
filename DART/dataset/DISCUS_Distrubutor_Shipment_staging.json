@@ -1,0 +1,114 @@
+{
+	"name": "DISCUS_Distrubutor_Shipment_staging",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "DISCUS"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ZPRO_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZPRO_DESC",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RUNID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "DATE_MM",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DATE_YYYY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DATE_DD",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DIST_ST_PROV_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DIST_REGION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DIST_FAMILY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DIST_GROUP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VENDOR_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BRAND_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SIZE_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PHYS_CASES",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "BATF_CASES",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "NINL_CASES",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "DIST_FAMILY_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DIST_GROUP_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DIST_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DIST_TYPE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Created By",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Created On",
+				"type": "datetime2",
+				"scale": 7
+			}
+		],
+		"typeProperties": {
+			"schema": "STG",
+			"table": "DISTRIBUTOR_SHIPMENT"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

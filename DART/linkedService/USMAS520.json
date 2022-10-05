@@ -1,0 +1,17 @@
+{
+	"name": "USMAS520",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "FileServer",
+		"typeProperties": {
+			"host": "\\\\USMAS520\\c$\\Users\\arendonsiv\\source\\repos\\DAX_EXTRACT\\DAX_EXTRACT",
+			"userId": "bl\\arendonsiv",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiJmMGFjZDZmMS02MmY4LTQwYzAtODg1NS0zOTQxNTYwYzRhYTciLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+		},
+		"connectVia": {
+			"referenceName": "nlmas005-IRtime",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

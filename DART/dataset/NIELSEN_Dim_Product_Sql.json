@@ -1,0 +1,122 @@
+{
+	"name": "NIELSEN_Dim_Product_Sql",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "NIELSEN"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "PRODUCT_KEY",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "UPC",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ALCOHOL_BY_VOLUME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BA_BRAND_EXTENSION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BA_BRAND_FAMILY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BA_CATEGORY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BA_FLAVOR",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BA_FLAVORED",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BA_MANUFACTURER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BA_SIZE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BA_SPIRITS_PRICE_TIER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BA_SUBCATEGORY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BA_VALUE_ADD",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BA_WHISKEY_TYPE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ITEM",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PACKAGE_GENERAL_SHAPE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BA_PACK_SIZE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BA_WINE_SPARKLING_BR_PRICE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BA_SEGMENT",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BA_WINE_TYPE_HIGH",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BA_WINE_UPC_PRICE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BA_COUNTRY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BA_STATE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BA_CONTAINER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BA_WINE_TYPE_GROUP",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "NIELSEN",
+			"table": "DIM_PRODUCT"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

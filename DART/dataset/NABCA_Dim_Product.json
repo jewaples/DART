@@ -1,0 +1,133 @@
+{
+	"name": "NABCA_Dim_Product",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "NABCA COMPETITIVE"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "DATA_PROVIDER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DATA_PROVIDER_DETAIL",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PRODUCT_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "STATE_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RECORD_MODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "STATE_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "STATE_ABBREVIATION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CLASS_NUMBER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DM_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BRAND_NUMBER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BRAND_ABBREVIATION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BRAND_FULL_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PRODUCT_CLASS_ABBREVIATION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BEVERAGE_TYPE_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SIZE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PACK_SIZE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PACK_SIZE_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PRODUCT_AGE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PRODUCT_PROOF",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UPC_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SCC_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "COM_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "COM_CODE_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "STATUS_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VENDOR_NUMBER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VENDOR_ABBREVIATION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "STATE_FULL_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CREATED_TIMESTAMP",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "NABCA",
+			"table": "DIM_PRODUCT"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

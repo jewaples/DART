@@ -1,0 +1,215 @@
+{
+	"name": "RAD_Dim_Product_Sql",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "RAD"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ITEM_DESCRIPTION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ITEM_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PRODUCT_BRAND_PLANNING_SIZE_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PRODUCT_BRAND_PLANNING_SIZE_DESCRIPTION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PRODUCT_BRAND_SIZE_DESCRIPTION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PRODUCT_BRAND_SIZE_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PRODUCT_BRAND_LABEL_DESCRIPTION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PRODUCT_BRAND_LABEL_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PRODUCT_BRAND_GROUP_DESCRIPTION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PRODUCT_BRAND_GROUP_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PRODUCT_BRAND_HOUSE_DESCRIPTION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PRODUCT_BRAND_HOUSE_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BOTTLE_SIZE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BOTTLE_VOLUME",
+				"type": "decimal",
+				"precision": 38,
+				"scale": 6
+			},
+			{
+				"name": "BOTTLES_PER_CASE",
+				"type": "decimal",
+				"precision": 38,
+				"scale": 0
+			},
+			{
+				"name": "RETAIL_UNITS_PER_CASE",
+				"type": "decimal",
+				"precision": 38,
+				"scale": 0
+			},
+			{
+				"name": "BOTTLES_PER_RETAIL_UNIT",
+				"type": "decimal",
+				"precision": 38,
+				"scale": 0
+			},
+			{
+				"name": "ACTIVE_FOR_PLANNING",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SAP_MATERIAL_GROUP_CODE",
+				"type": "decimal",
+				"precision": 38,
+				"scale": 0
+			},
+			{
+				"name": "SAP_MATERIAL_GROUP_DESCRIPTION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SAP_MATERIAL_TYPE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BEVERAGE_TYPE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PROOF",
+				"type": "decimal",
+				"precision": 38,
+				"scale": 6
+			},
+			{
+				"name": "PRODUCT_PLANNING_TYPE_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PRODUCT_PLANNING_TYPE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TOTAL_CASE_VOLUME",
+				"type": "decimal",
+				"precision": 38,
+				"scale": 6
+			},
+			{
+				"name": "MATERIAL_PRICE_GROUP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BRAND_GROUP_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BRAND_GROUP_DESCRIPTION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "REPRESENTATIVE_PLANNING_IPC",
+				"type": "nvarchar"
+			},
+			{
+				"name": "REPRESENTATIVE_PLANNING_IPC_DESCRIPTION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CONTAINER_TYPE_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CONTAINER_TYPE_DESCRIPTION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "OUTER_PACKAGING_TYPE_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "OUTER_PACKAGING_TYPE_DESCRIPTION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PRODUCT_HIERARCHY_LEVEL_4_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PRODUCT_HIERARCHY_LEVEL_4_DESCRIPTION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BRAND_STATUS_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BRAND_STATUS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BRAND_CLASSIFICATION_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "REPORTING_BRAND_GROUP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ACTIVE_FOR_ANNUAL_PLANNING_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ACTIVE_FOR_ANNUAL_PLANNING",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SCC_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TOTAL_BUSA_PORTFOLIO",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "RAD",
+			"table": "DIM_PRODUCT"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

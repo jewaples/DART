@@ -1,0 +1,404 @@
+{
+	"name": "ECOMMERCE_DRIZLY_SALES",
+	"properties": {
+		"activities": [
+			{
+				"name": "Copy data SnowFlake to Storage",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SnowflakeSource",
+						"query": {
+							"value": "Select DELIVERED_DATE_LOCAL AS delivered_at,\nBRAND_NAME AS brand_name,\nCATALOG_ITEM_NAME AS catalog_item_name,\nVERIFIED_UPC AS verified_upc,\nUNIT_PRICE AS unit_price,\nQUANTITY AS quantity,\nCONTAINER_QTY AS container_qty,\nCONTAINER_TYPE AS container_type,\nVOLUME AS volume,\nVOLUME_UNITS AS volume_units,\nTOP_LEVEL_CATEGORY AS top_level_category,\nTOP_SUBCATEGORY AS top_subcategory,\nSUBCATEGORY AS subcategory,\nDELIVERY_STATE AS delivery_state,\nDELIVERY_ZIPCODE AS delivery_zip,\nSTORE_MARKET AS market,\nSTORE_ZIPCODE AS store_zip\n\nFROM \"DRIZLY\".\"SHARING\".\"SHARE_STORE_ORDER_ITEMS\"\nwhere DELIVERED_DATE_LOCAL >= DATEADD(day,-15,'@{formatDateTime(pipeline().parameters.STARTDATE,'yyyy-MM-dd')}')\n",
+							"type": "Expression"
+						},
+						"exportSettings": {
+							"type": "SnowflakeExportCopyCommand"
+						}
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobStorageWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "Ecommerce_Drizly_Snowflake_Source",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "Ecommerce_Drizly_Sales_Extract_Snowflake",
+						"type": "DatasetReference",
+						"parameters": {
+							"FolderPath_DestinationStore": {
+								"value": "@pipeline().parameters.FolderPath_DestinationStore",
+								"type": "Expression"
+							},
+							"Filename": {
+								"value": "@concat('Drizly_Sales_' , formatDateTime(pipeline().parameters.STARTDATE,'yyyyMMdd'),'.csv')",
+								"type": "Expression"
+							}
+						}
+					}
+				]
+			},
+			{
+				"name": "Copy data Storage to Stg SQL",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Copy data SnowFlake to Storage",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": false,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"preCopyScript": "TRUNCATE TABLE [STG].[DRIZLY_ECOMMERCE]",
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "DELIVERED_AT",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "DELIVERED_AT",
+									"type": "DateTime",
+									"physicalType": "datetime2"
+								}
+							},
+							{
+								"source": {
+									"name": "BRAND_NAME",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "BRAND_NAME",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "CATALOG_ITEM_NAME",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "CATALOG_ITEM_NAME",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "VERIFIED_UPC",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "VERIFIED_UPC",
+									"type": "Double",
+									"physicalType": "float"
+								}
+							},
+							{
+								"source": {
+									"name": "UNIT_PRICE",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "UNIT_PRICE",
+									"type": "Double",
+									"physicalType": "float"
+								}
+							},
+							{
+								"source": {
+									"name": "QUANTITY",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "QUANTITY",
+									"type": "Double",
+									"physicalType": "float"
+								}
+							},
+							{
+								"source": {
+									"name": "CONTAINER_QTY",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "CONTAINER_QTY",
+									"type": "Double",
+									"physicalType": "float"
+								}
+							},
+							{
+								"source": {
+									"name": "CONTAINER_TYPE",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "CONTAINER_TYPE",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "VOLUME",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "VOLUME",
+									"type": "Double",
+									"physicalType": "float"
+								}
+							},
+							{
+								"source": {
+									"name": "VOLUME_UNITS",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "VOLUME_UNITS",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "TOP_LEVEL_CATEGORY",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "TOP_LEVEL_CATEGORY",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "TOP_SUBCATEGORY",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "TOP_SUBCATEGORY",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "SUBCATEGORY",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "SUBCATEGORY",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "DELIVERY_STATE",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "DELIVERY_STATE",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "DELIVERY_ZIP",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "DELIVERY_ZIP",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "MARKET",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "MARKET",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "STORE_ZIP",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "STORE_ZIP",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "Ecommerce_Drizly_Sales_Extract_Storage",
+						"type": "DatasetReference",
+						"parameters": {
+							"FolderPath_DestinationStore": "@pipeline().parameters.FolderPath_DestinationStore",
+							"Filename": "@concat('Drizly_Sales_' , formatDateTime(pipeline().parameters.STARTDATE,'yyyyMMdd'),'.csv')"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "Ecommerce_Drizly_Sales_Staging_SQL",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Update drizly sales",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "Copy data Storage to Stg SQL",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[ECOMM].[usp_UPDATE_DRIZLY_ECOMMERCE]"
+				},
+				"linkedServiceName": {
+					"referenceName": "NAM_COM_DART_SQL",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "Load_Products_Exeption",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "Update drizly sales",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[ECOMM].[usp_DRIZLY_PRODUCTS_EXCEPTION_LOAD]"
+				},
+				"linkedServiceName": {
+					"referenceName": "NAM_COM_DART_SQL",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"parameters": {
+			"STARTDATE": {
+				"type": "string"
+			},
+			"FolderPath_DestinationStore": {
+				"type": "string",
+				"defaultValue": "prod/Ecommerce/Drizly"
+			}
+		},
+		"folder": {
+			"name": "ECOMMERCE"
+		},
+		"annotations": [],
+		"lastPublishTime": "2021-06-25T15:49:17Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

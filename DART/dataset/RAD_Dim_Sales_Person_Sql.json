@@ -1,0 +1,69 @@
+{
+	"name": "RAD_Dim_Sales_Person_Sql",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "RAD"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "SALESPERSON_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SALEPERSON_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LEVEL1_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LEVEL1_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LEVEL2_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LEVEL2_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LEVEL3_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LEVEL3_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DIVISION_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DIVISION_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PARENT_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LSPRSN_KEY",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "RAD",
+			"table": "DIM_SALES_PERSON"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

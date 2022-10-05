@@ -1,0 +1,214 @@
+{
+	"name": "DATALLIANCE_Parquet",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_Data_Foundation_DataLake",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"Folder": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "DATALLIANCE"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "CPGInventoryAnalysisExtendedSU_BAC_SouthernGlazersWS.parquet",
+				"folderPath": {
+					"value": "@concat('landing/DATA_ALLIANCE/',dataset().Folder)",
+					"type": "Expression"
+				},
+				"fileSystem": "prod"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "ProductActivityDate",
+				"type": "UTF8"
+			},
+			{
+				"name": "Location",
+				"type": "UTF8"
+			},
+			{
+				"name": "ShippingLane",
+				"type": "UTF8"
+			},
+			{
+				"name": "SupplierUPC",
+				"type": "UTF8"
+			},
+			{
+				"name": "SupplierCatID",
+				"type": "UTF8"
+			},
+			{
+				"name": "DistributorCatID",
+				"type": "UTF8"
+			},
+			{
+				"name": "Description",
+				"type": "UTF8"
+			},
+			{
+				"name": "UsedStatus",
+				"type": "UTF8"
+			},
+			{
+				"name": "LastOrdered",
+				"type": "UTF8"
+			},
+			{
+				"name": "QtyonHand",
+				"type": "UTF8"
+			},
+			{
+				"name": "QtyonOrder",
+				"type": "UTF8"
+			},
+			{
+				"name": "QtySold",
+				"type": "UTF8"
+			},
+			{
+				"name": "TotalQtyRsvd",
+				"type": "UTF8"
+			},
+			{
+				"name": "TotalQtyCommtd",
+				"type": "UTF8"
+			},
+			{
+				"name": "QtyTransferred",
+				"type": "UTF8"
+			},
+			{
+				"name": "WTDSales",
+				"type": "UTF8"
+			},
+			{
+				"name": "TotalNQAAdj",
+				"type": "UTF8"
+			},
+			{
+				"name": "NQA",
+				"type": "UTF8"
+			},
+			{
+				"name": "SIMAlertCode",
+				"type": "UTF8"
+			},
+			{
+				"name": "EDILocationID",
+				"type": "UTF8"
+			},
+			{
+				"name": "POGroupID",
+				"type": "UTF8"
+			},
+			{
+				"name": "ItemAlertComments",
+				"type": "UTF8"
+			},
+			{
+				"name": "ItemComments",
+				"type": "UTF8"
+			},
+			{
+				"name": "PAOrderInfo",
+				"type": "UTF8"
+			},
+			{
+				"name": "UsedMinOQ",
+				"type": "UTF8"
+			},
+			{
+				"name": "PackSize1",
+				"type": "UTF8"
+			},
+			{
+				"name": "PackSize2",
+				"type": "UTF8"
+			},
+			{
+				"name": "PackSize3",
+				"type": "UTF8"
+			},
+			{
+				"name": "PackSizeOverride",
+				"type": "UTF8"
+			},
+			{
+				"name": "DistItemStatus",
+				"type": "UTF8"
+			},
+			{
+				"name": "StatusOvrd",
+				"type": "UTF8"
+			},
+			{
+				"name": "StatusOvrdComments",
+				"type": "UTF8"
+			},
+			{
+				"name": "BehaviorGroup",
+				"type": "UTF8"
+			},
+			{
+				"name": "DistUOM",
+				"type": "UTF8"
+			},
+			{
+				"name": "SIMUOM",
+				"type": "UTF8"
+			},
+			{
+				"name": "SupplierLocationID",
+				"type": "UTF8"
+			},
+			{
+				"name": "SupplierAltID",
+				"type": "UTF8"
+			},
+			{
+				"name": "UnitPrice",
+				"type": "UTF8"
+			},
+			{
+				"name": "BrandCode",
+				"type": "UTF8"
+			},
+			{
+				"name": "ProductGroup",
+				"type": "UTF8"
+			},
+			{
+				"name": "PAOrderUDF1",
+				"type": "UTF8"
+			},
+			{
+				"name": "PAOrderUDF2",
+				"type": "UTF8"
+			},
+			{
+				"name": "AltMatchID",
+				"type": "UTF8"
+			},
+			{
+				"name": "LocCaseCount",
+				"type": "UTF8"
+			},
+			{
+				"name": "SuppCaseCount",
+				"type": "UTF8"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

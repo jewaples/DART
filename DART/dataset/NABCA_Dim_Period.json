@@ -1,0 +1,45 @@
+{
+	"name": "NABCA_Dim_Period",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "NABCA COMPETITIVE"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "MONTH_KEY",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "PERIOD_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "MONTH_NUMBER",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "MONTH_NAME",
+				"type": "varchar"
+			},
+			{
+				"name": "YEAR",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": "NABCA",
+			"table": "DIM_PERIOD"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

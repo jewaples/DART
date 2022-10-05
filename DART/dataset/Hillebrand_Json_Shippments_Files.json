@@ -1,0 +1,314 @@
+{
+	"name": "Hillebrand_Json_Shippments_Files",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_Data_Foundation_DataLake",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"FileName": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@dataset().FileName",
+					"type": "Expression"
+				},
+				"folderPath": "EDW/BILLINGS/HILLEBRAND/API_PROCESS/HILLEBRANDSHIPMENTSSOURCE",
+				"fileSystem": "prod"
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"_pagingInfo": {
+					"type": "object",
+					"properties": {
+						"totalItems": {
+							"type": "integer"
+						},
+						"totalPages": {
+							"type": "integer"
+						},
+						"hasPreviousPage": {
+							"type": "boolean"
+						},
+						"hasNextPage": {
+							"type": "boolean"
+						},
+						"itemsOnPage": {
+							"type": "integer"
+						},
+						"pageNumber": {
+							"type": "integer"
+						},
+						"pageSize": {
+							"type": "integer"
+						}
+					}
+				},
+				"items": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"_links": {
+								"type": "object",
+								"properties": {
+									"href": {
+										"type": "string"
+									},
+									"rel": {
+										"type": "string"
+									}
+								}
+							},
+							"id": {
+								"type": "integer"
+							},
+							"modifiedTimeStamp": {
+								"type": "integer"
+							},
+							"shipFromPartyName": {
+								"type": "string"
+							},
+							"shipFromLocation": {
+								"type": "object",
+								"properties": {
+									"cityName": {
+										"type": "string"
+									},
+									"cityCode": {
+										"type": "string"
+									},
+									"countryName": {
+										"type": "string"
+									},
+									"countryCode": {
+										"type": "string"
+									},
+									"countrySubEntityName": {
+										"type": "string"
+									},
+									"countrySubEntityCode": {
+										"type": "string"
+									}
+								}
+							},
+							"shipFromLocationStatus": {
+								"type": "string"
+							},
+							"estimatedDepartureDate": {
+								"type": "string"
+							},
+							"actualDepartureDate": {
+								"type": "string"
+							},
+							"departureDate": {
+								"type": "string"
+							},
+							"shipToPartyName": {
+								"type": "string"
+							},
+							"shipToLocation": {
+								"type": "object",
+								"properties": {
+									"cityName": {
+										"type": "string"
+									},
+									"cityCode": {
+										"type": "string"
+									},
+									"countryName": {
+										"type": "string"
+									},
+									"countryCode": {
+										"type": "string"
+									},
+									"countrySubEntityName": {
+										"type": "string"
+									},
+									"countrySubEntityCode": {
+										"type": "string"
+									}
+								}
+							},
+							"shipToLocationStatus": {
+								"type": "string"
+							},
+							"estimatedArrivalDate": {
+								"type": "string"
+							},
+							"actualArrivalDate": {
+								"type": "string"
+							},
+							"arrivalDate": {
+								"type": "string"
+							},
+							"soldBy": {
+								"type": "string"
+							},
+							"soldTo": {
+								"type": "string"
+							},
+							"lastEvent": {
+								"type": "object",
+								"properties": {
+									"_links": {
+										"type": "object",
+										"properties": {
+											"href": {
+												"type": "string"
+											},
+											"rel": {
+												"type": "string"
+											}
+										}
+									},
+									"id": {
+										"type": "integer"
+									},
+									"code": {
+										"type": "string"
+									},
+									"category": {
+										"type": "string"
+									},
+									"date": {
+										"type": "string"
+									},
+									"lastUpdate": {
+										"type": "integer"
+									},
+									"text": {
+										"type": "string"
+									},
+									"template": {
+										"type": "string"
+									},
+									"templateVariables": {
+										"type": "array",
+										"items": {
+											"type": "object",
+											"properties": {
+												"name": {
+													"type": "string"
+												},
+												"value": {
+													"type": "string"
+												},
+												"dataType": {
+													"type": "string"
+												},
+												"resource": {
+													"type": "object",
+													"properties": {
+														"_links": {
+															"type": "object",
+															"properties": {
+																"href": {
+																	"type": "string"
+																},
+																"rel": {
+																	"type": "string"
+																}
+															}
+														},
+														"id": {
+															"type": "integer"
+														},
+														"type": {
+															"type": "string"
+														}
+													}
+												},
+												"primary": {
+													"type": "boolean"
+												}
+											}
+										}
+									}
+								}
+							},
+							"status": {
+								"type": "string"
+							},
+							"references": {
+								"type": "array",
+								"items": {
+									"type": "object",
+									"properties": {
+										"reference": {
+											"type": "string"
+										},
+										"role": {
+											"type": "string"
+										}
+									}
+								}
+							},
+							"equipment": {
+								"type": "object",
+								"properties": {
+									"number": {
+										"type": "string"
+									},
+									"classification": {
+										"type": "string"
+									},
+									"type": {
+										"type": "string"
+									},
+									"transportReferences": {
+										"type": "array"
+									},
+									"sealNumbers": {
+										"type": "array",
+										"items": {
+											"type": "string"
+										}
+									}
+								}
+							},
+							"progress": {
+								"type": "integer"
+							},
+							"onTimeStatus": {
+								"type": "string"
+							},
+							"emission": {
+								"type": "object",
+								"properties": {
+									"calculation": {
+										"type": "string"
+									},
+									"unit": {
+										"type": "string"
+									},
+									"type": {
+										"type": "string"
+									},
+									"value": {
+										"type": "number"
+									}
+								}
+							},
+							"readyDate": {
+								"type": "string"
+							},
+							"mainModality": {
+								"type": "string"
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

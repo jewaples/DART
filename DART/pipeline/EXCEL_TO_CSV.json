@@ -1,0 +1,557 @@
+{
+	"name": "EXCEL_TO_CSV",
+	"properties": {
+		"activities": [
+			{
+				"name": "GET_EXCEL_FILES",
+				"type": "GetMetadata",
+				"dependsOn": [
+					{
+						"activity": "CHANGE_FOLDER_EACH_CSV_FILE",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "GET_EXCEL",
+						"type": "DatasetReference"
+					},
+					"fieldList": [
+						"childItems"
+					],
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
+						"enablePartitionDiscovery": false
+					}
+				}
+			},
+			{
+				"name": "GET_EACH_EXCEL_FILE",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "GET_EXCEL_FILES",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('GET_EXCEL_FILES').output.childItems",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "IF_EXCEL_FILE_XLSX",
+							"type": "IfCondition",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"expression": {
+									"value": "@and(endswith(item().name,'.xlsx'),startswith(item().name,substring(activity('GET_EXCEL_FILES').output.childItems[sub(length(activity('GET_EXCEL_FILES').output.childItems),1)].name,0,10)))",
+									"type": "Expression"
+								},
+								"ifTrueActivities": [
+									{
+										"name": "NAME_OF_THE_FILE",
+										"type": "SetVariable",
+										"dependsOn": [],
+										"userProperties": [],
+										"typeProperties": {
+											"variableName": "FilesString",
+											"value": {
+												"value": "@{item()}",
+												"type": "Expression"
+											}
+										}
+									},
+									{
+										"name": "TRANSFORM_TO_CSV",
+										"type": "Copy",
+										"dependsOn": [
+											{
+												"activity": "NAME_OF_THE_FILE",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"source": {
+												"type": "ExcelSource",
+												"additionalColumns": [
+													{
+														"name": "File_Date",
+														"value": {
+															"value": "@substring(replace(replace(replace(replace(variables('FilesString'),'[',''),']',''),'{\"name\":\"',''),'\",\"type\":\"File\"}',''),0,10)",
+															"type": "Expression"
+														}
+													}
+												],
+												"storeSettings": {
+													"type": "AzureBlobFSReadSettings",
+													"recursive": true,
+													"wildcardFolderPath": "Ryder/EXCEL_LANDING_ZONE",
+													"wildcardFileName": {
+														"value": "@replace(replace(replace(replace(variables('FilesString'),'[',''),']',''),'{\"name\":\"',''),'\",\"type\":\"File\"}','')",
+														"type": "Expression"
+													},
+													"enablePartitionDiscovery": false
+												}
+											},
+											"sink": {
+												"type": "DelimitedTextSink",
+												"storeSettings": {
+													"type": "AzureBlobFSWriteSettings"
+												},
+												"formatSettings": {
+													"type": "DelimitedTextWriteSettings",
+													"quoteAllText": true,
+													"fileExtension": ".txt"
+												}
+											},
+											"enableStaging": false,
+											"translator": {
+												"type": "TabularTranslator",
+												"typeConversion": true,
+												"typeConversionSettings": {
+													"allowDataTruncation": true,
+													"treatBooleanAsNumber": false
+												}
+											}
+										},
+										"inputs": [
+											{
+												"referenceName": "GET_EXCEL",
+												"type": "DatasetReference"
+											}
+										],
+										"outputs": [
+											{
+												"referenceName": "EXCEL_TO_CSV",
+												"type": "DatasetReference",
+												"parameters": {
+													"File": {
+														"value": "@replace(replace(replace(replace(replace(replace(replace(variables('FilesString'),'[',''),']',''),'{\"name\":\"',''),'\",\"type\":\"File\"}',''),'.xlsx','.csv'),':','-'),' ','_')",
+														"type": "Expression"
+													}
+												}
+											}
+										]
+									}
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "CHANGE_FOLDER_EACH_CSV_FILE",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "GET_CURRENT_CSV_FILES",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('GET_CURRENT_CSV_FILES').output.childItems",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "NAME_OF_THE_CSV_FILE",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "FilesString",
+								"value": {
+									"value": "@{item()}",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "CHANGE_CSV_FOLDER",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "NAME_OF_THE_CSV_FILE",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "DelimitedTextSource",
+									"storeSettings": {
+										"type": "AzureBlobFSReadSettings",
+										"recursive": true,
+										"enablePartitionDiscovery": false
+									},
+									"formatSettings": {
+										"type": "DelimitedTextReadSettings"
+									}
+								},
+								"sink": {
+									"type": "DelimitedTextSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "DelimitedTextWriteSettings",
+										"quoteAllText": true,
+										"fileExtension": ".txt"
+									}
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "EXCEL_TO_CSV",
+									"type": "DatasetReference",
+									"parameters": {
+										"File": {
+											"value": "@replace(replace(replace(replace(variables('FilesString'),'[',''),']',''),'{\"name\":\"',''),'\",\"type\":\"File\"}','')",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "CHANGE_CSV_FOLDER",
+									"type": "DatasetReference",
+									"parameters": {
+										"File": {
+											"value": "@replace(replace(replace(replace(variables('FilesString'),'[',''),']',''),'{\"name\":\"',''),'\",\"type\":\"File\"}','')",
+											"type": "Expression"
+										},
+										"Folder": {
+											"value": "@replace(substring(replace(replace(replace(replace(variables('FilesString'),'[',''),']',''),'{\"name\":\"',''),'\",\"type\":\"File\"}',''),0,10),'-','')",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						},
+						{
+							"name": "REMOVE_LAST_PERIOD_CSV",
+							"type": "Delete",
+							"dependsOn": [
+								{
+									"activity": "CHANGE_CSV_FOLDER",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataset": {
+									"referenceName": "EXCEL_TO_CSV",
+									"type": "DatasetReference",
+									"parameters": {
+										"File": {
+											"value": "@replace(replace(replace(replace(variables('FilesString'),'[',''),']',''),'{\"name\":\"',''),'\",\"type\":\"File\"}','')",
+											"type": "Expression"
+										}
+									}
+								},
+								"enableLogging": false,
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								}
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "GET_CURRENT_CSV_FILES",
+				"type": "GetMetadata",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "EXCEL_TO_CSV",
+						"type": "DatasetReference",
+						"parameters": {
+							"File": "*"
+						}
+					},
+					"fieldList": [
+						"childItems"
+					],
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
+						"enablePartitionDiscovery": false
+					},
+					"formatSettings": {
+						"type": "DelimitedTextReadSettings"
+					}
+				}
+			},
+			{
+				"name": "GET_NEW_CURRENT_CSV_FILES",
+				"type": "GetMetadata",
+				"dependsOn": [
+					{
+						"activity": "GET_EACH_EXCEL_FILE",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "EXCEL_TO_CSV",
+						"type": "DatasetReference",
+						"parameters": {
+							"File": "*"
+						}
+					},
+					"fieldList": [
+						"childItems"
+					],
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
+						"enablePartitionDiscovery": false
+					},
+					"formatSettings": {
+						"type": "DelimitedTextReadSettings"
+					}
+				}
+			},
+			{
+				"name": "NEW_CHANGE_FOLDER_EACH_CSV_FILE",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "GET_NEW_CURRENT_CSV_FILES",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('GET_NEW_CURRENT_CSV_FILES').output.childItems",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "NEW_NAME_OF_THE_CSV_FILE",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "FilesString",
+								"value": {
+									"value": "@{item()}",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "NEW_CHANGE_CSV_FOLDER",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "NEW_NAME_OF_THE_CSV_FILE",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "DelimitedTextSource",
+									"storeSettings": {
+										"type": "AzureBlobFSReadSettings",
+										"recursive": true,
+										"enablePartitionDiscovery": false
+									},
+									"formatSettings": {
+										"type": "DelimitedTextReadSettings"
+									}
+								},
+								"sink": {
+									"type": "DelimitedTextSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "DelimitedTextWriteSettings",
+										"quoteAllText": true,
+										"fileExtension": ".txt"
+									}
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "EXCEL_TO_CSV",
+									"type": "DatasetReference",
+									"parameters": {
+										"File": {
+											"value": "@replace(replace(replace(replace(variables('FilesString'),'[',''),']',''),'{\"name\":\"',''),'\",\"type\":\"File\"}','')",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "CHANGE_CSV_FOLDER",
+									"type": "DatasetReference",
+									"parameters": {
+										"File": {
+											"value": "@replace(replace(replace(replace(variables('FilesString'),'[',''),']',''),'{\"name\":\"',''),'\",\"type\":\"File\"}','')",
+											"type": "Expression"
+										},
+										"Folder": {
+											"value": "@replace(substring(replace(replace(replace(replace(variables('FilesString'),'[',''),']',''),'{\"name\":\"',''),'\",\"type\":\"File\"}',''),0,10),'-','')",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					]
+				}
+			},
+			{
+				"name": "TO_PARQUETS_FOLDERS",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "NEW_CHANGE_FOLDER_EACH_CSV_FILE",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Repos/lmeloni@bacardi.com/Databricks/notebooks/DART/OPS/PROCS/STG_INGEST_RYDER"
+				},
+				"linkedServiceName": {
+					"referenceName": "bdhdbenam2_AzureDatabricks",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"variables": {
+			"FilesString": {
+				"type": "String"
+			},
+			"Today": {
+				"type": "String",
+				"defaultValue": "@{utcnow()}"
+			}
+		},
+		"folder": {
+			"name": "RYDER"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-08-22T14:11:25Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

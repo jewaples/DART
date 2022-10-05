@@ -1,0 +1,141 @@
+{
+	"name": "Master_Load_PRODIVER",
+	"properties": {
+		"activities": [
+			{
+				"name": "PRODIVER_ALL_STATES_ACCT",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "PRODIVER_ALL_STATES_ACCT",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"STARTDATE": {
+							"value": "@pipeline().parameters.STARTDATE",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "PRODIVER_ALL_STATES_Greenbook",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "PRODIVER_ALL_STATES_ACCT",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "PRODIVER_ALL_STATES_Greenbook",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"STARTDATE": {
+							"value": "@pipeline().parameters.STARTDATE",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "PRODIVER_N1_ACCT",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "PRODIVER_ALL_STATES_Greenbook",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "PRODIVER_N1_ACCT",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"STARTDATE": {
+							"value": "@pipeline().parameters.STARTDATE",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "PRODIVER_UT_ACCT",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "PRODIVER_N1_ACCT",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "PRODIVER_UT_ACCT",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"STARTDATE": {
+							"value": "@pipeline().parameters.STARTDATE",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "PRODIVER_ALL_STATES_CalledOn",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "PRODIVER_UT_ACCT",
+						"dependencyConditions": [
+							"Skipped"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "PRODIVER_ALL_STATES_CalledOn",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"STARTDATE": {
+							"value": "@pipeline().parameters.STARTDATE",
+							"type": "Expression"
+						}
+					}
+				}
+			}
+		],
+		"parameters": {
+			"STARTDATE": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "DIVER"
+		},
+		"annotations": [],
+		"lastPublishTime": "2021-10-15T17:38:28Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

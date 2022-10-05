@@ -1,0 +1,1959 @@
+{
+	"name": "2_API_SHIPMENTS_CALL",
+	"properties": {
+		"activities": [
+			{
+				"name": "LookUpShipmentsIDs",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "Hillebrand_IDs",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "Getting_All_Shipments_Jsons",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Set_API_Token",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('LookUpShipmentsIDs').output.value",
+						"type": "Expression"
+					},
+					"isSequential": false,
+					"batchCount": 10,
+					"activities": [
+						{
+							"name": "Get_Hillebrand_Shipments_API_Data",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "RestSource",
+									"httpRequestTimeout": "00:01:40",
+									"requestInterval": "00.00:00:00.010",
+									"requestMethod": "GET",
+									"additionalHeaders": {
+										"Authorization": {
+											"value": "@concat('Bearer ',variables('APIToken'))",
+											"type": "Expression"
+										}
+									},
+									"paginationRules": {
+										"supportRFC5988": "true"
+									}
+								},
+								"sink": {
+									"type": "JsonSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "JsonWriteSettings"
+									}
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "hillbrand",
+									"type": "DatasetReference",
+									"parameters": {
+										"QueryParameter": {
+											"value": "@replace(replace(replace(replace(replace(string(item()),'{',''),'\"',''),':',''),'}',''),'ID','')",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "Hillebrand_Json_Shippments_Files",
+									"type": "DatasetReference",
+									"parameters": {
+										"FileName": {
+											"value": "Hillebrand_Json_Shipment_@{replace(replace(replace(replace(replace(string(item()),'{',''),'\"',''),':',''),'}',''),'ID','')}.json",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						},
+						{
+							"name": "Rest_API_Refreshing_Token",
+							"type": "WebActivity",
+							"dependsOn": [
+								{
+									"activity": "Fail_Message_Get_Call",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": "false",
+								"secureInput": "false"
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"url": "https://login.hillebrand.com/oauth2/aus2lt1zi5HuDEayF0i7/v1/token",
+								"method": "POST",
+								"headers": {
+									"Content-Type": "application/x-www-form-urlencoded",
+									"Accept": "application/json"
+								},
+								"body": {
+									"value": "grant_type=password&username=JFH_DART_API%40bacardi.com&password=uA9jmFPMuGpxXAdJVscBZCa%25&client_id=tTPWp29wwoPreFvieI5sMMJZnVmQ2mTC&client_secret=7OGIhaSiCH14g0oS&scope=offline_access",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Set_API_Refresh_Token",
+							"type": "SetVariable",
+							"dependsOn": [
+								{
+									"activity": "Rest_API_Refreshing_Token",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "APIToken",
+								"value": {
+									"value": "@activity('Rest_API_Refreshing_Token').output.access_token",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Reexecute_Get_Hillebrand_Shipments_API_Data",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "Set_API_Refresh_Token",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "RestSource",
+									"httpRequestTimeout": "00:01:40",
+									"requestInterval": "00.00:00:00.010",
+									"requestMethod": "GET",
+									"additionalHeaders": {
+										"Authorization": {
+											"value": "@concat('Bearer ',variables('APIToken'))",
+											"type": "Expression"
+										}
+									},
+									"paginationRules": {
+										"supportRFC5988": "true"
+									}
+								},
+								"sink": {
+									"type": "JsonSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "JsonWriteSettings"
+									}
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "hillbrand",
+									"type": "DatasetReference",
+									"parameters": {
+										"QueryParameter": {
+											"value": "@replace(replace(replace(replace(replace(string(item()),'{',''),'\"',''),':',''),'}',''),'ID','')",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "Hillebrand_Json_Shippments_Files",
+									"type": "DatasetReference",
+									"parameters": {
+										"FileName": {
+											"value": "Hillebrand_Json_Shipment_@{replace(replace(replace(replace(replace(string(item()),'{',''),'\"',''),':',''),'}',''),'ID','')}.json",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						},
+						{
+							"name": "Fail_Message_Reexecute_Get_Call",
+							"type": "SetVariable",
+							"dependsOn": [
+								{
+									"activity": "Reexecute_Get_Hillebrand_Shipments_API_Data",
+									"dependencyConditions": [
+										"Failed"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "Failure",
+								"value": {
+									"value": "@string(concat('TIMESTAMP=',variables('UTC')\n,'|','PIPELINE_NAME=',activity('Reexecute_Get_Hillebrand_Shipments_API_Data').PipelineName\n,'|','PIPELINE_RUN_ID=',activity('Reexecute_Get_Hillebrand_Shipments_API_Data').PipelineRunId\n,'|','JOB_ID=',activity('Reexecute_Get_Hillebrand_Shipments_API_Data').JobId\n,'|','ACTIVITY_RUN_ID=',activity('Reexecute_Get_Hillebrand_Shipments_API_Data').ActivityRunId\n,'|','EXECUTION_START_TIME=',activity('Reexecute_Get_Hillebrand_Shipments_API_Data').ExecutionStartTime\n,'|','EXECUTION_END_TIME=',activity('Reexecute_Get_Hillebrand_Shipments_API_Data').ExecutionEndTime\n,'|','ERROR_ERROR_CODE=',activity('Reexecute_Get_Hillebrand_Shipments_API_Data').Error.errorCode\n,'|','ERROR_MESSAGE=',activity('Reexecute_Get_Hillebrand_Shipments_API_Data').Error.message\n,'|','ERROR_FAILURE_TYPE=',activity('Reexecute_Get_Hillebrand_Shipments_API_Data').Error.failureType\n,'|','ERROR_TARGET=',activity('Reexecute_Get_Hillebrand_Shipments_API_Data').Error.target\n,'|','EXECUTION_DETAILS=',activity('Reexecute_Get_Hillebrand_Shipments_API_Data').ExecutionDetails\n,'|','STATUS_CODE=',activity('Reexecute_Get_Hillebrand_Shipments_API_Data').StatusCode\n,'|','EXECUTION_STATUS=',activity('Reexecute_Get_Hillebrand_Shipments_API_Data').ExecutionStatus\n,'|','DURATION=',activity('Reexecute_Get_Hillebrand_Shipments_API_Data').Duration\n,'|','RECOVERY_STATUS=',activity('Reexecute_Get_Hillebrand_Shipments_API_Data').RecoveryStatus\n))",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Copy_ReLogs_From_Variable_Fail_Message",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "Wait_15_seconds",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "DelimitedTextSource",
+									"additionalColumns": [
+										{
+											"name": "FAILCALLVALUE",
+											"value": {
+												"value": "@variables('Failure')",
+												"type": "Expression"
+											}
+										}
+									],
+									"storeSettings": {
+										"type": "AzureBlobFSReadSettings",
+										"recursive": true,
+										"enablePartitionDiscovery": false
+									},
+									"formatSettings": {
+										"type": "DelimitedTextReadSettings"
+									}
+								},
+								"sink": {
+									"type": "AzureSqlSink",
+									"preCopyScript": "TRUNCATE TABLE STG.HILLEBRAND_STRING_LOG",
+									"writeBehavior": "insert",
+									"sqlWriterUseTableLock": false,
+									"disableMetricsCollection": false
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"mappings": [
+										{
+											"source": {
+												"name": "FAILCALLVALUE",
+												"type": "String"
+											},
+											"sink": {
+												"name": "FAIL_RESULT",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										}
+									],
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "Template_Logs_Ingestion",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "Template_Logs_Ingestion_To_File",
+									"type": "DatasetReference"
+								}
+							]
+						},
+						{
+							"name": "Copy_ReLogs_To_Sql_Logs",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "Copy_ReLogs_From_Variable_Fail_Message",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderQuery": "SELECT\nMAX(TIME_STAMP) AS TIME_STAMP,\nMAX(PIPELINE_NAME) AS PIPELINE_NAME,\nMAX(PIPELINE_RUN_ID) AS PIPELINE_RUN_ID,\nMAX(JOB_ID) AS JOB_ID,\nMAX(ACTIVITY_RUN_ID) AS ACTIVITY_RUN_ID,\nMAX(EXECUTION_START_TIME) AS EXECUTION_START_TIME,\nMAX(EXECUTION_END_TIME) AS EXECUTION_END_TIME,\nMAX(ERROR_ERROR_CODE) AS ERROR_ERROR_CODE,\nMAX(ERROR_MESSAGES) AS ERROR_MESSAGES,\nMAX(ERROR_FAILURE_TYPE) AS ERROR_FAILURE_TYPE,\nMAX(ERROR_TARGET) AS ERROR_TARGET,\nMAX(EXECUTION_DETAILS) AS EXECUTION_DETAILS,\nMAX(STATUS_CODE) AS STATUS_CODE,\nMAX(EXECUTION_STATUS) AS EXECUTION_STATUS,\nMAX(DURATION) AS DURATION,\nMAX(RECOVERY_STATUS) AS RECOVERY_STATUS\nFROM(\nSELECT \nCASE WHEN SUBSTRING(VALUE,0,11) = 'TIMESTAMP=' THEN SUBSTRING(VALUE,11,LEN(VALUE)) END AS TIME_STAMP,\nCASE WHEN SUBSTRING(VALUE,0,15) = 'PIPELINE_NAME=' THEN SUBSTRING(VALUE,15,LEN(VALUE)) END AS PIPELINE_NAME,\nCASE WHEN SUBSTRING(VALUE,0,17) = 'PIPELINE_RUN_ID=' THEN SUBSTRING(VALUE,17,LEN(VALUE)) END AS PIPELINE_RUN_ID,\nCASE WHEN SUBSTRING(VALUE,0,8) = 'JOB_ID=' THEN SUBSTRING(VALUE,8,LEN(VALUE)) END AS JOB_ID,\nCASE WHEN SUBSTRING(VALUE,0,17) = 'ACTIVITY_RUN_ID=' THEN SUBSTRING(VALUE,17,LEN(VALUE)) END AS ACTIVITY_RUN_ID,\nCASE WHEN SUBSTRING(VALUE,0,22) = 'EXECUTION_START_TIME=' THEN SUBSTRING(VALUE,22,LEN(VALUE)) END AS EXECUTION_START_TIME,\nCASE WHEN SUBSTRING(VALUE,0,20) = 'EXECUTION_END_TIME=' THEN SUBSTRING(VALUE,20,LEN(VALUE)) END AS EXECUTION_END_TIME,\nCASE WHEN SUBSTRING(VALUE,0,18) = 'ERROR_ERROR_CODE=' THEN SUBSTRING(VALUE,18,LEN(VALUE)) END AS ERROR_ERROR_CODE,\nCASE WHEN SUBSTRING(VALUE,0,15) = 'ERROR_MESSAGE=' THEN SUBSTRING(VALUE,15,LEN(VALUE)) END AS ERROR_MESSAGES,\nCASE WHEN SUBSTRING(VALUE,0,20) = 'ERROR_FAILURE_TYPE=' THEN SUBSTRING(VALUE,20,LEN(VALUE)) END AS ERROR_FAILURE_TYPE,\nCASE WHEN SUBSTRING(VALUE,0,14) = 'ERROR_TARGET=' THEN SUBSTRING(VALUE,14,LEN(VALUE)) END AS ERROR_TARGET,\nCASE WHEN SUBSTRING(VALUE,0,19) = 'EXECUTION_DETAILS=' THEN SUBSTRING(VALUE,19,LEN(VALUE)) END AS EXECUTION_DETAILS,\nCASE WHEN SUBSTRING(VALUE,0,13) = 'STATUS_CODE=' THEN SUBSTRING(VALUE,13,LEN(VALUE)) END AS STATUS_CODE,\nCASE WHEN SUBSTRING(VALUE,0,18) = 'EXECUTION_STATUS=' THEN SUBSTRING(VALUE,18,LEN(VALUE)) END AS EXECUTION_STATUS,\nCASE WHEN SUBSTRING(VALUE,0,10) = 'DURATION=' THEN SUBSTRING(VALUE,10,LEN(VALUE)) END AS DURATION,\nCASE WHEN SUBSTRING(VALUE,0,17) = 'RECOVERY_STATUS=' THEN SUBSTRING(VALUE,17,LEN(VALUE)) END AS RECOVERY_STATUS\nFROM [STG].[HILLEBRAND_STRING_LOG] AS LOGS CROSS APPLY STRING_SPLIT(FAIL_RESULT,'|') AS SPLIT) AS SUBQUERY",
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"sink": {
+									"type": "AzureSqlSink",
+									"writeBehavior": "insert",
+									"sqlWriterUseTableLock": false
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"mappings": [
+										{
+											"source": {
+												"name": "TIME_STAMP",
+												"type": "String",
+												"physicalType": "varchar"
+											},
+											"sink": {
+												"name": "TIME_STAMP",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "PIPELINE_NAME",
+												"type": "String",
+												"physicalType": "varchar"
+											},
+											"sink": {
+												"name": "PIPELINE_NAME",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "PIPELINE_RUN_ID",
+												"type": "String",
+												"physicalType": "varchar"
+											},
+											"sink": {
+												"name": "PIPELINE_RUN_ID",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "JOB_ID",
+												"type": "String",
+												"physicalType": "varchar"
+											},
+											"sink": {
+												"name": "JOB_ID",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "ACTIVITY_RUN_ID",
+												"type": "String",
+												"physicalType": "varchar"
+											},
+											"sink": {
+												"name": "ACTIVITY_RUN_ID",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "EXECUTION_START_TIME",
+												"type": "String",
+												"physicalType": "varchar"
+											},
+											"sink": {
+												"name": "EXECUTION_START_TIME",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "EXECUTION_END_TIME",
+												"type": "String",
+												"physicalType": "varchar"
+											},
+											"sink": {
+												"name": "EXECUTION_END_TIME",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "ERROR_ERROR_CODE",
+												"type": "String",
+												"physicalType": "varchar"
+											},
+											"sink": {
+												"name": "ERROR_ERROR_CODE",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "ERROR_MESSAGES",
+												"type": "String",
+												"physicalType": "varchar"
+											},
+											"sink": {
+												"name": "ERROR_MESSAGES",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "ERROR_FAILURE_TYPE",
+												"type": "String",
+												"physicalType": "varchar"
+											},
+											"sink": {
+												"name": "ERROR_FAILURE_TYPE",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "ERROR_TARGET",
+												"type": "String",
+												"physicalType": "varchar"
+											},
+											"sink": {
+												"name": "ERROR_TARGET",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "EXECUTION_DETAILS",
+												"type": "String",
+												"physicalType": "varchar"
+											},
+											"sink": {
+												"name": "EXECUTION_DETAILS",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "STATUS_CODE",
+												"type": "String",
+												"physicalType": "varchar"
+											},
+											"sink": {
+												"name": "STATUS_CODE",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "EXECUTION_STATUS",
+												"type": "String",
+												"physicalType": "varchar"
+											},
+											"sink": {
+												"name": "EXECUTION_STATUS",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "DURATION",
+												"type": "String",
+												"physicalType": "varchar"
+											},
+											"sink": {
+												"name": "DURATION",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "RECOVERY_STATUS",
+												"type": "String",
+												"physicalType": "varchar"
+											},
+											"sink": {
+												"name": "RECOVERY_STATUS",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										}
+									],
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "Template_Logs_Ingestion_To_File",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "Hillebrand_Logs",
+									"type": "DatasetReference"
+								}
+							]
+						},
+						{
+							"name": "Wait_15_seconds",
+							"type": "Wait",
+							"dependsOn": [
+								{
+									"activity": "Fail_Message_Reexecute_Get_Call",
+									"dependencyConditions": [
+										"Completed"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"waitTimeInSeconds": 15
+							}
+						},
+						{
+							"name": "Fail_Message_Get_Call",
+							"type": "SetVariable",
+							"dependsOn": [
+								{
+									"activity": "Get_Hillebrand_Shipments_API_Data",
+									"dependencyConditions": [
+										"Failed"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "Failure",
+								"value": {
+									"value": "@string(concat('TIMESTAMP=',variables('UTC')\n,'|','PIPELINE_NAME=',activity('Get_Hillebrand_Shipments_API_Data').PipelineName\n,'|','PIPELINE_RUN_ID=',activity('Get_Hillebrand_Shipments_API_Data').PipelineRunId\n,'|','JOB_ID=',activity('Get_Hillebrand_Shipments_API_Data').JobId\n,'|','ACTIVITY_RUN_ID=',activity('Get_Hillebrand_Shipments_API_Data').ActivityRunId\n,'|','EXECUTION_START_TIME=',activity('Get_Hillebrand_Shipments_API_Data').ExecutionStartTime\n,'|','EXECUTION_END_TIME=',activity('Get_Hillebrand_Shipments_API_Data').ExecutionEndTime\n,'|','ERROR_ERROR_CODE=',activity('Get_Hillebrand_Shipments_API_Data').Error.errorCode\n,'|','ERROR_MESSAGE=',activity('Get_Hillebrand_Shipments_API_Data').Error.message\n,'|','ERROR_FAILURE_TYPE=',activity('Get_Hillebrand_Shipments_API_Data').Error.failureType\n,'|','ERROR_TARGET=',activity('Get_Hillebrand_Shipments_API_Data').Error.target\n,'|','EXECUTION_DETAILS=',activity('Get_Hillebrand_Shipments_API_Data').ExecutionDetails\n,'|','STATUS_CODE=',activity('Get_Hillebrand_Shipments_API_Data').StatusCode\n,'|','EXECUTION_STATUS=',activity('Get_Hillebrand_Shipments_API_Data').ExecutionStatus\n,'|','DURATION=',activity('Get_Hillebrand_Shipments_API_Data').Duration\n,'|','RECOVERY_STATUS=',activity('Get_Hillebrand_Shipments_API_Data').RecoveryStatus\n))",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Copy_Logs_From_Variable_Fail_Message",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "Fail_Message_Get_Call",
+									"dependencyConditions": [
+										"Completed"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "DelimitedTextSource",
+									"additionalColumns": [
+										{
+											"name": "FAILCALLVALUE",
+											"value": {
+												"value": "@variables('Failure')",
+												"type": "Expression"
+											}
+										}
+									],
+									"storeSettings": {
+										"type": "AzureBlobFSReadSettings",
+										"recursive": true,
+										"enablePartitionDiscovery": false
+									},
+									"formatSettings": {
+										"type": "DelimitedTextReadSettings"
+									}
+								},
+								"sink": {
+									"type": "AzureSqlSink",
+									"preCopyScript": "TRUNCATE TABLE STG.HILLEBRAND_STRING_LOG",
+									"writeBehavior": "insert",
+									"sqlWriterUseTableLock": false,
+									"disableMetricsCollection": false
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"mappings": [
+										{
+											"source": {
+												"name": "FAILCALLVALUE",
+												"type": "String"
+											},
+											"sink": {
+												"name": "FAIL_RESULT",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										}
+									],
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "Template_Logs_Ingestion",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "Template_Logs_Ingestion_To_File",
+									"type": "DatasetReference"
+								}
+							]
+						},
+						{
+							"name": "Copy_Logs_To_Sql_Logs",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "Copy_Logs_From_Variable_Fail_Message",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderQuery": "SELECT\nMAX(TIME_STAMP) AS TIME_STAMP,\nMAX(PIPELINE_NAME) AS PIPELINE_NAME,\nMAX(PIPELINE_RUN_ID) AS PIPELINE_RUN_ID,\nMAX(JOB_ID) AS JOB_ID,\nMAX(ACTIVITY_RUN_ID) AS ACTIVITY_RUN_ID,\nMAX(EXECUTION_START_TIME) AS EXECUTION_START_TIME,\nMAX(EXECUTION_END_TIME) AS EXECUTION_END_TIME,\nMAX(ERROR_ERROR_CODE) AS ERROR_ERROR_CODE,\nMAX(ERROR_MESSAGES) AS ERROR_MESSAGES,\nMAX(ERROR_FAILURE_TYPE) AS ERROR_FAILURE_TYPE,\nMAX(ERROR_TARGET) AS ERROR_TARGET,\nMAX(EXECUTION_DETAILS) AS EXECUTION_DETAILS,\nMAX(STATUS_CODE) AS STATUS_CODE,\nMAX(EXECUTION_STATUS) AS EXECUTION_STATUS,\nMAX(DURATION) AS DURATION,\nMAX(RECOVERY_STATUS) AS RECOVERY_STATUS\nFROM(\nSELECT \nCASE WHEN SUBSTRING(VALUE,0,11) = 'TIMESTAMP=' THEN SUBSTRING(VALUE,11,LEN(VALUE)) END AS TIME_STAMP,\nCASE WHEN SUBSTRING(VALUE,0,15) = 'PIPELINE_NAME=' THEN SUBSTRING(VALUE,15,LEN(VALUE)) END AS PIPELINE_NAME,\nCASE WHEN SUBSTRING(VALUE,0,17) = 'PIPELINE_RUN_ID=' THEN SUBSTRING(VALUE,17,LEN(VALUE)) END AS PIPELINE_RUN_ID,\nCASE WHEN SUBSTRING(VALUE,0,8) = 'JOB_ID=' THEN SUBSTRING(VALUE,8,LEN(VALUE)) END AS JOB_ID,\nCASE WHEN SUBSTRING(VALUE,0,17) = 'ACTIVITY_RUN_ID=' THEN SUBSTRING(VALUE,17,LEN(VALUE)) END AS ACTIVITY_RUN_ID,\nCASE WHEN SUBSTRING(VALUE,0,22) = 'EXECUTION_START_TIME=' THEN SUBSTRING(VALUE,22,LEN(VALUE)) END AS EXECUTION_START_TIME,\nCASE WHEN SUBSTRING(VALUE,0,20) = 'EXECUTION_END_TIME=' THEN SUBSTRING(VALUE,20,LEN(VALUE)) END AS EXECUTION_END_TIME,\nCASE WHEN SUBSTRING(VALUE,0,18) = 'ERROR_ERROR_CODE=' THEN SUBSTRING(VALUE,18,LEN(VALUE)) END AS ERROR_ERROR_CODE,\nCASE WHEN SUBSTRING(VALUE,0,15) = 'ERROR_MESSAGE=' THEN SUBSTRING(VALUE,15,LEN(VALUE)) END AS ERROR_MESSAGES,\nCASE WHEN SUBSTRING(VALUE,0,20) = 'ERROR_FAILURE_TYPE=' THEN SUBSTRING(VALUE,20,LEN(VALUE)) END AS ERROR_FAILURE_TYPE,\nCASE WHEN SUBSTRING(VALUE,0,14) = 'ERROR_TARGET=' THEN SUBSTRING(VALUE,14,LEN(VALUE)) END AS ERROR_TARGET,\nCASE WHEN SUBSTRING(VALUE,0,19) = 'EXECUTION_DETAILS=' THEN SUBSTRING(VALUE,19,LEN(VALUE)) END AS EXECUTION_DETAILS,\nCASE WHEN SUBSTRING(VALUE,0,13) = 'STATUS_CODE=' THEN SUBSTRING(VALUE,13,LEN(VALUE)) END AS STATUS_CODE,\nCASE WHEN SUBSTRING(VALUE,0,18) = 'EXECUTION_STATUS=' THEN SUBSTRING(VALUE,18,LEN(VALUE)) END AS EXECUTION_STATUS,\nCASE WHEN SUBSTRING(VALUE,0,10) = 'DURATION=' THEN SUBSTRING(VALUE,10,LEN(VALUE)) END AS DURATION,\nCASE WHEN SUBSTRING(VALUE,0,17) = 'RECOVERY_STATUS=' THEN SUBSTRING(VALUE,17,LEN(VALUE)) END AS RECOVERY_STATUS\nFROM [STG].[HILLEBRAND_STRING_LOG] AS LOGS CROSS APPLY STRING_SPLIT(FAIL_RESULT,'|') AS SPLIT) AS SUBQUERY",
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"sink": {
+									"type": "AzureSqlSink",
+									"writeBehavior": "insert",
+									"sqlWriterUseTableLock": false
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"mappings": [
+										{
+											"source": {
+												"name": "TIME_STAMP",
+												"type": "String",
+												"physicalType": "varchar"
+											},
+											"sink": {
+												"name": "TIME_STAMP",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "PIPELINE_NAME",
+												"type": "String",
+												"physicalType": "varchar"
+											},
+											"sink": {
+												"name": "PIPELINE_NAME",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "PIPELINE_RUN_ID",
+												"type": "String",
+												"physicalType": "varchar"
+											},
+											"sink": {
+												"name": "PIPELINE_RUN_ID",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "JOB_ID",
+												"type": "String",
+												"physicalType": "varchar"
+											},
+											"sink": {
+												"name": "JOB_ID",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "ACTIVITY_RUN_ID",
+												"type": "String",
+												"physicalType": "varchar"
+											},
+											"sink": {
+												"name": "ACTIVITY_RUN_ID",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "EXECUTION_START_TIME",
+												"type": "String",
+												"physicalType": "varchar"
+											},
+											"sink": {
+												"name": "EXECUTION_START_TIME",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "EXECUTION_END_TIME",
+												"type": "String",
+												"physicalType": "varchar"
+											},
+											"sink": {
+												"name": "EXECUTION_END_TIME",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "ERROR_ERROR_CODE",
+												"type": "String",
+												"physicalType": "varchar"
+											},
+											"sink": {
+												"name": "ERROR_ERROR_CODE",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "ERROR_MESSAGES",
+												"type": "String",
+												"physicalType": "varchar"
+											},
+											"sink": {
+												"name": "ERROR_MESSAGES",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "ERROR_FAILURE_TYPE",
+												"type": "String",
+												"physicalType": "varchar"
+											},
+											"sink": {
+												"name": "ERROR_FAILURE_TYPE",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "ERROR_TARGET",
+												"type": "String",
+												"physicalType": "varchar"
+											},
+											"sink": {
+												"name": "ERROR_TARGET",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "EXECUTION_DETAILS",
+												"type": "String",
+												"physicalType": "varchar"
+											},
+											"sink": {
+												"name": "EXECUTION_DETAILS",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "STATUS_CODE",
+												"type": "String",
+												"physicalType": "varchar"
+											},
+											"sink": {
+												"name": "STATUS_CODE",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "EXECUTION_STATUS",
+												"type": "String",
+												"physicalType": "varchar"
+											},
+											"sink": {
+												"name": "EXECUTION_STATUS",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "DURATION",
+												"type": "String",
+												"physicalType": "varchar"
+											},
+											"sink": {
+												"name": "DURATION",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										},
+										{
+											"source": {
+												"name": "RECOVERY_STATUS",
+												"type": "String",
+												"physicalType": "varchar"
+											},
+											"sink": {
+												"name": "RECOVERY_STATUS",
+												"type": "String",
+												"physicalType": "varchar"
+											}
+										}
+									],
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "Template_Logs_Ingestion_To_File",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "Hillebrand_Logs",
+									"type": "DatasetReference"
+								}
+							]
+						}
+					]
+				}
+			},
+			{
+				"name": "Consolidating_Jsons",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Getting_All_Shipments_Jsons",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"wildcardFolderPath": "EDW/BILLINGS/HILLEBRAND/API_PROCESS/HILLEBRANDSHIPMENTSSOURCE",
+							"wildcardFileName": "*.json",
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"sink": {
+						"type": "JsonSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings",
+							"copyBehavior": "MergeFiles"
+						},
+						"formatSettings": {
+							"type": "JsonWriteSettings",
+							"filePattern": "setOfObjects"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "Hillebrand_Source_Shipments_Files",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "Hillebrand_Json_Shipments_Ingest",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Deleting_Jsons_Sourcing_File",
+				"type": "Delete",
+				"dependsOn": [
+					{
+						"activity": "Consolidating_Jsons",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "Hillebrand_Json_Shippments_Files",
+						"type": "DatasetReference",
+						"parameters": {
+							"FileName": "*json"
+						}
+					},
+					"enableLogging": false,
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
+						"wildcardFileName": "*json",
+						"enablePartitionDiscovery": false
+					}
+				}
+			},
+			{
+				"name": "Sink_Hillebrand_Data_Lake",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Sink_Hillebrand_SQL",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"sink": {
+						"type": "JsonSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "JsonWriteSettings"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "$['id']"
+								},
+								"sink": {
+									"name": "ID",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"path": "$['modifiedTimeStamp']"
+								},
+								"sink": {
+									"name": "MODIFIED_TIME_STAMP",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"path": "$['status']"
+								},
+								"sink": {
+									"name": "STATUS",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['shipFromPartyName']"
+								},
+								"sink": {
+									"name": "SHIP_FROM_PARTY_NAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['shipFromLocation']['cityName']"
+								},
+								"sink": {
+									"name": "SHIP_FROM_LOCATION_CITY_NAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['shipFromLocation']['cityCode']"
+								},
+								"sink": {
+									"name": "SHIP_FROM_LOCATION_CITY_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['shipFromLocation']['countryName']"
+								},
+								"sink": {
+									"name": "SHIP_FROM_LOCATION_COUNTRY_NAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['shipFromLocation']['countryCode']"
+								},
+								"sink": {
+									"name": "SHIP_FROM_LOCATION_COUNTRY_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['shipFromLocation']['countrySubEntityName']"
+								},
+								"sink": {
+									"name": "SHIP_FROM_LOCATION_COUNTRY_SUB_ENTITY_NAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['shipFromLocation']['countrySubEntityCode']"
+								},
+								"sink": {
+									"name": "SHIP_FROM_LOCATION_COUNTRY_SUB_ENTITY_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['shipFromLocationStatus']"
+								},
+								"sink": {
+									"name": "SHIP_FROM_LOCATION_STATUS",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['estimatedDepartureDate']"
+								},
+								"sink": {
+									"name": "ESTIMATED_DEPARTURE_DATE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['actualDepartureDate']"
+								},
+								"sink": {
+									"name": "ACTUAL_DEPARTURE_DATE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['departureDate']"
+								},
+								"sink": {
+									"name": "DEPARTURE_DATE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['shipToPartyName']"
+								},
+								"sink": {
+									"name": "SHIP_TO_PARTY_NAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['shipToLocation']['cityName']"
+								},
+								"sink": {
+									"name": "SHIP_TO_LOCATION_CITY_NAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['shipToLocation']['cityCode']"
+								},
+								"sink": {
+									"name": "SHIP_TO_LOCATION_CITY_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['shipToLocation']['countryName']"
+								},
+								"sink": {
+									"name": "SHIP_TO_LOCATION_COUNTRY_NAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['shipToLocation']['countryCode']"
+								},
+								"sink": {
+									"name": "SHIP_TO_LOCATION_COUNTRY_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['shipToLocation']['countrySubEntityName']"
+								},
+								"sink": {
+									"name": "SHIP_TO_LOCATION_COUNTRY_SUB_ENTITY_NAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['shipToLocation']['countrySubEntityCode']"
+								},
+								"sink": {
+									"name": "SHIP_TO_LOCATION_COUNTRY_SUB_ENTITY_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['shipToLocationStatus']"
+								},
+								"sink": {
+									"name": "SHIP_TO_LOCATION_STATUS",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['estimatedArrivalDate']"
+								},
+								"sink": {
+									"name": "ESTIMATED_ARRIVAL_DATE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['actualArrivalDate']"
+								},
+								"sink": {
+									"name": "ACTUAL_ARRIVAL_DATE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['arrivalDate']"
+								},
+								"sink": {
+									"name": "ARRIVAL_DATE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['soldBy']"
+								},
+								"sink": {
+									"name": "SOLD_BY",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['soldTo']"
+								},
+								"sink": {
+									"name": "SOLD_TO",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['references'][0]['reference']"
+								},
+								"sink": {
+									"name": "REFERENCE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['references'][0]['role']"
+								},
+								"sink": {
+									"name": "ROLE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['otherReferences'][0]"
+								},
+								"sink": {
+									"name": "OTHER_REFERENCES",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['equipment']['number']"
+								},
+								"sink": {
+									"name": "EQUIPMENT_NUMBER",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['equipment']['classification']"
+								},
+								"sink": {
+									"name": "EQUIPMENT_CLASSIFICATION",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['equipment']['type']"
+								},
+								"sink": {
+									"name": "EQUIPMENT_TYPE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['equipment']['grossWeight']"
+								},
+								"sink": {
+									"name": "EQUIPMENT_GROSS_WEIGHT",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"path": "$['equipment']['grossWeightUnit']"
+								},
+								"sink": {
+									"name": "EQUIPMENT_GROSS_WEIGHT_UNIT",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['equipment']['transportReferences'][0]"
+								},
+								"sink": {
+									"name": "EQUIPMENT_TRANSPORT_REFERENCES",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['equipment']['sealNumbers'][0]"
+								},
+								"sink": {
+									"name": "EQUIPMENT_SEAL_NUMBERS",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['progress']"
+								},
+								"sink": {
+									"name": "PROGRESS",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"path": "$['totalPackages']"
+								},
+								"sink": {
+									"name": "TOTAL_PACKAGES",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"path": "$['palletisation']"
+								},
+								"sink": {
+									"name": "PALLETISATION",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['grossWeight']"
+								},
+								"sink": {
+									"name": "GROSS_WEIGHT",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"path": "$['grossWeightUnit']"
+								},
+								"sink": {
+									"name": "GROSS_WEIGHT_UNIT",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['lastEvent']['_links']['href']"
+								},
+								"sink": {
+									"name": "LASTEVENT_LINKS_HREF",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['lastEvent']['_links']['rel']"
+								},
+								"sink": {
+									"name": "LASTEVENT_LINKS_REL",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['lastEvent']['id']"
+								},
+								"sink": {
+									"name": "LASTEVENT_LINKS_ID",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"path": "$['lastEvent']['code']"
+								},
+								"sink": {
+									"name": "LASTEVENT_LINKS_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['lastEvent']['category']"
+								},
+								"sink": {
+									"name": "LASTEVENT_LINKS_CATEGORY",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['lastEvent']['date']"
+								},
+								"sink": {
+									"name": "LASTEVENT_LINKS_DATE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['lastEvent']['lastUpdate']"
+								},
+								"sink": {
+									"name": "LASTEVENT_LINKS_LASTUPDATE",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"path": "$['lastEvent']['text']"
+								},
+								"sink": {
+									"name": "LASTEVENT_LINKS_TEXT",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['lastEvent']['template']"
+								},
+								"sink": {
+									"name": "LASTEVENT_LINKS_TEMPLATE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['lastEvent']['templateVariables'][0]['name']"
+								},
+								"sink": {
+									"name": "LASTEVENT_NAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['lastEvent']['templateVariables'][0]['value']"
+								},
+								"sink": {
+									"name": "LASTEVENT_VALUE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['lastEvent']['templateVariables'][0]['dataType']"
+								},
+								"sink": {
+									"name": "LASTEVENT_DATATYPE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['lastEvent']['templateVariables'][0]['resource']['_links']['href']"
+								},
+								"sink": {
+									"name": "LASTEVENT_HREF",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['lastEvent']['templateVariables'][0]['resource']['_links']['rel']"
+								},
+								"sink": {
+									"name": "LASTEVENT_REL",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['lastEvent']['templateVariables'][0]['resource']['id']"
+								},
+								"sink": {
+									"name": "LASTEVENT_ID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['lastEvent']['templateVariables'][0]['resource']['type']"
+								},
+								"sink": {
+									"name": "LASTEVENT_TYPE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['lastEvent']['templateVariables'][0]['primary']"
+								},
+								"sink": {
+									"name": "LASTEVENT_PRIMARY",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['hsCodes'][0]"
+								},
+								"sink": {
+									"name": "HS_CODES",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['onTimeStatus']"
+								},
+								"sink": {
+									"name": "ON_TIME_STATUS",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['emission']['calculation']"
+								},
+								"sink": {
+									"name": "EMISSION_CALCULATION",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['emission']['unit']"
+								},
+								"sink": {
+									"name": "EMISSION_UNIT",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['emission']['type']"
+								},
+								"sink": {
+									"name": "EMISSION_TYPE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['emission']['value']"
+								},
+								"sink": {
+									"name": "EMISSION_VALUE",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"path": "$['incoterm']['incoterm']"
+								},
+								"sink": {
+									"name": "INCOTERM_INCOTERM",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['incoterm']['locationCode']"
+								},
+								"sink": {
+									"name": "INCOTERM_LOCATION_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['incoterm']['locationName']"
+								},
+								"sink": {
+									"name": "INCOTERM_LOCATION_NAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['commodity']"
+								},
+								"sink": {
+									"name": "COMMODITY",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['readyDate']"
+								},
+								"sink": {
+									"name": "READY_DATE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['insured']"
+								},
+								"sink": {
+									"name": "INSURED",
+									"type": "Boolean"
+								}
+							},
+							{
+								"source": {
+									"path": "$['mainModality']"
+								},
+								"sink": {
+									"name": "MAIN_MODALITY",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['booking']['number']"
+								},
+								"sink": {
+									"name": "BOOKING_NUMBER",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['booking']['dateTime']"
+								},
+								"sink": {
+									"name": "BOOKING_DATE_TIME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['booking']['carrier']['name']"
+								},
+								"sink": {
+									"name": "CARRIER_NAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['booking']['carrier']['scac']"
+								},
+								"sink": {
+									"name": "CARRIER_SCAC",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['booking']['billOfLadingNumbers'][0]['number']"
+								},
+								"sink": {
+									"name": "BOOKING_BLNUMBER_NUMBER",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['booking']['billOfLadingNumbers'][0]['type']"
+								},
+								"sink": {
+									"name": "BOOKING_BLNUMBER_TYPE",
+									"type": "String"
+								}
+							}
+						],
+						"collectionReference": ""
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "Hillebrand_Json_Shipments_Ingest",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "Sink_DataLake_dev_EDW_HILLEBRAND",
+						"type": "DatasetReference",
+						"parameters": {
+							"FileName": "STG_SHIPMENTS_IDS"
+						}
+					}
+				]
+			},
+			{
+				"name": "Sink_Hillebrand_SQL",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Deleting_Jsons_Sourcing_File",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"preCopyScript": "TRUNCATE TABLE STG.HILLEBRAND_SHIPMENTS_IDS",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false,
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "$['id']"
+								},
+								"sink": {
+									"name": "ID",
+									"type": "Int32"
+								}
+							}
+						],
+						"collectionReference": ""
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "Hillebrand_Json_Shipments_Ingest",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "Hillebrand_IDs_Shipments",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Rest_API_Authentication",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "LookUpShipmentsIDs",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": "false",
+					"secureInput": "false"
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://login.hillebrand.com/oauth2/aus2lt1zi5HuDEayF0i7/v1/token",
+					"method": "POST",
+					"headers": {
+						"Content-Type": "application/x-www-form-urlencoded",
+						"Accept": "application/json"
+					},
+					"body": {
+						"value": "grant_type=password&username=JFH_DART_API%40bacardi.com&password=uA9jmFPMuGpxXAdJVscBZCa%25&client_id=tTPWp29wwoPreFvieI5sMMJZnVmQ2mTC&client_secret=7OGIhaSiCH14g0oS&scope=offline_access",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set_API_Token",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Rest_API_Authentication",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "APIToken",
+					"value": {
+						"value": "@activity('Rest_API_Authentication').output.access_token",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"variables": {
+			"APIToken": {
+				"type": "String"
+			},
+			"UTC": {
+				"type": "String",
+				"defaultValue": "@{utcnow()}"
+			},
+			"Failure": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "HILLEBRAND"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-08-26T16:38:46Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

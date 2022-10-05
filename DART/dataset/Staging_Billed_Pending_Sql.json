@@ -1,0 +1,132 @@
+{
+	"name": "Staging_Billed_Pending_Sql",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "STAGING"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "NINEL_CASE_QTY",
+				"type": "decimal",
+				"precision": 36,
+				"scale": 11
+			},
+			{
+				"name": "CASE_QTY",
+				"type": "decimal",
+				"precision": 16,
+				"scale": 6
+			},
+			{
+				"name": "SAP_CUSTOMER_CODE",
+				"type": "varchar"
+			},
+			{
+				"name": "INVOICE_DATE",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "DISTRIBUTOR_CODE",
+				"type": "varchar"
+			},
+			{
+				"name": "ITEM_CODE",
+				"type": "varchar"
+			},
+			{
+				"name": "NET_UNIT_PRICE",
+				"type": "decimal",
+				"precision": 9,
+				"scale": 2
+			},
+			{
+				"name": "DISTRIBUTOR_MATERIAL_NUMBER",
+				"type": "varchar"
+			},
+			{
+				"name": "TRANSACTION_TYPE",
+				"type": "varchar"
+			},
+			{
+				"name": "DEPLETION_PERIOD",
+				"type": "datetime2",
+				"scale": 3
+			},
+			{
+				"name": "ACC_KEY",
+				"type": "varchar"
+			},
+			{
+				"name": "CONCAT_ACCOUNT_AND_PLANNING_SIZE",
+				"type": "varchar"
+			},
+			{
+				"name": "SLSPRSN_KEY",
+				"type": "varchar"
+			},
+			{
+				"name": "TOTAL_CASE_VOLUME",
+				"type": "decimal",
+				"precision": 17,
+				"scale": 3
+			},
+			{
+				"name": "FIXED_FRONTLINE_UNIT_PRICE4",
+				"type": "decimal",
+				"precision": 24,
+				"scale": 4
+			},
+			{
+				"name": "FIXED_ADDITIONAL_CHARGE_AMT",
+				"type": "decimal",
+				"precision": 18,
+				"scale": 4
+			},
+			{
+				"name": "FIXED_NET_UNIT_PRICE4",
+				"type": "decimal",
+				"precision": 22,
+				"scale": 4
+			},
+			{
+				"name": "FIXED_SPLIT_CASE_UNIT_CHARGE",
+				"type": "decimal",
+				"precision": 15,
+				"scale": 2
+			},
+			{
+				"name": "FREE_GOOD_FLAG",
+				"type": "varchar"
+			},
+			{
+				"name": "VIP_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DEAL_KEY",
+				"type": "varchar"
+			},
+			{
+				"name": "CREATED_DATE",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "CONCAT_ACCOUNT_AND_BRAND_SIZE",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "STG",
+			"table": "BILLINGS_BILLED_PENDING"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

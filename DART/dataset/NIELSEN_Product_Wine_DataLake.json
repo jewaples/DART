@@ -1,0 +1,111 @@
+{
+	"name": "NIELSEN_Product_Wine_DataLake",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_Data_Foundation_DataLake",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"path": {
+				"type": "string"
+			},
+			"filename": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "NIELSEN"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@dataset().filename",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@dataset().path",
+					"type": "Expression"
+				}
+			},
+			"columnDelimiter": "|",
+			"compressionCodec": "gzip",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "PRODUCT KEY",
+				"type": "String"
+			},
+			{
+				"name": "BA SEGMENT",
+				"type": "String"
+			},
+			{
+				"name": "UPC",
+				"type": "String"
+			},
+			{
+				"name": "ALCOHOL BY VOLUME",
+				"type": "String"
+			},
+			{
+				"name": "BA BRAND EXTENSION",
+				"type": "String"
+			},
+			{
+				"name": "BA BRAND FAMILY",
+				"type": "String"
+			},
+			{
+				"name": "BA PACK SIZE",
+				"type": "String"
+			},
+			{
+				"name": "BA MANUFACTURER",
+				"type": "String"
+			},
+			{
+				"name": "BA SIZE",
+				"type": "String"
+			},
+			{
+				"name": "BA WINE SPARKLING BR PRICE",
+				"type": "String"
+			},
+			{
+				"name": "ITEM",
+				"type": "String"
+			},
+			{
+				"name": "BA WINE TYPE HIGH",
+				"type": "String"
+			},
+			{
+				"name": "BA WINE UPC PRICE",
+				"type": "String"
+			},
+			{
+				"name": "BA COUNTRY",
+				"type": "String"
+			},
+			{
+				"name": "BA STATE",
+				"type": "String"
+			},
+			{
+				"name": "BA CONTAINER",
+				"type": "String"
+			},
+			{
+				"name": "BA WINE TYPE GROUP",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

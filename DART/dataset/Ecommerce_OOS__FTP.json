@@ -1,0 +1,27 @@
+{
+	"name": "Ecommerce_OOS__FTP",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_SGWS_FTP",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "ECOMMERCE"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "SftpLocation",
+				"fileName": "Ecomm_OOS.csv",
+				"folderPath": "/Drizly OOS"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

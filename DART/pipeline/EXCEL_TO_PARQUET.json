@@ -1,0 +1,1478 @@
+{
+	"name": "EXCEL_TO_PARQUET",
+	"properties": {
+		"activities": [
+			{
+				"name": "GET_EXCEL_FILES",
+				"type": "GetMetadata",
+				"dependsOn": [
+					{
+						"activity": "CLEAR_DELIVERED_CURRENT_FOLDER",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "GET_EXCEL",
+						"type": "DatasetReference"
+					},
+					"fieldList": [
+						"childItems"
+					],
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
+						"enablePartitionDiscovery": false
+					}
+				}
+			},
+			{
+				"name": "GET_EACH_EXCEL_FILE",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "GET_EXCEL_FILES",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('GET_EXCEL_FILES').output.childItems",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "IF_DELIVERED",
+							"type": "IfCondition",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"expression": {
+									"value": "@and(contains(string(item()),'Delivered'),startswith(item().name,substring(activity('GET_EXCEL_FILES').output.childItems[sub(length(activity('GET_EXCEL_FILES').output.childItems),1)].name,0,10)))",
+									"type": "Expression"
+								},
+								"ifTrueActivities": [
+									{
+										"name": "NAME_OF_THE_DELIVERED_FILE",
+										"type": "SetVariable",
+										"dependsOn": [],
+										"userProperties": [],
+										"typeProperties": {
+											"variableName": "FilesStringDelivered",
+											"value": {
+												"value": "@{item()}",
+												"type": "Expression"
+											}
+										}
+									},
+									{
+										"name": "TRANSFORM_DELIVERED_TO_PARQUET",
+										"type": "Copy",
+										"dependsOn": [
+											{
+												"activity": "NAME_OF_THE_DELIVERED_FILE",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"source": {
+												"type": "ExcelSource",
+												"additionalColumns": [
+													{
+														"name": "FILE_DATE",
+														"value": {
+															"value": "@substring(replace(replace(replace(replace(variables('FilesStringDelivered'),'[',''),']',''),'{\"name\":\"',''),'\",\"type\":\"File\"}',''),0,10)",
+															"type": "Expression"
+														}
+													}
+												],
+												"storeSettings": {
+													"type": "AzureBlobFSReadSettings",
+													"recursive": true,
+													"wildcardFolderPath": "EDW/BILLINGS/RYDER/EXCEL_LANDING_ZONE",
+													"wildcardFileName": {
+														"value": "@replace(replace(replace(replace(variables('FilesStringDelivered'),'[',''),']',''),'{\"name\":\"',''),'\",\"type\":\"File\"}','')",
+														"type": "Expression"
+													},
+													"enablePartitionDiscovery": false
+												}
+											},
+											"sink": {
+												"type": "ParquetSink",
+												"storeSettings": {
+													"type": "AzureBlobFSWriteSettings"
+												},
+												"formatSettings": {
+													"type": "ParquetWriteSettings"
+												}
+											},
+											"enableStaging": false,
+											"translator": {
+												"type": "TabularTranslator",
+												"mappings": [
+													{
+														"source": {
+															"name": "customer_nbr",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "CUSTOMER_NBR",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "load_nbr",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "LOAD_NBR",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "carrier_nbr",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "CARRIER_NBR",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "actual_ship_dt",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "ACTUAL_SHIP_DT",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "actual_delivery_dt",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "ACTUAL_DELIVERY_DT",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "origin_name",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "ORIGIN_NAME",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "origin_city",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "ORIGIN_CITY",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "origin_state",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "ORIGIN_STATE",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "origin_postal_cd",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "ORIGIN_POSTAL_CD",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "destination_name",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "DESTINATION_NAME",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "destination_city",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "DESTINATION_CITY",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "destination_state",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "DESTINATION_STATE",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "destination_postal_cd",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "DESTINATION_POSTAL_CD",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "executed_mode",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "EXECUTED_MODE",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "equipment",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "EQUIPMENT",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "BAC Sales Order #",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "BAC_SALES_ORDER",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "BAC Shipment #",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "BAC_SHIPMENT",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "Customer PO #",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "CUSTOMER_PO",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "load_status_desc",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "LOAD_STATUS_DESC",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "FILE_DATE",
+															"type": "String"
+														},
+														"sink": {
+															"name": "FILE_DATE",
+															"type": "String",
+															"physicalType": "UTF8"
+														}
+													}
+												],
+												"typeConversion": true,
+												"typeConversionSettings": {
+													"allowDataTruncation": true,
+													"treatBooleanAsNumber": false
+												}
+											}
+										},
+										"inputs": [
+											{
+												"referenceName": "GET_EXCEL",
+												"type": "DatasetReference"
+											}
+										],
+										"outputs": [
+											{
+												"referenceName": "EXCEL_TO_PARQUET",
+												"type": "DatasetReference",
+												"parameters": {
+													"File": {
+														"value": "@replace(replace(replace(replace(replace(replace(replace(variables('FilesStringDelivered'),'[',''),']',''),'{\"name\":\"',''),'\",\"type\":\"File\"}',''),'.xlsx','.parquet'),':','-'),' ','_')",
+														"type": "Expression"
+													},
+													"FolderDate": {
+														"value": "@replace(substring(replace(replace(replace(replace(variables('FilesStringDelivered'),'[',''),']',''),'{\"name\":\"',''),'\",\"type\":\"File\"}',''),0,10),'-','')",
+														"type": "Expression"
+													},
+													"FolderType": "DELIVERED"
+												}
+											}
+										]
+									},
+									{
+										"name": "TRANSFORM_DELIVERED_TO_PARQUET_copy1",
+										"type": "Copy",
+										"dependsOn": [
+											{
+												"activity": "TRANSFORM_DELIVERED_TO_PARQUET",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"source": {
+												"type": "ExcelSource",
+												"additionalColumns": [
+													{
+														"name": "FILE_DATE",
+														"value": {
+															"value": "@concat(substring(replace(replace(replace(replace(variables('FilesStringDelivered'),'[',''),']',''),'{\"name\":\"',''),'\",\"type\":\"File\"}',''),0,10),'_CURRENT')",
+															"type": "Expression"
+														}
+													}
+												],
+												"storeSettings": {
+													"type": "AzureBlobFSReadSettings",
+													"recursive": true,
+													"wildcardFolderPath": "EDW/BILLINGS/RYDER/EXCEL_LANDING_ZONE",
+													"wildcardFileName": {
+														"value": "@replace(replace(replace(replace(variables('FilesStringDelivered'),'[',''),']',''),'{\"name\":\"',''),'\",\"type\":\"File\"}','')",
+														"type": "Expression"
+													},
+													"enablePartitionDiscovery": false
+												}
+											},
+											"sink": {
+												"type": "ParquetSink",
+												"storeSettings": {
+													"type": "AzureBlobFSWriteSettings"
+												},
+												"formatSettings": {
+													"type": "ParquetWriteSettings"
+												}
+											},
+											"enableStaging": false,
+											"translator": {
+												"type": "TabularTranslator",
+												"mappings": [
+													{
+														"source": {
+															"name": "customer_nbr",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "CUSTOMER_NBR",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "load_nbr",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "LOAD_NBR",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "carrier_nbr",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "CARRIER_NBR",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "actual_ship_dt",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "ACTUAL_SHIP_DT",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "actual_delivery_dt",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "ACTUAL_DELIVERY_DT",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "origin_name",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "ORIGIN_NAME",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "origin_city",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "ORIGIN_CITY",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "origin_state",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "ORIGIN_STATE",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "origin_postal_cd",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "ORIGIN_POSTAL_CD",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "destination_name",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "DESTINATION_NAME",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "destination_city",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "DESTINATION_CITY",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "destination_state",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "DESTINATION_STATE",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "destination_postal_cd",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "DESTINATION_POSTAL_CD",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "executed_mode",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "EXECUTED_MODE",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "equipment",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "EQUIPMENT",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "BAC Sales Order #",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "BAC_SALES_ORDER",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "BAC Shipment #",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "BAC_SHIPMENT",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "Customer PO #",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "CUSTOMER_PO",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "load_status_desc",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "LOAD_STATUS_DESC",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "FILE_DATE",
+															"type": "String"
+														},
+														"sink": {
+															"name": "FILE_DATE",
+															"type": "String",
+															"physicalType": "UTF8"
+														}
+													}
+												],
+												"typeConversion": true,
+												"typeConversionSettings": {
+													"allowDataTruncation": true,
+													"treatBooleanAsNumber": false
+												}
+											}
+										},
+										"inputs": [
+											{
+												"referenceName": "GET_EXCEL",
+												"type": "DatasetReference"
+											}
+										],
+										"outputs": [
+											{
+												"referenceName": "EXCEL_TO_PARQUET",
+												"type": "DatasetReference",
+												"parameters": {
+													"File": {
+														"value": "@replace(replace(replace(replace(replace(replace(replace(variables('FilesStringDelivered'),'[',''),']',''),'{\"name\":\"',''),'\",\"type\":\"File\"}',''),'.xlsx','.parquet'),':','-'),' ','_')",
+														"type": "Expression"
+													},
+													"FolderDate": "CURRENT",
+													"FolderType": "DELIVERED"
+												}
+											}
+										]
+									}
+								]
+							}
+						},
+						{
+							"name": "IF_ENROUTE",
+							"type": "IfCondition",
+							"dependsOn": [
+								{
+									"activity": "IF_DELIVERED",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"expression": {
+									"value": "@and(contains(string(item()),'Enroute'),startswith(item().name,substring(activity('GET_EXCEL_FILES').output.childItems[sub(length(activity('GET_EXCEL_FILES').output.childItems),1)].name,0,10)))",
+									"type": "Expression"
+								},
+								"ifTrueActivities": [
+									{
+										"name": "NAME_OF_THE_ENROUTE_FILE",
+										"type": "SetVariable",
+										"dependsOn": [],
+										"userProperties": [],
+										"typeProperties": {
+											"variableName": "FilesStringEnroute",
+											"value": {
+												"value": "@{item()}",
+												"type": "Expression"
+											}
+										}
+									},
+									{
+										"name": "TRANSFORM_ENROUTE_TO_PARQUET",
+										"type": "Copy",
+										"dependsOn": [
+											{
+												"activity": "NAME_OF_THE_ENROUTE_FILE",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"source": {
+												"type": "ExcelSource",
+												"additionalColumns": [
+													{
+														"name": "FILE_DATE",
+														"value": {
+															"value": "@substring(replace(replace(replace(replace(variables('FilesStringEnroute'),'[',''),']',''),'{\"name\":\"',''),'\",\"type\":\"File\"}',''),0,10)",
+															"type": "Expression"
+														}
+													}
+												],
+												"storeSettings": {
+													"type": "AzureBlobFSReadSettings",
+													"recursive": true,
+													"wildcardFolderPath": "EDW/BILLINGS/RYDER/EXCEL_LANDING_ZONE",
+													"wildcardFileName": {
+														"value": "@replace(replace(replace(replace(variables('FilesStringEnroute'),'[',''),']',''),'{\"name\":\"',''),'\",\"type\":\"File\"}','')",
+														"type": "Expression"
+													},
+													"enablePartitionDiscovery": false
+												}
+											},
+											"sink": {
+												"type": "ParquetSink",
+												"storeSettings": {
+													"type": "AzureBlobFSWriteSettings"
+												},
+												"formatSettings": {
+													"type": "ParquetWriteSettings"
+												}
+											},
+											"enableStaging": false,
+											"translator": {
+												"type": "TabularTranslator",
+												"mappings": [
+													{
+														"source": {
+															"name": "customer_nbr",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "CUSTOMER_NBR",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "load_nbr",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "LOAD_NBR",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "carrier_nbr",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "CARRIER_NBR",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "actual_ship_dt",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "ACTUAL_SHIP_DT",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "actual_delivery_dt",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "ACTUAL_DELIVERY_DT",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "Del Appointment",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "DEL_APPOINTMENT",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "origin_name",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "ORIGIN_NAME",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "origin_city",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "ORIGIN_CITY",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "origin_state",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "ORIGIN_STATE",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "origin_postal_cd",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "ORIGIN_POSTAL_CD",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "destination_name",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "DESTINATION_NAME",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "destination_city",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "DESTINATION_CITY",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "destination_state",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "DESTINATION_STATE",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "destination_postal_cd",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "DESTINATION_POSTAL_CD",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "executed_mode",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "EXECUTED_MODE",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "equipment",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "EQUIPMENT",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "BAC Sales Order #",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "BAC_SALES_ORDER",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "BAC Shipment #",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "BAC_SHIPMENT",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "Customer PO #",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "CUSTOMER_PO",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "load_status_desc",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "LOAD_STATUS_DESC",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "FILE_DATE",
+															"type": "String"
+														},
+														"sink": {
+															"name": "FILE_DATE",
+															"type": "String",
+															"physicalType": "UTF8"
+														}
+													}
+												],
+												"typeConversion": true,
+												"typeConversionSettings": {
+													"allowDataTruncation": true,
+													"treatBooleanAsNumber": false
+												}
+											}
+										},
+										"inputs": [
+											{
+												"referenceName": "GET_EXCEL",
+												"type": "DatasetReference"
+											}
+										],
+										"outputs": [
+											{
+												"referenceName": "EXCEL_TO_PARQUET",
+												"type": "DatasetReference",
+												"parameters": {
+													"File": {
+														"value": "@replace(replace(replace(replace(replace(replace(replace(variables('FilesStringEnroute'),'[',''),']',''),'{\"name\":\"',''),'\",\"type\":\"File\"}',''),'.xlsx','.parquet'),':','-'),' ','_')",
+														"type": "Expression"
+													},
+													"FolderDate": {
+														"value": "@replace(substring(replace(replace(replace(replace(variables('FilesStringEnroute'),'[',''),']',''),'{\"name\":\"',''),'\",\"type\":\"File\"}',''),0,10),'-','')",
+														"type": "Expression"
+													},
+													"FolderType": "ENROUTE"
+												}
+											}
+										]
+									},
+									{
+										"name": "TRANSFORM_ENROUTE_TO_PARQUET_CURRENT",
+										"type": "Copy",
+										"dependsOn": [
+											{
+												"activity": "TRANSFORM_ENROUTE_TO_PARQUET",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"source": {
+												"type": "ExcelSource",
+												"additionalColumns": [
+													{
+														"name": "FILE_DATE",
+														"value": {
+															"value": "@concat(substring(replace(replace(replace(replace(variables('FilesStringEnroute'),'[',''),']',''),'{\"name\":\"',''),'\",\"type\":\"File\"}',''),0,10),'_CURRENT')",
+															"type": "Expression"
+														}
+													}
+												],
+												"storeSettings": {
+													"type": "AzureBlobFSReadSettings",
+													"recursive": true,
+													"wildcardFolderPath": "EDW/BILLINGS/RYDER/EXCEL_LANDING_ZONE",
+													"wildcardFileName": {
+														"value": "@replace(replace(replace(replace(variables('FilesStringEnroute'),'[',''),']',''),'{\"name\":\"',''),'\",\"type\":\"File\"}','')",
+														"type": "Expression"
+													},
+													"enablePartitionDiscovery": false
+												}
+											},
+											"sink": {
+												"type": "ParquetSink",
+												"storeSettings": {
+													"type": "AzureBlobFSWriteSettings"
+												},
+												"formatSettings": {
+													"type": "ParquetWriteSettings"
+												}
+											},
+											"enableStaging": false,
+											"translator": {
+												"type": "TabularTranslator",
+												"mappings": [
+													{
+														"source": {
+															"name": "customer_nbr",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "CUSTOMER_NBR",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "load_nbr",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "LOAD_NBR",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "carrier_nbr",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "CARRIER_NBR",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "actual_ship_dt",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "ACTUAL_SHIP_DT",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "actual_delivery_dt",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "ACTUAL_DELIVERY_DT",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "Del Appointment",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "DEL_APPOINTMENT",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "origin_name",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "ORIGIN_NAME",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "origin_city",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "ORIGIN_CITY",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "origin_state",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "ORIGIN_STATE",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "origin_postal_cd",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "ORIGIN_POSTAL_CD",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "destination_name",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "DESTINATION_NAME",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "destination_city",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "DESTINATION_CITY",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "destination_state",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "DESTINATION_STATE",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "destination_postal_cd",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "DESTINATION_POSTAL_CD",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "executed_mode",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "EXECUTED_MODE",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "equipment",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "EQUIPMENT",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "BAC Sales Order #",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "BAC_SALES_ORDER",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "BAC Shipment #",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "BAC_SHIPMENT",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "Customer PO #",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "CUSTOMER_PO",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "load_status_desc",
+															"type": "String",
+															"physicalType": "String"
+														},
+														"sink": {
+															"name": "LOAD_STATUS_DESC",
+															"physicalType": "UTF8"
+														}
+													},
+													{
+														"source": {
+															"name": "FILE_DATE",
+															"type": "String"
+														},
+														"sink": {
+															"name": "FILE_DATE",
+															"type": "String",
+															"physicalType": "UTF8"
+														}
+													}
+												],
+												"typeConversion": true,
+												"typeConversionSettings": {
+													"allowDataTruncation": true,
+													"treatBooleanAsNumber": false
+												}
+											}
+										},
+										"inputs": [
+											{
+												"referenceName": "GET_EXCEL",
+												"type": "DatasetReference"
+											}
+										],
+										"outputs": [
+											{
+												"referenceName": "EXCEL_TO_PARQUET",
+												"type": "DatasetReference",
+												"parameters": {
+													"File": {
+														"value": "@replace(replace(replace(replace(replace(replace(replace(variables('FilesStringEnroute'),'[',''),']',''),'{\"name\":\"',''),'\",\"type\":\"File\"}',''),'.xlsx','.parquet'),':','-'),' ','_')",
+														"type": "Expression"
+													},
+													"FolderDate": "CURRENT",
+													"FolderType": "ENROUTE"
+												}
+											}
+										]
+									}
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "TO_PARQUETS_FOLDERS",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "GET_EACH_EXCEL_FILE",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Repos/lmeloni@bacardi.com/Databricks/notebooks/DART/OPS/PROCS/STG_IN_TRANSIT_RYDER"
+				},
+				"linkedServiceName": {
+					"referenceName": "bdhdbenam2_AzureDatabricks",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "CLEAR_ENROUTE_CURRENT_FOLDER",
+				"type": "Delete",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "EXCEL_TO_PARQUET",
+						"type": "DatasetReference",
+						"parameters": {
+							"File": "*parquet",
+							"FolderDate": "CURRENT",
+							"FolderType": "ENROUTE"
+						}
+					},
+					"enableLogging": false,
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
+						"wildcardFileName": "*parquet",
+						"enablePartitionDiscovery": false
+					}
+				}
+			},
+			{
+				"name": "CLEAR_DELIVERED_CURRENT_FOLDER",
+				"type": "Delete",
+				"dependsOn": [
+					{
+						"activity": "CLEAR_ENROUTE_CURRENT_FOLDER",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "EXCEL_TO_PARQUET",
+						"type": "DatasetReference",
+						"parameters": {
+							"File": "*parquet",
+							"FolderDate": "CURRENT",
+							"FolderType": "DELIVERED"
+						}
+					},
+					"enableLogging": false,
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
+						"wildcardFileName": "*parquet",
+						"enablePartitionDiscovery": false
+					}
+				}
+			}
+		],
+		"variables": {
+			"FilesStringDelivered": {
+				"type": "String"
+			},
+			"FilesStringEnroute": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "RYDER"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-09-09T18:27:45Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

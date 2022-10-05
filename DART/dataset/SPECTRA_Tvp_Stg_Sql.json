@@ -1,0 +1,25 @@
+{
+	"name": "SPECTRA_Tvp_Stg_Sql",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "SPECTRA"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "VALUE",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "",
+			"table": "TVP"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

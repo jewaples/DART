@@ -1,0 +1,55 @@
+{
+	"name": "NIELSEN_Kroger_Sales",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "NIELSEN"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "PRODUCT",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TIME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "GEOGRAPHY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TOTAL_LITERS_UPC_WOCFL",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DOLLAR_SALES",
+				"type": "decimal",
+				"precision": 15,
+				"scale": 3
+			},
+			{
+				"name": "UNIT_SALES",
+				"type": "decimal",
+				"precision": 15,
+				"scale": 3
+			},
+			{
+				"name": "VOLUME_SALES",
+				"type": "decimal",
+				"precision": 15,
+				"scale": 3
+			}
+		],
+		"typeProperties": {
+			"schema": "TVP",
+			"table": ""
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,83 @@
+{
+	"name": "NIELSEN_Costco_Sales",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "NIELSEN"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ITEM",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VENUE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TIME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DOLLAR_SALES",
+				"type": "decimal",
+				"precision": 15,
+				"scale": 3
+			},
+			{
+				"name": "UNIT_SALES",
+				"type": "decimal",
+				"precision": 15,
+				"scale": 3
+			},
+			{
+				"name": "STATE_OR_PROVINCE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "REGION_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "POSTAL_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "WAREHOUSE_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "WAREHOUSE_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "%_DISCOUNT",
+				"type": "decimal",
+				"precision": 15,
+				"scale": 3
+			},
+			{
+				"name": "NON_PROMOTED_DOLLARS",
+				"type": "decimal",
+				"precision": 15,
+				"scale": 3
+			},
+			{
+				"name": "NON_PROMOTED_UNITS",
+				"type": "decimal",
+				"precision": 15,
+				"scale": 3
+			}
+		],
+		"typeProperties": {
+			"schema": "NIELSEN",
+			"table": "COSTCO_SALES"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

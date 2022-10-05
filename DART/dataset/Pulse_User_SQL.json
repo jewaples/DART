@@ -1,0 +1,737 @@
+{
+	"name": "Pulse_User_SQL",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "PULSE"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "Id",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Username",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LastName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FirstName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MiddleName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Suffix",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Name",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CompanyName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Division",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Department",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Title",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Street",
+				"type": "nvarchar"
+			},
+			{
+				"name": "City",
+				"type": "nvarchar"
+			},
+			{
+				"name": "State",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PostalCode",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Country",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Latitude",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Longitude",
+				"type": "nvarchar"
+			},
+			{
+				"name": "GeocodeAccuracy",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Email",
+				"type": "nvarchar"
+			},
+			{
+				"name": "EmailPreferencesAutoBcc",
+				"type": "nvarchar"
+			},
+			{
+				"name": "EmailPreferencesAutoBccStayInTouch",
+				"type": "nvarchar"
+			},
+			{
+				"name": "EmailPreferencesStayInTouchReminder",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SenderEmail",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SenderName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Signature",
+				"type": "nvarchar"
+			},
+			{
+				"name": "StayInTouchSubject",
+				"type": "nvarchar"
+			},
+			{
+				"name": "StayInTouchSignature",
+				"type": "nvarchar"
+			},
+			{
+				"name": "StayInTouchNote",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Phone",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Fax",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MobilePhone",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Alias",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CommunityNickname",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BadgeText",
+				"type": "nvarchar"
+			},
+			{
+				"name": "IsActive",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TimeZoneSidKey",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserRoleId",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LocaleSidKey",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ReceivesInfoEmails",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ReceivesAdminInfoEmails",
+				"type": "nvarchar"
+			},
+			{
+				"name": "EmailEncodingKey",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DefaultCurrencyIsoCode",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CurrencyIsoCode",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ProfileId",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserType",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LanguageLocaleKey",
+				"type": "nvarchar"
+			},
+			{
+				"name": "EmployeeNumber",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DelegatedApproverId",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ManagerId",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LastLoginDate",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CreatedDate",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CreatedById",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LastModifiedDate",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LastModifiedById",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SystemModstamp",
+				"type": "nvarchar"
+			},
+			{
+				"name": "OfflineTrialExpirationDate",
+				"type": "nvarchar"
+			},
+			{
+				"name": "OfflinePdaTrialExpirationDate",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPermissionsMarketingUser",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPermissionsOfflineUser",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPermissionsAvantgoUser",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPermissionsCallCenterAutoLogin",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPermissionsSFContentUser",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPermissionsKnowledgeUser",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPermissionsInteractionUser",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPermissionsSupportUser",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ForecastEnabled",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesActivityRemindersPopup",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesEventRemindersCheckboxDefault",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesTaskRemindersCheckboxDefault",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesReminderSoundOff",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesDisableAllFeedsEmail",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesDisableFollowersEmail",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesDisableProfilePostEmail",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesDisableChangeCommentEmail",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesDisableLaterCommentEmail",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesDisProfPostCommentEmail",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesApexPagesDeveloperMode",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesReceiveNoNotificationsAsApprover",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesReceiveNotificationsAsDelegatedApprover",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesHideCSNGetChatterMobileTask",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesDisableMentionsPostEmail",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesDisMentionsCommentEmail",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesHideCSNDesktopTask",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesHideChatterOnboardingSplash",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesHideSecondChatterOnboardingSplash",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesDisCommentAfterLikeEmail",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesDisableLikeEmail",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesSortFeedByComment",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesDisableMessageEmail",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesDisableBookmarkEmail",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesDisableSharePostEmail",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesEnableAutoSubForFeeds",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesDisableFileShareNotificationsForApi",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesShowTitleToExternalUsers",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesShowManagerToExternalUsers",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesShowEmailToExternalUsers",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesShowWorkPhoneToExternalUsers",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesShowMobilePhoneToExternalUsers",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesShowFaxToExternalUsers",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesShowStreetAddressToExternalUsers",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesShowCityToExternalUsers",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesShowStateToExternalUsers",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesShowPostalCodeToExternalUsers",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesShowCountryToExternalUsers",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesShowProfilePicToGuestUsers",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesShowTitleToGuestUsers",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesShowCityToGuestUsers",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesShowStateToGuestUsers",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesShowPostalCodeToGuestUsers",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesShowCountryToGuestUsers",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesHideInvoicesRedirectConfirmation",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesHideStatementsRedirectConfirmation",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesHideS1BrowserUI",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesDisableEndorsementEmail",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesPathAssistantCollapsed",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesCacheDiagnostics",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesShowEmailToGuestUsers",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesShowManagerToGuestUsers",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesShowWorkPhoneToGuestUsers",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesShowMobilePhoneToGuestUsers",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesShowFaxToGuestUsers",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesShowStreetAddressToGuestUsers",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesLightningExperiencePreferred",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesPreviewLightning",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesHideEndUserOnboardingAssistantModal",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesHideLightningMigrationModal",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesHideSfxWelcomeMat",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesHideBiggerPhotoCallout",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesGlobalNavBarWTShown",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesGlobalNavGridMenuWTShown",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesCreateLEXAppsWTShown",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesFavoritesWTShown",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesRecordHomeSectionCollapseWTShown",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesRecordHomeReservedWTShown",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesFavoritesShowTopFavorites",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesExcludeMailAppAttachments",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesSuppressTaskSFXReminders",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesSuppressEventSFXReminders",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesPreviewCustomTheme",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesHasCelebrationBadge",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesUserDebugModePref",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesSRHOverrideActivities",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesNewLightningReportRunPageEnabled",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesNativeEmailClient",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserPreferencesHideBrowseProductRedirectConfirmation",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ContactId",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AccountId",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CallCenterId",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Extension",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FederationIdentifier",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AboutMe",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FullPhotoUrl",
+				"type": "varchar"
+			},
+			{
+				"name": "SmallPhotoUrl",
+				"type": "varchar"
+			},
+			{
+				"name": "IsExtIndicatorVisible",
+				"type": "nvarchar"
+			},
+			{
+				"name": "OutOfOfficeMessage",
+				"type": "varchar"
+			},
+			{
+				"name": "MediumPhotoUrl",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DigestFrequency",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DefaultGroupNotificationFrequency",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LastViewedDate",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LastReferencedDate",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BannerPhotoUrl",
+				"type": "varchar"
+			},
+			{
+				"name": "SmallBannerPhotoUrl",
+				"type": "varchar"
+			},
+			{
+				"name": "MediumBannerPhotoUrl",
+				"type": "varchar"
+			},
+			{
+				"name": "IsProfilePhotoActive",
+				"type": "varchar"
+			},
+			{
+				"name": "IndividualId",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Market__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Delegated_Manager_Approver_Active__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Delegated_Manager_Approver__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "APXT_Redlining__Contract_Agreement_Role__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DB_Region__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Count__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Discipline__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "District__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Market_Subdivision__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "USA_Markets__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "USA_StateAssignment__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Core_PulseMarketSubdivision__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Core_PulseMarket__c",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "PULSE",
+			"table": "USER"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

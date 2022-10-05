@@ -1,0 +1,62 @@
+{
+	"name": "DIVER_Provider_N1_Acct",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "DIVER"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "STATE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PREMISE_INDICATOR",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MONTH",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CASES_9L",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "DOLLARS_SHELF",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "TIMESTAMP",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "PIPELINE_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SOURCE_FILE",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "DIVER",
+			"table": "PRODIVER_N1_ACCT"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

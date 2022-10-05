@@ -1,0 +1,34 @@
+{
+	"name": "NABCA_Dim_State",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "NABCA COMPETITIVE"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "STATE_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "STATE_ABBREVIATION",
+				"type": "varchar"
+			},
+			{
+				"name": "STATE_DESCRIPTION",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "NABCA",
+			"table": "DIM_STATE"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

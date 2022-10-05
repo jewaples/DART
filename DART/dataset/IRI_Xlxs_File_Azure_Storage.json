@@ -1,0 +1,96 @@
+{
+	"name": "IRI_Xlxs_File_Azure_Storage",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_Data_Foundation_DataLake",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"path": {
+				"type": "string"
+			},
+			"filename": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "IRI"
+		},
+		"annotations": [],
+		"type": "Excel",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@dataset().filename",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@dataset().path",
+					"type": "Expression"
+				}
+			},
+			"sheetIndex": 0,
+			"firstRowAsHeader": true
+		},
+		"schema": [
+			{
+				"name": "Geography",
+				"type": "String"
+			},
+			{
+				"name": "Time",
+				"type": "String"
+			},
+			{
+				"name": "Product",
+				"type": "String"
+			},
+			{
+				"name": "Spirits Supplier Value",
+				"type": "String"
+			},
+			{
+				"name": "Spirits Category Value",
+				"type": "String"
+			},
+			{
+				"name": "Spirits Brand Family Value",
+				"type": "String"
+			},
+			{
+				"name": "Spirits Brand Value",
+				"type": "String"
+			},
+			{
+				"name": "Spirits Size Value",
+				"type": "String"
+			},
+			{
+				"name": "Volume Sales",
+				"type": "String"
+			},
+			{
+				"name": "Volume Sales Year Ago",
+				"type": "String"
+			},
+			{
+				"name": "Dollar Sales",
+				"type": "String"
+			},
+			{
+				"name": "Dollar Sales Year Ago",
+				"type": "String"
+			},
+			{
+				"name": "Unit Sales",
+				"type": "String"
+			},
+			{
+				"name": "Unit Sales Year Ago",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

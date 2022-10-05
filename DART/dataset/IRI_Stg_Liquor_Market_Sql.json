@@ -1,0 +1,83 @@
+{
+	"name": "IRI_Stg_Liquor_Market_Sql",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "IRI"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "GEOGRAPHY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TIME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PRODUCT",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SPIRITS_SUPPLIER_VALUE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SPIRITS_CATEGORY_VALUE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SPIRITS_BRAND_FAMILY_VALUE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SPIRITS_BRAND_VALUE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SPIRITS_SIZE_VALUE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VOLUME_SALES",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "VOLUME_SALES_YEAR_AGO",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "DOLLAR_SALES",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "DOLLAR_SALES_YEAR_AGO",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "UNIT_SALES",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "UNIT_SALES_YEAR_AGO",
+				"type": "float",
+				"precision": 15
+			}
+		],
+		"typeProperties": {
+			"schema": "STG",
+			"table": "IRI_LIQUOR_MARKET"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,1717 @@
+{
+	"name": "LOAD_STAGING_OWNED_INVENTORY",
+	"properties": {
+		"activities": [
+			{
+				"name": "Get Week Day",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": {
+							"value": "SELECT DATEPART(dw,'@{formatDateTime(pipeline().parameters.STARTDATE,'yyyy-MM-dd')}')  AS DAY",
+							"type": "Expression"
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "RAD_Dim_Time_Sql",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "If Condition",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "Get Week Day",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@equals(activity('Get Week Day').output.firstRow.DAY,7)",
+						"type": "Expression"
+					},
+					"ifFalseActivities": [
+						{
+							"name": "Copy_Tables_HanaOwned_SQl_Db",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "DeleteOwnedInv_D",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "SapHanaSource",
+									"query": "SELECT\n\"0APO_LOCNO\"\n,\"0APO_LOCNO___T\"\n,\"0APO_LOCNO__0APO_LOCTYP\"\n,\"0APO_LOCNO__0APO_LOCTYP___T\"\n,\"0APO_LOCNO__0COUNTRY\"\n,\"0APO_LOCNO__0COUNTRY___T\"\n,\"0APO_LPROD\"\n,\"0APO_LPROD__0APO_BESKZ\"\n,\"0APO_LPROD__0APO_BESKZ___T\"\n,\"0APO_PROD\"\n,\"0APO_PROD___T\"\n,\"0APO_PROD__0APO_ATTPR5\"\n,\"0APO_PROD__0APO_ATTPR5___T\"\n,\"0APO_PROD__0MATL_GROUP\"\n,\"0APO_PROD__0MATL_GROUP___T\"\n,\"0APO_PROD__0MATL_TYPE\"\n,\"0APO_PROD__0MATL_TYPE___T\"\n,\"0APO_PROD__0PROD_HIER\"\n,\"0APO_PROD__0PROD_HIER___T\"\n,\"0APO_PROD__ZMATHIER1\"\n,\"0APO_PROD__ZMATHIER1___T\"\n,\"0APO_PROD__ZMATHIER2\"\n,\"0APO_PROD__ZMATHIER2___T\"\n,\"0APO_PROD__ZMATHIER3\"\n,\"0APO_PROD__ZMATHIER3___T\"\n,\"0APO_PROD__ZMATHIER4\"\n,\"0APO_PROD__ZMATHIER4___T\"\n,\"0APO_PROD__ZMATHIER5\"\n,\"0APO_PROD__ZMATHIER5___T\"\n,\"0APO_PROD__ZMATPRCAT\"\n,\"0APO_PROD__ZMATPRCAT___T\"\n,\"0BASE_UOM\"\n,\"0BASE_UOM___T\"\n,\"0CALMONTH\"\n,\"0CALYEAR\"\n,\"ZAPO_DCRD\"\n,\"ZAPO_LAG2\"\n,\"ZAPO_LAG2___T\"\n,\"ZAPO_MCRD\"\n,\"ZAPO_WCRD\"\n,\"ZAPO_YCRD\"\n,\"ZDATAKIND\"\n,\"ZDATAKIND___T\"\n,\"0CALDAY\"\n,\"0CALWEEK\"\n,\"0MAT_PLANT__0DISMM\"\n,\"0MAT_PLANT__0DISMM___T\"\n,\"0MAT_PLANT__ZMMSTA\"\n,\"0MAT_PLANT__ZMMSTA___T\"\n,\"ZAPO_LAG\"\n,\"ZAPO_LAG___T\"\n,\"0FISCYEAR\"\n,\"ZSTOCKD_CS\"\n,\"ZCITRAN_CS\"\n,\"ZCTSHIP_CS\"\n,\"ZCAPSHIP_CS\"\n,\"ZDMDTO_CS\"\n,\"ZSTOCKD_9L\"\n,\"ZCITRAN_9L\"\n,\"ZCTSHIP_9L\"\n,\"ZCAPSHIP_9L\"\n,\"ZDMDTO_9L\"\nFROM \"_SYS_BIC\".\"T_Prod.Distributors_USA.DailySales.Reporting/CV_R_BACARDI_OWNED_INVENTORY\"('PLACEHOLDER' = ( '$$I_APO_LOCNO$$' , '''US34'', ''CA05'', ''CA04'', ''CA03'', ''CA02'', ''US52'', ''US51'', ''US50'', ''US36'', ''US33'', ''US32'', ''US31'', ''US30'', ''US28'', ''US27'', ''US26'', ''US22'', ''US21'', ''US19'', ''US18'', ''US17'', ''US16'', ''US15'', ''US14'', ''US13'', ''US11'', ''US10'', ''US56'' , ''US12'' , ''US04'', ''US35'''))\nWHERE TO_DATE( \"0CALDAY\" ,'YYYYMMDD') BETWEEN ADD_MONTHS(NEXT_DAY(LAST_DAY(CURRENT_DATE)),-6) AND\nCURRENT_DATE",
+									"partitionOption": "None"
+								},
+								"sink": {
+									"type": "ParquetSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "ParquetWriteSettings"
+									}
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"mappings": [
+										{
+											"source": {
+												"name": "0APO_LOCNO",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_LOCNO",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_LOCNO___T",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_LOCNO___T",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_LOCNO__0APO_LOCTYP",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_LOCNO__0APO_LOCTYP",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_LOCNO__0APO_LOCTYP___T",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_LOCNO__0APO_LOCTYP___T",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_LOCNO__0COUNTRY",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_LOCNO__0COUNTRY",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_LOCNO__0COUNTRY___T",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_LOCNO__0COUNTRY___T",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_LPROD",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_LPROD",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_LPROD__0APO_BESKZ",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_LPROD__0APO_BESKZ",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_LPROD__0APO_BESKZ___T",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_LPROD__0APO_BESKZ___T",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_PROD",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_PROD",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_PROD___T",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_PROD___T",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_PROD__0APO_ATTPR5",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_PROD__0APO_ATTPR5",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_PROD__0APO_ATTPR5___T",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_PROD__0APO_ATTPR5___T",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_PROD__0MATL_GROUP",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_PROD__0MATL_GROUP",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_PROD__0MATL_GROUP___T",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_PROD__0MATL_GROUP___T",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_PROD__0MATL_TYPE",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_PROD__0MATL_TYPE",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_PROD__0MATL_TYPE___T",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_PROD__0MATL_TYPE___T",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_PROD__0PROD_HIER",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_PROD__0PROD_HIER",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_PROD__0PROD_HIER___T",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_PROD__0PROD_HIER___T",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_PROD__ZMATHIER1",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_PROD__ZMATHIER1",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_PROD__ZMATHIER1___T",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_PROD__ZMATHIER1___T",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_PROD__ZMATHIER2",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_PROD__ZMATHIER2",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_PROD__ZMATHIER2___T",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_PROD__ZMATHIER2___T",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_PROD__ZMATHIER3",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_PROD__ZMATHIER3",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_PROD__ZMATHIER3___T",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_PROD__ZMATHIER3___T",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_PROD__ZMATHIER4",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_PROD__ZMATHIER4",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_PROD__ZMATHIER4___T",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_PROD__ZMATHIER4___T",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_PROD__ZMATHIER5",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_PROD__ZMATHIER5",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_PROD__ZMATHIER5___T",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_PROD__ZMATHIER5___T",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_PROD__ZMATPRCAT",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_PROD__ZMATPRCAT",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_PROD__ZMATPRCAT___T",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_PROD__ZMATPRCAT___T",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0BASE_UOM",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0BASE_UOM",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0BASE_UOM___T",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0BASE_UOM___T",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0CALMONTH",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0CALMONTH",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0CALYEAR",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0CALYEAR",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "ZAPO_DCRD",
+												"type": "String"
+											},
+											"sink": {
+												"name": "ZAPO_DCRD",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "ZAPO_LAG2",
+												"type": "String"
+											},
+											"sink": {
+												"name": "ZAPO_LAG2",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "ZAPO_LAG2___T",
+												"type": "String"
+											},
+											"sink": {
+												"name": "ZAPO_LAG2___T",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "ZAPO_MCRD",
+												"type": "String"
+											},
+											"sink": {
+												"name": "ZAPO_MCRD",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "ZAPO_WCRD",
+												"type": "String"
+											},
+											"sink": {
+												"name": "ZAPO_WCRD",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "ZAPO_YCRD",
+												"type": "String"
+											},
+											"sink": {
+												"name": "ZAPO_YCRD",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "ZDATAKIND",
+												"type": "String"
+											},
+											"sink": {
+												"name": "ZDATAKIND",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "ZDATAKIND___T",
+												"type": "String"
+											},
+											"sink": {
+												"name": "ZDATAKIND___T",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0CALDAY",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0CALDAY",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0CALWEEK",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0CALWEEK",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0MAT_PLANT__0DISMM",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0MAT_PLANT__0DISMM",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0MAT_PLANT__0DISMM___T",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0MAT_PLANT__0DISMM___T",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0MAT_PLANT__ZMMSTA",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0MAT_PLANT__ZMMSTA",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0MAT_PLANT__ZMMSTA___T",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0MAT_PLANT__ZMMSTA___T",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "ZAPO_LAG",
+												"type": "String"
+											},
+											"sink": {
+												"name": "ZAPO_LAG",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "ZAPO_LAG___T",
+												"type": "String"
+											},
+											"sink": {
+												"name": "ZAPO_LAG___T",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0FISCYEAR",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0FISCYEAR",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "ZSTOCKD_CS",
+												"type": "Decimal"
+											},
+											"sink": {
+												"name": "ZSTOCKD_CS",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "ZCITRAN_CS",
+												"type": "Decimal"
+											},
+											"sink": {
+												"name": "ZCITRAN_CS",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "ZCTSHIP_CS",
+												"type": "Decimal"
+											},
+											"sink": {
+												"name": "ZCTSHIP_CS",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "ZCAPSHIP_CS",
+												"type": "Decimal"
+											},
+											"sink": {
+												"name": "ZCAPSHIP_CS",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "ZDMDTO_CS",
+												"type": "Decimal"
+											},
+											"sink": {
+												"name": "ZDMDTO_CS",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "ZSTOCKD_9L",
+												"type": "Decimal"
+											},
+											"sink": {
+												"name": "ZSTOCKD_9L",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "ZCITRAN_9L",
+												"type": "Decimal"
+											},
+											"sink": {
+												"name": "ZCITRAN_9L",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "ZCTSHIP_9L",
+												"type": "Decimal"
+											},
+											"sink": {
+												"name": "ZCTSHIP_9L",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "ZCAPSHIP_9L",
+												"type": "Decimal"
+											},
+											"sink": {
+												"name": "ZCAPSHIP_9L",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "ZDMDTO_9L",
+												"type": "Decimal"
+											},
+											"sink": {
+												"name": "ZDMDTO_9L",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										}
+									],
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "SapHanaTOwned",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "ParquetOwnedInventory",
+									"type": "DatasetReference"
+								}
+							]
+						},
+						{
+							"name": "CopyOnwned_ADL_to_SQL_D",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "Copy_Tables_HanaOwned_SQl_Db",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "ParquetSource",
+									"storeSettings": {
+										"type": "AzureBlobFSReadSettings",
+										"recursive": true,
+										"enablePartitionDiscovery": false
+									}
+								},
+								"sink": {
+									"type": "AzureSqlSink",
+									"preCopyScript": "DECLARE  @DATE DATE, @SIXM DATE;\nSET @DATE = GETDATE()\nSET @SIXM = DATEADD(DAY, 1, EOMONTH(DATEADD(MONTH, -6, @DATE)))\n\nDELETE FROM [BDH-SQL-NAM-COM-DART].[STG].[STG_OWNED_INVENTORY]\nWHERE CAST([0CALDAY] AS DATE)>= @SIXM",
+									"writeBehavior": "insert",
+									"sqlWriterUseTableLock": false,
+									"disableMetricsCollection": false
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "ParquetOwnedInventory",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "AzureSqlTOwnedInv",
+									"type": "DatasetReference"
+								}
+							]
+						},
+						{
+							"name": "DeleteOwnedInv_D",
+							"type": "Delete",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataset": {
+									"referenceName": "ParquetOwnedInventory",
+									"type": "DatasetReference"
+								},
+								"enableLogging": false,
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								}
+							}
+						}
+					],
+					"ifTrueActivities": [
+						{
+							"name": "Copy_Tables_HanaOwned_SQl_Db_copy1",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "DeleteOwnedInv_W",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "SapHanaSource",
+									"query": "SELECT\n\"0APO_LOCNO\"\n,\"0APO_LOCNO___T\"\n,\"0APO_LOCNO__0APO_LOCTYP\"\n,\"0APO_LOCNO__0APO_LOCTYP___T\"\n,\"0APO_LOCNO__0COUNTRY\"\n,\"0APO_LOCNO__0COUNTRY___T\"\n,\"0APO_LPROD\"\n,\"0APO_LPROD__0APO_BESKZ\"\n,\"0APO_LPROD__0APO_BESKZ___T\"\n,\"0APO_PROD\"\n,\"0APO_PROD___T\"\n,\"0APO_PROD__0APO_ATTPR5\"\n,\"0APO_PROD__0APO_ATTPR5___T\"\n,\"0APO_PROD__0MATL_GROUP\"\n,\"0APO_PROD__0MATL_GROUP___T\"\n,\"0APO_PROD__0MATL_TYPE\"\n,\"0APO_PROD__0MATL_TYPE___T\"\n,\"0APO_PROD__0PROD_HIER\"\n,\"0APO_PROD__0PROD_HIER___T\"\n,\"0APO_PROD__ZMATHIER1\"\n,\"0APO_PROD__ZMATHIER1___T\"\n,\"0APO_PROD__ZMATHIER2\"\n,\"0APO_PROD__ZMATHIER2___T\"\n,\"0APO_PROD__ZMATHIER3\"\n,\"0APO_PROD__ZMATHIER3___T\"\n,\"0APO_PROD__ZMATHIER4\"\n,\"0APO_PROD__ZMATHIER4___T\"\n,\"0APO_PROD__ZMATHIER5\"\n,\"0APO_PROD__ZMATHIER5___T\"\n,\"0APO_PROD__ZMATPRCAT\"\n,\"0APO_PROD__ZMATPRCAT___T\"\n,\"0BASE_UOM\"\n,\"0BASE_UOM___T\"\n,\"0CALMONTH\"\n,\"0CALYEAR\"\n,\"ZAPO_DCRD\"\n,\"ZAPO_LAG2\"\n,\"ZAPO_LAG2___T\"\n,\"ZAPO_MCRD\"\n,\"ZAPO_WCRD\"\n,\"ZAPO_YCRD\"\n,\"ZDATAKIND\"\n,\"ZDATAKIND___T\"\n,\"0CALDAY\"\n,\"0CALWEEK\"\n,\"0MAT_PLANT__0DISMM\"\n,\"0MAT_PLANT__0DISMM___T\"\n,\"0MAT_PLANT__ZMMSTA\"\n,\"0MAT_PLANT__ZMMSTA___T\"\n,\"ZAPO_LAG\"\n,\"ZAPO_LAG___T\"\n,\"0FISCYEAR\"\n,\"ZSTOCKD_CS\"\n,\"ZCITRAN_CS\"\n,\"ZCTSHIP_CS\"\n,\"ZCAPSHIP_CS\"\n,\"ZDMDTO_CS\"\n,\"ZSTOCKD_9L\"\n,\"ZCITRAN_9L\"\n,\"ZCTSHIP_9L\"\n,\"ZCAPSHIP_9L\"\n,\"ZDMDTO_9L\"\nFROM \"_SYS_BIC\".\"T_Prod.Distributors_USA.DailySales.Reporting/CV_R_BACARDI_OWNED_INVENTORY\"('PLACEHOLDER' = ( '$$I_APO_LOCNO$$' , '''US34'', ''CA05'', ''CA04'', ''CA03'', ''CA02'', ''US52'', ''US51'', ''US50'', ''US36'', ''US33'', ''US32'', ''US31'', ''US30'', ''US28'', ''US27'', ''US26'', ''US22'', ''US21'', ''US19'', ''US18'', ''US17'', ''US16'', ''US15'', ''US14'', ''US13'', ''US11'', ''US10'', ''US56'' , ''US12'' , ''US04'', ''US35'''))\nWHERE TO_DATE( \"0CALDAY\" ,'YYYYMMDD') BETWEEN TO_DATE(EXTRACT (YEAR FROM ADD_YEARS(CURRENT_DATE,-2))||'0101','YYYYMMDD') AND\nCURRENT_DATE",
+									"partitionOption": "None"
+								},
+								"sink": {
+									"type": "ParquetSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "ParquetWriteSettings"
+									}
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"mappings": [
+										{
+											"source": {
+												"name": "0APO_LOCNO",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_LOCNO",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_LOCNO___T",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_LOCNO___T",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_LOCNO__0APO_LOCTYP",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_LOCNO__0APO_LOCTYP",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_LOCNO__0APO_LOCTYP___T",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_LOCNO__0APO_LOCTYP___T",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_LOCNO__0COUNTRY",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_LOCNO__0COUNTRY",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_LOCNO__0COUNTRY___T",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_LOCNO__0COUNTRY___T",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_LPROD",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_LPROD",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_LPROD__0APO_BESKZ",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_LPROD__0APO_BESKZ",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_LPROD__0APO_BESKZ___T",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_LPROD__0APO_BESKZ___T",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_PROD",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_PROD",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_PROD___T",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_PROD___T",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_PROD__0APO_ATTPR5",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_PROD__0APO_ATTPR5",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_PROD__0APO_ATTPR5___T",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_PROD__0APO_ATTPR5___T",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_PROD__0MATL_GROUP",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_PROD__0MATL_GROUP",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_PROD__0MATL_GROUP___T",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_PROD__0MATL_GROUP___T",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_PROD__0MATL_TYPE",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_PROD__0MATL_TYPE",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_PROD__0MATL_TYPE___T",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_PROD__0MATL_TYPE___T",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_PROD__0PROD_HIER",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_PROD__0PROD_HIER",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_PROD__0PROD_HIER___T",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_PROD__0PROD_HIER___T",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_PROD__ZMATHIER1",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_PROD__ZMATHIER1",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_PROD__ZMATHIER1___T",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_PROD__ZMATHIER1___T",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_PROD__ZMATHIER2",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_PROD__ZMATHIER2",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_PROD__ZMATHIER2___T",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_PROD__ZMATHIER2___T",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_PROD__ZMATHIER3",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_PROD__ZMATHIER3",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_PROD__ZMATHIER3___T",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_PROD__ZMATHIER3___T",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_PROD__ZMATHIER4",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_PROD__ZMATHIER4",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_PROD__ZMATHIER4___T",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_PROD__ZMATHIER4___T",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_PROD__ZMATHIER5",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_PROD__ZMATHIER5",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_PROD__ZMATHIER5___T",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_PROD__ZMATHIER5___T",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_PROD__ZMATPRCAT",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_PROD__ZMATPRCAT",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0APO_PROD__ZMATPRCAT___T",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0APO_PROD__ZMATPRCAT___T",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0BASE_UOM",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0BASE_UOM",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0BASE_UOM___T",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0BASE_UOM___T",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0CALMONTH",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0CALMONTH",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0CALYEAR",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0CALYEAR",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "ZAPO_DCRD",
+												"type": "String"
+											},
+											"sink": {
+												"name": "ZAPO_DCRD",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "ZAPO_LAG2",
+												"type": "String"
+											},
+											"sink": {
+												"name": "ZAPO_LAG2",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "ZAPO_LAG2___T",
+												"type": "String"
+											},
+											"sink": {
+												"name": "ZAPO_LAG2___T",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "ZAPO_MCRD",
+												"type": "String"
+											},
+											"sink": {
+												"name": "ZAPO_MCRD",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "ZAPO_WCRD",
+												"type": "String"
+											},
+											"sink": {
+												"name": "ZAPO_WCRD",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "ZAPO_YCRD",
+												"type": "String"
+											},
+											"sink": {
+												"name": "ZAPO_YCRD",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "ZDATAKIND",
+												"type": "String"
+											},
+											"sink": {
+												"name": "ZDATAKIND",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "ZDATAKIND___T",
+												"type": "String"
+											},
+											"sink": {
+												"name": "ZDATAKIND___T",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0CALDAY",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0CALDAY",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0CALWEEK",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0CALWEEK",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0MAT_PLANT__0DISMM",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0MAT_PLANT__0DISMM",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0MAT_PLANT__0DISMM___T",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0MAT_PLANT__0DISMM___T",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0MAT_PLANT__ZMMSTA",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0MAT_PLANT__ZMMSTA",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0MAT_PLANT__ZMMSTA___T",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0MAT_PLANT__ZMMSTA___T",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "ZAPO_LAG",
+												"type": "String"
+											},
+											"sink": {
+												"name": "ZAPO_LAG",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "ZAPO_LAG___T",
+												"type": "String"
+											},
+											"sink": {
+												"name": "ZAPO_LAG___T",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "0FISCYEAR",
+												"type": "String"
+											},
+											"sink": {
+												"name": "0FISCYEAR",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "ZSTOCKD_CS",
+												"type": "Decimal"
+											},
+											"sink": {
+												"name": "ZSTOCKD_CS",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "ZCITRAN_CS",
+												"type": "Decimal"
+											},
+											"sink": {
+												"name": "ZCITRAN_CS",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "ZCTSHIP_CS",
+												"type": "Decimal"
+											},
+											"sink": {
+												"name": "ZCTSHIP_CS",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "ZCAPSHIP_CS",
+												"type": "Decimal"
+											},
+											"sink": {
+												"name": "ZCAPSHIP_CS",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "ZDMDTO_CS",
+												"type": "Decimal"
+											},
+											"sink": {
+												"name": "ZDMDTO_CS",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "ZSTOCKD_9L",
+												"type": "Decimal"
+											},
+											"sink": {
+												"name": "ZSTOCKD_9L",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "ZCITRAN_9L",
+												"type": "Decimal"
+											},
+											"sink": {
+												"name": "ZCITRAN_9L",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "ZCTSHIP_9L",
+												"type": "Decimal"
+											},
+											"sink": {
+												"name": "ZCTSHIP_9L",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "ZCAPSHIP_9L",
+												"type": "Decimal"
+											},
+											"sink": {
+												"name": "ZCAPSHIP_9L",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										},
+										{
+											"source": {
+												"name": "ZDMDTO_9L",
+												"type": "Decimal"
+											},
+											"sink": {
+												"name": "ZDMDTO_9L",
+												"type": "String",
+												"physicalType": "nvarchar"
+											}
+										}
+									],
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "SapHanaTOwned",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "ParquetOwnedInventory",
+									"type": "DatasetReference"
+								}
+							]
+						},
+						{
+							"name": "CopyOnwned_ADL_to_SQL",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "Copy_Tables_HanaOwned_SQl_Db_copy1",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "ParquetSource",
+									"storeSettings": {
+										"type": "AzureBlobFSReadSettings",
+										"recursive": true,
+										"enablePartitionDiscovery": false
+									}
+								},
+								"sink": {
+									"type": "AzureSqlSink",
+									"preCopyScript": "DECLARE @DATE DATE, @THREEY DATE;\nSET @DATE = GETDATE()\nSET @THREEY = DATEADD(YY, DATEDIFF(YY, 0, @DATE) -3, 0)\n\nDELETE FROM [BDH-SQL-NAM-COM-DART].[STG].[STG_OWNED_INVENTORY]\nWHERE CAST([0CALDAY] AS DATE)>= @THREEY",
+									"writeBehavior": "insert",
+									"sqlWriterUseTableLock": false,
+									"disableMetricsCollection": false
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "ParquetOwnedInventory",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "AzureSqlTOwnedInv",
+									"type": "DatasetReference"
+								}
+							]
+						},
+						{
+							"name": "DeleteOwnedInv_W",
+							"type": "Delete",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataset": {
+									"referenceName": "ParquetOwnedInventory",
+									"type": "DatasetReference"
+								},
+								"enableLogging": false,
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								}
+							}
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"STARTDATE": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "BILLINGS"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-07-15T17:05:44Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

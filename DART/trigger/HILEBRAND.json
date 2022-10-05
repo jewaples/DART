@@ -1,0 +1,36 @@
+{
+	"name": "HILEBRAND",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Stopped",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "14_DAILY_ORCHESTRATOR",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Day",
+				"interval": 1,
+				"startTime": "2022-04-26T04:00:00",
+				"timeZone": "Central America Standard Time",
+				"schedule": {
+					"hours": [
+						0,
+						3,
+						6,
+						9,
+						12,
+						15,
+						18,
+						21
+					]
+				}
+			}
+		}
+	}
+}
