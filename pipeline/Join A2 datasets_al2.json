@@ -1,0 +1,502 @@
+{
+	"name": "Join A2 datasets_al2",
+	"properties": {
+		"activities": [
+			{
+				"name": "Join DIM_PRODUCT_ALERT2 Parquet",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "ParquetSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"wildcardFolderPath": {
+								"value": "@concat(pipeline().parameters.root,pipeline().parameters.stage,pipeline().parameters.folder,'/**/DIM_PRODUCT_ALERT2/CURRENT')",
+								"type": "Expression"
+							},
+							"wildcardFileName": "*.parquet",
+							"enablePartitionDiscovery": false
+						}
+					},
+					"sink": {
+						"type": "ParquetSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings",
+							"copyBehavior": "MergeFiles"
+						},
+						"formatSettings": {
+							"type": "ParquetWriteSettings"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "AA_ALERTS",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "JOIN_DIM_PRODUCT_ALERT2",
+						"type": "DatasetReference",
+						"parameters": {
+							"path": {
+								"value": "@concat(pipeline().parameters.root,pipeline().parameters.stage)",
+								"type": "Expression"
+							}
+						}
+					}
+				]
+			},
+			{
+				"name": "Delete current files on DIM_PROD",
+				"type": "Delete",
+				"dependsOn": [
+					{
+						"activity": "Join DIM_PRODUCT_ALERT2 Parquet",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "DEL_CURRENT_A1_DIM_PROD_TABLE",
+						"type": "DatasetReference",
+						"parameters": {
+							"path": {
+								"value": "@concat(pipeline().parameters.root,pipeline().parameters.stage)",
+								"type": "Expression"
+							}
+						}
+					},
+					"enableLogging": false,
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
+						"enablePartitionDiscovery": false
+					}
+				}
+			},
+			{
+				"name": "Join current DIM_PRODUCT_ALERT2 Parquet",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Delete current files on DIM_PROD",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "ParquetSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"wildcardFolderPath": {
+								"value": "@concat(pipeline().parameters.root,pipeline().parameters.stage,pipeline().parameters.folder,'/**/DIM_PRODUCT_ALERT2/CURRENT')",
+								"type": "Expression"
+							},
+							"wildcardFileName": "*.parquet",
+							"enablePartitionDiscovery": false
+						}
+					},
+					"sink": {
+						"type": "ParquetSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings",
+							"copyBehavior": "MergeFiles"
+						},
+						"formatSettings": {
+							"type": "ParquetWriteSettings"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "AA_ALERTS",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "CURRENT_A2_DIM_PROD_TABLE",
+						"type": "DatasetReference",
+						"parameters": {
+							"path": {
+								"value": "@concat(pipeline().parameters.root,pipeline().parameters.stage)",
+								"type": "Expression"
+							}
+						}
+					}
+				]
+			},
+			{
+				"name": "Join DIM_MARKET_ALERT2 Parquet",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "ParquetSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"wildcardFolderPath": {
+								"value": "@concat(pipeline().parameters.root,pipeline().parameters.stage,pipeline().parameters.folder,'/**/DIM_MARKET_ALERT2/CURRENT')",
+								"type": "Expression"
+							},
+							"wildcardFileName": "*.parquet",
+							"enablePartitionDiscovery": false
+						}
+					},
+					"sink": {
+						"type": "ParquetSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings",
+							"copyBehavior": "MergeFiles"
+						},
+						"formatSettings": {
+							"type": "ParquetWriteSettings"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "AA_ALERTS",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "JOIN_DIM_MARKET_ALERT2",
+						"type": "DatasetReference",
+						"parameters": {
+							"path": {
+								"value": "@concat(pipeline().parameters.root,pipeline().parameters.stage)",
+								"type": "Expression"
+							}
+						}
+					}
+				]
+			},
+			{
+				"name": "Delete current files on DIM_MARKET",
+				"type": "Delete",
+				"dependsOn": [
+					{
+						"activity": "Join DIM_MARKET_ALERT2 Parquet",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "DEL_CURRENT_A2_MARKET_TABLE",
+						"type": "DatasetReference",
+						"parameters": {
+							"path": {
+								"value": "@concat(pipeline().parameters.root,pipeline().parameters.stage)",
+								"type": "Expression"
+							}
+						}
+					},
+					"enableLogging": false,
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
+						"enablePartitionDiscovery": false
+					}
+				}
+			},
+			{
+				"name": "Join current DIM_MARKET_ALERT2 Parquet",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Delete current files on DIM_MARKET",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "ParquetSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"wildcardFolderPath": {
+								"value": "@concat(pipeline().parameters.root,pipeline().parameters.stage,pipeline().parameters.folder,'/**/DIM_MARKET_ALERT2/CURRENT')",
+								"type": "Expression"
+							},
+							"wildcardFileName": "*.parquet",
+							"enablePartitionDiscovery": false
+						}
+					},
+					"sink": {
+						"type": "ParquetSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings",
+							"copyBehavior": "MergeFiles"
+						},
+						"formatSettings": {
+							"type": "ParquetWriteSettings"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "AA_ALERTS",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "CURRENT_A2_DIM_MARKET",
+						"type": "DatasetReference",
+						"parameters": {
+							"path": {
+								"value": "@concat(pipeline().parameters.root,pipeline().parameters.stage)",
+								"type": "Expression"
+							}
+						}
+					}
+				]
+			},
+			{
+				"name": "Join FACT_NGR_ALERT2 Parquet",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "ParquetSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"wildcardFolderPath": {
+								"value": "@concat(pipeline().parameters.root,pipeline().parameters.stage,pipeline().parameters.folder,'/**/FACT_NGR_ALERT2/CURRENT')",
+								"type": "Expression"
+							},
+							"wildcardFileName": "*.parquet",
+							"enablePartitionDiscovery": false
+						}
+					},
+					"sink": {
+						"type": "ParquetSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings",
+							"copyBehavior": "MergeFiles"
+						},
+						"formatSettings": {
+							"type": "ParquetWriteSettings"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "AA_ALERTS",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "JOIN_FACT_NGR_ALERT2",
+						"type": "DatasetReference",
+						"parameters": {
+							"path": {
+								"value": "@concat(pipeline().parameters.root,pipeline().parameters.stage)",
+								"type": "Expression"
+							}
+						}
+					}
+				]
+			},
+			{
+				"name": "Delete current files on FACT_NGR_ALERT2",
+				"type": "Delete",
+				"dependsOn": [
+					{
+						"activity": "Join FACT_NGR_ALERT2 Parquet",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "DEL_CURRENT_A2_FACT_NGR_TABLE",
+						"type": "DatasetReference",
+						"parameters": {
+							"path": {
+								"value": "@concat(pipeline().parameters.root,pipeline().parameters.stage)",
+								"type": "Expression"
+							}
+						}
+					},
+					"enableLogging": false,
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
+						"enablePartitionDiscovery": false
+					}
+				}
+			},
+			{
+				"name": "Join current FACT_NGR_ALERT2 Parquet",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Delete current files on FACT_NGR_ALERT2",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "ParquetSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"wildcardFolderPath": {
+								"value": "@concat(pipeline().parameters.root,pipeline().parameters.stage,pipeline().parameters.folder,'/**/FACT_NGR_ALERT2/CURRENT')",
+								"type": "Expression"
+							},
+							"wildcardFileName": "*.parquet",
+							"enablePartitionDiscovery": false
+						}
+					},
+					"sink": {
+						"type": "ParquetSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings",
+							"copyBehavior": "MergeFiles"
+						},
+						"formatSettings": {
+							"type": "ParquetWriteSettings"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "AA_ALERTS",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "CURRENT_A2_FACT_NGR_TABLE",
+						"type": "DatasetReference",
+						"parameters": {
+							"path": {
+								"value": "@concat(pipeline().parameters.root,pipeline().parameters.stage)",
+								"type": "Expression"
+							}
+						}
+					}
+				]
+			}
+		],
+		"parameters": {
+			"root": {
+				"type": "string",
+				"defaultValue": "EDW/AA/ALERTS/ALERT2"
+			},
+			"stage": {
+				"type": "string"
+			},
+			"folder": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "Alert 2"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-10-05T15:38:21Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

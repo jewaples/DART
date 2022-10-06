@@ -1,0 +1,89 @@
+{
+	"name": "EXP Join Dataf pipe_a2",
+	"properties": {
+		"activities": [
+			{
+				"name": "Join Market Dataframes",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Join A2 datasets_al2",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"stage": {
+							"value": "@concat('/',pipeline().parameters.stage)",
+							"type": "Expression"
+						},
+						"folder": {
+							"value": "@pipeline().parameters.folder",
+							"type": "Expression"
+						}
+					}
+				}
+			}
+		],
+		"parameters": {
+			"market_list": {
+				"type": "array",
+				"defaultValue": [
+					"Texas",
+					"Florida",
+					"Massachusetts",
+					"New Hampshire",
+					"Arizona",
+					"Maryland",
+					"Washington",
+					"Indiana",
+					"Maine",
+					"Louisiana",
+					"Missouri",
+					"Delaware",
+					"Oklahoma",
+					"South Carolina",
+					"Kentucky",
+					"Metro New York"
+				]
+			},
+			"receiver": {
+				"type": "string",
+				"defaultValue": "emilio.piotto@accenture.com"
+			},
+			"stage": {
+				"type": "string",
+				"defaultValue": "DEV"
+			},
+			"folder": {
+				"type": "string",
+				"defaultValue": "/STAGE"
+			},
+			"guardrail_spec": {
+				"type": "string",
+				"defaultValue": "Price_Guidelines_Brand_Size_Description_w_strategy_QA.csv"
+			}
+		},
+		"variables": {
+			"cluster_id": {
+				"type": "String"
+			},
+			"wheel_name": {
+				"type": "String"
+			},
+			"booly": {
+				"type": "Boolean"
+			},
+			"boolstr": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "Alert 2/experiments"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-10-05T15:38:22Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

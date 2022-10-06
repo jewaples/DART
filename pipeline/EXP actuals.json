@@ -1,0 +1,135 @@
+{
+	"name": "EXP actuals",
+	"properties": {
+		"activities": [
+			{
+				"name": "actuals_path",
+				"description": "",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "stage",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "actuals_path",
+					"value": {
+						"value": "@concat(variables('stage'),'/ACTUALS')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "root",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "root",
+					"value": "/mnt/dartread/EDW/AA/DRC"
+				}
+			},
+			{
+				"name": "stage",
+				"description": "",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "root",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "stage",
+					"value": {
+						"value": "@concat(variables('root'),'/QA')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Actuals_update",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "actuals_path",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Shared/DRC/data_pipelines/actuals_file_update",
+					"baseParameters": {
+						"actuals_path": {
+							"value": "@variables('actuals_path')",
+							"type": "Expression"
+						},
+						"DIM_DISTRIBUTOR_CCC_PARQUET_FILE": {
+							"value": "@pipeline().parameters.DIM_DISTRIBUTOR_CCC_PARQUET_FILE",
+							"type": "Expression"
+						},
+						"DIM_PRODUCT_PARQUET_FILE": {
+							"value": "@pipeline().parameters.DIM_PRODUCT_PARQUET_FILE",
+							"type": "Expression"
+						},
+						"FACT_ANAPLAN_PARQUET_FILE": {
+							"value": "@pipeline().parameters.FACT_ANAPLAN_PARQUET_FILE",
+							"type": "Expression"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "adf_drc_fixed_cluster",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"parameters": {
+			"FACT_ANAPLAN_PARQUET_FILE": {
+				"type": "string",
+				"defaultValue": "/mnt/dartread/EDW/ANAPLAN/FACT_ANAPLAN/Current"
+			},
+			"DIM_DISTRIBUTOR_CCC_PARQUET_FILE": {
+				"type": "string",
+				"defaultValue": "/mnt/dartread/EDW/RAD/DIM_DISTRIBUTOR_CCC"
+			},
+			"DIM_PRODUCT_PARQUET_FILE": {
+				"type": "string",
+				"defaultValue": "/mnt/dartread/EDW/RAD/DIM_PRODUCT"
+			}
+		},
+		"variables": {
+			"root": {
+				"type": "String"
+			},
+			"stage": {
+				"type": "String"
+			},
+			"actuals_path": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "DRC/experiments"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-09-21T12:06:06Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

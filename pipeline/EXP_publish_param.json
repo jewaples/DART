@@ -1,0 +1,53 @@
+{
+	"name": "EXP_publish_param",
+	"properties": {
+		"activities": [
+			{
+				"name": "testing_publish_parameters",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Users/ext_epiotto@bacardi.com/testing_publish_parameters",
+					"baseParameters": {
+						"var_1": {
+							"value": "@pipeline().parameters.var_1",
+							"type": "Expression"
+						},
+						"var_2": {
+							"value": "@pipeline().parameters.var_2",
+							"type": "Expression"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "adf_drc_fixed_cluster",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"parameters": {
+			"var_1": {
+				"type": "string",
+				"defaultValue": "a"
+			},
+			"var_2": {
+				"type": "string",
+				"defaultValue": "b"
+			}
+		},
+		"folder": {
+			"name": "DRC/experiments"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-09-20T14:23:22Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

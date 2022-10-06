@@ -1,0 +1,29 @@
+{
+	"name": "CURRENT_A1_FACT_TABLE",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ADLS_DART_PROD",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"path": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": {
+					"value": "@concat(dataset().path,'/FACT_ALERT1/CURRENT')",
+					"type": "Expression"
+				},
+				"fileSystem": "prod"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

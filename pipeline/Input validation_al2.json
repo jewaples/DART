@@ -1,0 +1,185 @@
+{
+	"name": "Input validation_al2",
+	"properties": {
+		"activities": [
+			{
+				"name": "Fact Sales Metadata",
+				"type": "GetMetadata",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "Fact_Sales_RGM",
+						"type": "DatasetReference"
+					},
+					"fieldList": [
+						"exists",
+						"childItems"
+					],
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
+						"enablePartitionDiscovery": false
+					}
+				}
+			},
+			{
+				"name": "If Condition1",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "Fact Sales Metadata",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Dim Retailer Metadata",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Dim Product Metadata",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Dim RAD-RGM Processed Product Metadata",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@and(and(and(greater(length(activity('Fact Sales Metadata').output.childItems),0), greater(length(activity('Dim Retailer Metadata').output.childItems),0)),greater(length(activity('Dim RAD-RGM Processed Product Metadata').output.childItems),0)), greater(length(activity('Dim Product Metadata').output.childItems),0))",
+						"type": "Expression"
+					},
+					"ifFalseActivities": [
+						{
+							"name": "Fail1",
+							"type": "Fail",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"message": {
+									"value": "No files found",
+									"type": "Expression"
+								},
+								"errorCode": {
+									"value": "500",
+									"type": "Expression"
+								}
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "Dim Retailer Metadata",
+				"type": "GetMetadata",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "DIM_RETAILER",
+						"type": "DatasetReference"
+					},
+					"fieldList": [
+						"exists",
+						"childItems"
+					],
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
+						"enablePartitionDiscovery": false
+					}
+				}
+			},
+			{
+				"name": "Dim Product Metadata",
+				"type": "GetMetadata",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "DIM_PRODUCT",
+						"type": "DatasetReference"
+					},
+					"fieldList": [
+						"exists",
+						"childItems"
+					],
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
+						"enablePartitionDiscovery": false
+					}
+				}
+			},
+			{
+				"name": "Dim RAD-RGM Processed Product Metadata",
+				"type": "GetMetadata",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "DIM_PROCESSED_PRODUCT_RAD_RGM",
+						"type": "DatasetReference"
+					},
+					"fieldList": [
+						"exists",
+						"childItems"
+					],
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
+						"enablePartitionDiscovery": false
+					}
+				}
+			}
+		],
+		"variables": {
+			"Error": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "Alert 2"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-10-05T15:38:19Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

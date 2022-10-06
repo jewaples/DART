@@ -1,0 +1,350 @@
+{
+	"name": "Main Alert1 Iterative Pipeline",
+	"properties": {
+		"activities": [
+			{
+				"name": "Dataset Validation",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Cluster Validation",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Input validation",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Validation Fail Notification",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Dataset Validation",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Email notification",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"receiver": {
+							"value": "@pipeline().parameters.receiver",
+							"type": "Expression"
+						},
+						"message": {
+							"value": "@concat('Alert1 pipeline has failed :', activity('Dataset Validation').error.message)",
+							"type": "Expression"
+						},
+						"title": "PIPELINE RUN FAILED",
+						"color": "Red",
+						"pipelineName": {
+							"value": "@pipeline().Pipeline",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "For Each Market Notebook",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Dataset Validation",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "For Each Market",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"market_list": {
+							"value": "@pipeline().parameters.market_list",
+							"type": "Expression"
+						},
+						"stage": {
+							"value": "@pipeline().parameters.stage",
+							"type": "Expression"
+						},
+						"folder": {
+							"value": "@pipeline().parameters.folder",
+							"type": "Expression"
+						},
+						"guardrail_spec": {
+							"value": "@pipeline().parameters.guardrail_spec",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "Join Market Dataframes",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "For Each Market Notebook",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Join A1 datasets",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"stage": {
+							"value": "@concat('/',pipeline().parameters.stage)",
+							"type": "Expression"
+						},
+						"folder": {
+							"value": "@pipeline().parameters.folder",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "For each Market Iteration Fail Notification",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "For Each Market Notebook",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Email notification",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"receiver": {
+							"value": "@pipeline().parameters.receiver",
+							"type": "Expression"
+						},
+						"message": {
+							"value": "@concat('Alert1 pipeline has failed :', activity('For Each Market Notebook').error.message)",
+							"type": "Expression"
+						},
+						"title": "PIPELINE RUN FAILED",
+						"color": "Red",
+						"pipelineName": {
+							"value": "@pipeline().Pipeline",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "Join Market Dataframe Fail Notification",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Join Market Dataframes",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Email notification",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"receiver": {
+							"value": "@pipeline().parameters.receiver",
+							"type": "Expression"
+						},
+						"message": {
+							"value": "@concat('Alert1 pipeline has failed :', activity('Join Market Dataframes').error.message)",
+							"type": "Expression"
+						},
+						"title": "PIPELINE RUN FAILED",
+						"color": "Red",
+						"pipelineName": {
+							"value": "@pipeline().Pipeline",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "Join Market Dataframe Success Notification",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Join Market Dataframes",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Email notification",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"receiver": {
+							"value": "@pipeline().parameters.receiver",
+							"type": "Expression"
+						},
+						"message": "Alert1 pipeline run successfully",
+						"title": "PIPELINE RUN FINISHED",
+						"color": "Green",
+						"pipelineName": {
+							"value": "@pipeline().Pipeline",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "Cluster Validation",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Cluster validation",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"stage": {
+							"value": "@pipeline().parameters.stage",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "Cluseter Validation Fail Notification",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Cluster Validation",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Email notification",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"receiver": {
+							"value": "@pipeline().parameters.receiver",
+							"type": "Expression"
+						},
+						"message": {
+							"value": "@concat('Alert1 pipeline has failed :', activity('Cluster Validation').error.message)",
+							"type": "Expression"
+						},
+						"title": "PIPELINE RUN FAILED",
+						"color": "Red",
+						"pipelineName": {
+							"value": "@pipeline().Pipeline",
+							"type": "Expression"
+						}
+					}
+				}
+			}
+		],
+		"parameters": {
+			"market_list": {
+				"type": "array",
+				"defaultValue": [
+					"Texas",
+					"Florida",
+					"Massachusetts",
+					"New Hampshire",
+					"Arizona",
+					"Maryland",
+					"Washington",
+					"Indiana",
+					"Maine",
+					"Louisiana",
+					"Missouri",
+					"Delaware",
+					"Oklahoma",
+					"South Carolina",
+					"Kentucky",
+					"Metro New York"
+				]
+			},
+			"receiver": {
+				"type": "string",
+				"defaultValue": "emilio.piotto@accenture.com"
+			},
+			"stage": {
+				"type": "string",
+				"defaultValue": "DEV"
+			},
+			"folder": {
+				"type": "string",
+				"defaultValue": "/STAGE"
+			},
+			"guardrail_spec": {
+				"type": "string",
+				"defaultValue": "Price_Guidelines_Brand_Size_Description_w_strategy_PROD.csv"
+			}
+		},
+		"variables": {
+			"cluster_id": {
+				"type": "String"
+			},
+			"wheel_name": {
+				"type": "String"
+			},
+			"booly": {
+				"type": "Boolean"
+			},
+			"boolstr": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "Alert 1"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-09-29T18:54:03Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

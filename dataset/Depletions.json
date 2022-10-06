@@ -1,0 +1,38 @@
+{
+	"name": "Depletions",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "bdhdlsgen2nam",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "EDW/AA/DRC/ACTUALS/CURRENT",
+				"fileSystem": "prod"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "DISTRIBUTOR",
+				"type": "UTF8"
+			},
+			{
+				"name": "PRODUCT_BRAND_PLANNING_SIZE_ID",
+				"type": "UTF8"
+			},
+			{
+				"name": "Period_Date",
+				"type": "INT96"
+			},
+			{
+				"name": "NINEL_CASE_QTY",
+				"type": "DOUBLE"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

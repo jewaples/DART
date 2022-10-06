@@ -1,0 +1,96 @@
+{
+	"name": "DRC Test",
+	"properties": {
+		"activities": [
+			{
+				"name": "Data Ingestion",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Users/sbrenesm@bacardi.com/DRC/Data Ingestion Script"
+				},
+				"linkedServiceName": {
+					"referenceName": "databricks_dart_sandbox",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"ai_alerts_pilot_cluster_version": "10.1.x-scala2.12",
+						"ai_alerts_pilot_node_type": "Standard_F8"
+					}
+				}
+			},
+			{
+				"name": "Data Preprocessing",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "Data Ingestion",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Users/sbrenesm@bacardi.com/DRC/DataBricksExtract_ALL_TABLES_git"
+				},
+				"linkedServiceName": {
+					"referenceName": "databricks_dart_sandbox",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"ai_alerts_pilot_cluster_version": "10.1.x-scala2.12",
+						"ai_alerts_pilot_node_type": "Standard_F8"
+					}
+				}
+			},
+			{
+				"name": "Generate DRC output",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "Data Preprocessing",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Users/sbrenesm@bacardi.com/DRC/processAllCurrentDate_with_combination_option_git"
+				},
+				"linkedServiceName": {
+					"referenceName": "databricks_dart_sandbox",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"ai_alerts_pilot_cluster_version": "10.1.x-scala2.12",
+						"ai_alerts_pilot_node_type": "Standard_F8"
+					}
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2022-02-02T19:19:14Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

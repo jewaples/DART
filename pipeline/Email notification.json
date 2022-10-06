@@ -1,0 +1,57 @@
+{
+	"name": "Email notification",
+	"properties": {
+		"activities": [
+			{
+				"name": "Email Notification",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://prod-82.eastus.logic.azure.com:443/workflows/fd4763e300b0452db2d90e41d699a6e9/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=i8bNvQHP_wd-0xpntusl01wmnSrRUlxraR9CQzoIcxY",
+					"method": "POST",
+					"body": {
+						"value": "{   \"title\" : \"@{pipeline().parameters.title}\",\n    \"message\" : \"@{pipeline().parameters.message}.\",\n    \"color\" : \"@{pipeline().parameters.color}\",\n    \"dataFactoryName\" : \"@{pipeline().DataFactory}\", \n    \"pipelineName\" : \"@{pipeline().parameters.pipelineName}\",\n    \"receiver\" : \"@{pipeline().parameters.receiver}\",\n    \"time\" : \"@{utcNow()}\"\n   }",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"receiver": {
+				"type": "string"
+			},
+			"pipelineRunID": {
+				"type": "string"
+			},
+			"message": {
+				"type": "string"
+			},
+			"title": {
+				"type": "string"
+			},
+			"color": {
+				"type": "string"
+			},
+			"pipelineName": {
+				"type": "string"
+			},
+			"time": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "Alert 1"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-09-21T12:06:06Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

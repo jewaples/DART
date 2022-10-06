@@ -1,0 +1,127 @@
+{
+	"name": "EXP Main Mails",
+	"properties": {
+		"activities": [
+			{
+				"name": "Validation Fail Notification",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Email notification",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"receiver": {
+							"value": "@pipeline().parameters.receiver",
+							"type": "Expression"
+						},
+						"message": {
+							"value": "Alert1 pipeline has failed :",
+							"type": "Expression"
+						},
+						"title": "PIPELINE RUN FAILED",
+						"color": "Red",
+						"pipelineName": {
+							"value": "@pipeline().Pipeline",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "For each Market Iteration Fail Notification",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Email notification",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"receiver": {
+							"value": "@pipeline().parameters.receiver",
+							"type": "Expression"
+						},
+						"message": {
+							"value": "Alert1 pipeline has failed :",
+							"type": "Expression"
+						},
+						"title": "PIPELINE RUN FAILED",
+						"color": "Red",
+						"pipelineName": {
+							"value": "@pipeline().Pipeline",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "Join Market Dataframe Fail Notification",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Email notification",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"receiver": {
+							"value": "@pipeline().parameters.receiver",
+							"type": "Expression"
+						},
+						"message": {
+							"value": "Alert1 pipeline has failed :",
+							"type": "Expression"
+						},
+						"title": "PIPELINE RUN FAILED",
+						"color": "Red",
+						"pipelineName": {
+							"value": "@pipeline().Pipeline",
+							"type": "Expression"
+						}
+					}
+				}
+			}
+		],
+		"parameters": {
+			"market_list": {
+				"type": "array",
+				"defaultValue": [
+					"Texas",
+					"Florida",
+					"Massachusetts",
+					"New Hampshire",
+					"Arizona",
+					"Maryland",
+					"Washington",
+					"Indiana",
+					"Maine",
+					"Louisiana",
+					"Missouri",
+					"Delaware",
+					"Oklahoma",
+					"South Carolina",
+					"Kentucky",
+					"Metro New York"
+				]
+			},
+			"receiver": {
+				"type": "string",
+				"defaultValue": "emilio.piotto@accenture.com"
+			}
+		},
+		"folder": {
+			"name": "Alert 1/experiments"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-09-21T12:06:07Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

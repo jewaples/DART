@@ -1,0 +1,408 @@
+{
+	"name": "DIM_PROCESSED_PRODUCT_RAD_RGM",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ADLS_DART_PROD",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "EDW/RGM/DIM_PROCESSED_PRODUCT_RAD_RGM/CURRENT",
+				"fileSystem": "prod"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "ITEM_DESCRIPTION",
+				"type": "UTF8"
+			},
+			{
+				"name": "ITEM_ID",
+				"type": "UTF8"
+			},
+			{
+				"name": "PRODUCT_BRAND_PLANNING_SIZE_ID",
+				"type": "UTF8"
+			},
+			{
+				"name": "PRODUCT_BRAND_PLANNING_SIZE_DESCRIPTION",
+				"type": "UTF8"
+			},
+			{
+				"name": "PRODUCT_BRAND_SIZE_DESCRIPTION",
+				"type": "UTF8"
+			},
+			{
+				"name": "PRODUCT_BRAND_SIZE_ID",
+				"type": "UTF8"
+			},
+			{
+				"name": "PRODUCT_BRAND_LABEL_DESCRIPTION",
+				"type": "UTF8"
+			},
+			{
+				"name": "PRODUCT_BRAND_LABEL_ID",
+				"type": "UTF8"
+			},
+			{
+				"name": "PRODUCT_BRAND_GROUP_DESCRIPTION",
+				"type": "UTF8"
+			},
+			{
+				"name": "PRODUCT_BRAND_GROUP_ID",
+				"type": "UTF8"
+			},
+			{
+				"name": "PRODUCT_BRAND_HOUSE_DESCRIPTION",
+				"type": "UTF8"
+			},
+			{
+				"name": "PRODUCT_BRAND_HOUSE_ID",
+				"type": "UTF8"
+			},
+			{
+				"name": "BOTTLE_SIZE",
+				"type": "UTF8"
+			},
+			{
+				"name": "BOTTLE_VOLUME",
+				"type": "UTF8"
+			},
+			{
+				"name": "BOTTLES_PER_CASE",
+				"type": "DECIMAL",
+				"precision": 38,
+				"scale": 0
+			},
+			{
+				"name": "RETAIL_UNITS_PER_CASE",
+				"type": "DECIMAL",
+				"precision": 38,
+				"scale": 0
+			},
+			{
+				"name": "BOTTLES_PER_RETAIL_UNIT",
+				"type": "DECIMAL",
+				"precision": 38,
+				"scale": 0
+			},
+			{
+				"name": "ACTIVE_FOR_PLANNING",
+				"type": "UTF8"
+			},
+			{
+				"name": "SAP_MATERIAL_GROUP_CODE",
+				"type": "DECIMAL",
+				"precision": 33,
+				"scale": 3
+			},
+			{
+				"name": "SAP_MATERIAL_GROUP_DESCRIPTION",
+				"type": "UTF8"
+			},
+			{
+				"name": "SAP_MATERIAL_TYPE",
+				"type": "UTF8"
+			},
+			{
+				"name": "BEVERAGE_TYPE",
+				"type": "UTF8"
+			},
+			{
+				"name": "PROOF",
+				"type": "DECIMAL",
+				"precision": 33,
+				"scale": 3
+			},
+			{
+				"name": "PRODUCT_PLANNING_TYPE_ID",
+				"type": "UTF8"
+			},
+			{
+				"name": "PRODUCT_PLANNING_TYPE",
+				"type": "UTF8"
+			},
+			{
+				"name": "TOTAL_CASE_VOLUME",
+				"type": "DECIMAL",
+				"precision": 33,
+				"scale": 3
+			},
+			{
+				"name": "MATERIAL_PRICE_GROUP",
+				"type": "UTF8"
+			},
+			{
+				"name": "BRAND_GROUP_CODE",
+				"type": "UTF8"
+			},
+			{
+				"name": "BRAND_GROUP_DESCRIPTION",
+				"type": "UTF8"
+			},
+			{
+				"name": "REPRESENTATIVE_PLANNING_IPC",
+				"type": "UTF8"
+			},
+			{
+				"name": "REPRESENTATIVE_PLANNING_IPC_DESCRIPTION",
+				"type": "UTF8"
+			},
+			{
+				"name": "CONTAINER_TYPE_CODE",
+				"type": "UTF8"
+			},
+			{
+				"name": "CONTAINER_TYPE_DESCRIPTION",
+				"type": "UTF8"
+			},
+			{
+				"name": "OUTER_PACKAGING_TYPE_CODE",
+				"type": "UTF8"
+			},
+			{
+				"name": "OUTER_PACKAGING_TYPE_DESCRIPTION",
+				"type": "UTF8"
+			},
+			{
+				"name": "PRODUCT_HIERARCHY_LEVEL_4_CODE",
+				"type": "UTF8"
+			},
+			{
+				"name": "PRODUCT_HIERARCHY_LEVEL_4_DESCRIPTION",
+				"type": "UTF8"
+			},
+			{
+				"name": "BRAND_STATUS_CODE",
+				"type": "UTF8"
+			},
+			{
+				"name": "BRAND_STATUS",
+				"type": "UTF8"
+			},
+			{
+				"name": "BRAND_CLASSIFICATION_CODE",
+				"type": "UTF8"
+			},
+			{
+				"name": "ACTIVE_FOR_ANNUAL_PLANNING_CODE",
+				"type": "UTF8"
+			},
+			{
+				"name": "ACTIVE_FOR_ANNUAL_PLANNING",
+				"type": "UTF8"
+			},
+			{
+				"name": "SCC_CODE",
+				"type": "UTF8"
+			},
+			{
+				"name": "TOTAL_BUSA_PORTFOLIO",
+				"type": "UTF8"
+			},
+			{
+				"name": "REPORTING_BRAND_GROUP",
+				"type": "UTF8"
+			},
+			{
+				"name": "UNIVERSE",
+				"type": "UTF8"
+			},
+			{
+				"name": "MANUFACTURER",
+				"type": "UTF8"
+			},
+			{
+				"name": "BACARDI_PATRON_FLAG",
+				"type": "UTF8"
+			},
+			{
+				"name": "BRAND_EXTENSION",
+				"type": "UTF8"
+			},
+			{
+				"name": "PRODUCT_MASTER_ID",
+				"type": "UTF8"
+			},
+			{
+				"name": "SCAT",
+				"type": "UTF8"
+			},
+			{
+				"name": "BA_CATEGORY",
+				"type": "UTF8"
+			},
+			{
+				"name": "FLAVOR",
+				"type": "UTF8"
+			},
+			{
+				"name": "FLAVORED",
+				"type": "UTF8"
+			},
+			{
+				"name": "ALCOHOL_BY_VOLUME",
+				"type": "UTF8"
+			},
+			{
+				"name": "PTIER",
+				"type": "UTF8"
+			},
+			{
+				"name": "VAP",
+				"type": "UTF8"
+			},
+			{
+				"name": "WTYPE",
+				"type": "UTF8"
+			},
+			{
+				"name": "CREATED_TIMESTAMP",
+				"type": "UTF8"
+			},
+			{
+				"name": "CATEGORY",
+				"type": "UTF8"
+			},
+			{
+				"name": "WHISKEY_TYPE",
+				"type": "UTF8"
+			},
+			{
+				"name": "PRICE_TIER",
+				"type": "UTF8"
+			},
+			{
+				"name": "SUBCATEGORY",
+				"type": "UTF8"
+			},
+			{
+				"name": "HYBRID_SUBCATEGORY",
+				"type": "UTF8"
+			},
+			{
+				"name": "CATEGORY_COMPARE_ID",
+				"type": "UTF8"
+			},
+			{
+				"name": "SOURCE",
+				"type": "UTF8"
+			},
+			{
+				"name": "TEST_BOTTLE_VOLUME",
+				"type": "INT32"
+			},
+			{
+				"name": "BFAMILY",
+				"type": "UTF8"
+			},
+			{
+				"name": "BRANDFAMILYHOUSEID",
+				"type": "UTF8"
+			},
+			{
+				"name": "SHORT_BRAND_HOUSE_DESCRIPTION",
+				"type": "UTF8"
+			},
+			{
+				"name": "BTEAM",
+				"type": "UTF8"
+			},
+			{
+				"name": "BTEAM2",
+				"type": "UTF8"
+			},
+			{
+				"name": "SOURCE_PRODUCT",
+				"type": "UTF8"
+			},
+			{
+				"name": "SOURCE_SIZE",
+				"type": "UTF8"
+			},
+			{
+				"name": "PACKAGE_GENERAL_SHAPE",
+				"type": "UTF8"
+			},
+			{
+				"name": "NIELSEN_UNITS",
+				"type": "DECIMAL",
+				"precision": 38,
+				"scale": 3
+			},
+			{
+				"name": "BRAND_GROUPS",
+				"type": "UTF8"
+			},
+			{
+				"name": "NABCA_PRODUCT_CLASS_ABBREVIATION",
+				"type": "UTF8"
+			},
+			{
+				"name": "NABCA_VENDOR_ABBREVIATION",
+				"type": "UTF8"
+			},
+			{
+				"name": "BRAND_FAMILY",
+				"type": "UTF8"
+			},
+			{
+				"name": "BRAND_TEAM",
+				"type": "UTF8"
+			},
+			{
+				"name": "DISCONTINUED",
+				"type": "UTF8"
+			},
+			{
+				"name": "PACK_SIZE",
+				"type": "UTF8"
+			},
+			{
+				"name": "DISCUS_BRAND_FAMILY",
+				"type": "UTF8"
+			},
+			{
+				"name": "DISCUS_COMMON_CODE_NAME",
+				"type": "UTF8"
+			},
+			{
+				"name": "COMMON_CODE_NAME",
+				"type": "UTF8"
+			},
+			{
+				"name": "DISCUS_MAJOR_CATEGORY",
+				"type": "UTF8"
+			},
+			{
+				"name": "DISCUS_MINOR_1",
+				"type": "UTF8"
+			},
+			{
+				"name": "DISCUS_MINOR_2",
+				"type": "UTF8"
+			},
+			{
+				"name": "DISCUS_FLAVOR",
+				"type": "UTF8"
+			},
+			{
+				"name": "VENDOR",
+				"type": "UTF8"
+			},
+			{
+				"name": "PRODUCT_ID_NABCA",
+				"type": "INT32"
+			},
+			{
+				"name": "SEQUENCE_NUMBER_NABCA",
+				"type": "INT32"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

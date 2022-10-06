@@ -1,0 +1,30 @@
+{
+	"name": "Alerts Schedule",
+	"properties": {
+		"description": "Weekly trigger for Alerts refresh",
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "AI Alerts 1 Pilot",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Week",
+				"interval": 1,
+				"startTime": "2022-03-02T08:00:00",
+				"timeZone": "Eastern Standard Time",
+				"schedule": {
+					"weekDays": [
+						"Wednesday"
+					]
+				}
+			}
+		}
+	}
+}

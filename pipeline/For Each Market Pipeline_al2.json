@@ -1,0 +1,58 @@
+{
+	"name": "For Each Market Pipeline_al2",
+	"properties": {
+		"activities": [
+			{
+				"name": "ForEach market alert1",
+				"type": "ForEach",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@pipeline().parameters.market_list",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "Alert1 Single Market",
+							"type": "DatabricksNotebook",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"notebookPath": "/Shared/Alert1/adf_pipelines_notebooks/Alert1-Refactor-Test-adf_shared",
+								"baseParameters": {
+									"market": {
+										"value": "@item()",
+										"type": "Expression"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "adf_alert_1_dev_ep",
+								"type": "LinkedServiceReference"
+							}
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"market_list": {
+				"type": "array"
+			}
+		},
+		"folder": {
+			"name": "Alert 2"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-10-05T15:38:19Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

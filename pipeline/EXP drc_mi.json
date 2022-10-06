@@ -1,0 +1,181 @@
+{
+	"name": "EXP drc_mi",
+	"properties": {
+		"activities": [
+			{
+				"name": "MI_tool",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "actuals_path",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "intervals_path",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "stage",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "intervals_folder",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Repos/adf_db_repo/adf_db_drc_DEV/notebooks/DRC/experiments/drc_model_interval(1)",
+					"baseParameters": {
+						"actuals_path": {
+							"value": "@variables('actuals_path')",
+							"type": "Expression"
+						},
+						"intervals_path": {
+							"value": "@variables('intervals_path')",
+							"type": "Expression"
+						},
+						"stage": {
+							"value": "@variables('stage')",
+							"type": "Expression"
+						},
+						"intervals_folder": {
+							"value": "@variables('intervals_folder')",
+							"type": "Expression"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "adf_drc_fixed_cluster",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "actuals_path",
+				"description": "",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "stage",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "actuals_path",
+					"value": {
+						"value": "@concat(variables('stage'),'/ACTUALS')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "intervals_path",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "stage",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "intervals_folder",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "intervals_path",
+					"value": {
+						"value": "@concat(variables('stage'),variables('intervals_folder'))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "root",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "root",
+					"value": "/mnt/dartread/EDW/AA/DRC"
+				}
+			},
+			{
+				"name": "stage",
+				"description": "",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "root",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "stage",
+					"value": {
+						"value": "@concat(variables('root'),'/QA')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "intervals_folder",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "intervals_folder",
+					"value": "/INTERVALS"
+				}
+			}
+		],
+		"variables": {
+			"actuals_path": {
+				"type": "String"
+			},
+			"intervals_path": {
+				"type": "String"
+			},
+			"intervals_folder": {
+				"type": "String"
+			},
+			"root": {
+				"type": "String"
+			},
+			"stage": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "DRC/experiments"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-09-29T18:54:02Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

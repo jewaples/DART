@@ -1,0 +1,184 @@
+{
+	"name": "AI Alerts 3 Pilot",
+	"properties": {
+		"activities": [
+			{
+				"name": "Check Analytics Engine Version",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "Analytics Engine Version",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Analytics Engine Wheel Name",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "databricks_cluster_version",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "databricks_node_type",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "00.01:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Repos/tgui@bacardi.com/ai_alerts_production_pilot/notebooks/test_alerts_engine_install_Bacardi",
+					"baseParameters": {
+						"package version": {
+							"value": "@variables('analytics_engine_version')",
+							"type": "Expression"
+						},
+						"path to wheel": {
+							"value": "@variables('analytics_engine_whl_base_name')",
+							"type": "Expression"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "databricks_dart_sandbox",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"ai_alerts_pilot_cluster_version": {
+							"value": "@variables('databricks_cluster_version')",
+							"type": "Expression"
+						},
+						"ai_alerts_pilot_node_type": {
+							"value": "@variables('databricks_node_type')",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "Analytics Engine Version",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "analytics_engine_version",
+					"value": "0.0.4"
+				}
+			},
+			{
+				"name": "Analytics Engine Wheel Name",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Analytics Engine Version",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "analytics_engine_whl_base_name",
+					"value": {
+						"value": "@concat('/dbfs/FileStore/tables/alerts_engine-',\n variables('analytics_engine_version'),\n'-py3-none-any.whl')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "databricks_cluster_version",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "databricks_cluster_version",
+					"value": "10.1.x-scala2.12"
+				}
+			},
+			{
+				"name": "databricks_node_type",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "databricks_node_type",
+					"value": "Standard_F8"
+				}
+			},
+			{
+				"name": "Run AI Alerts 3",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "Check Analytics Engine Version",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Repos/tgui@bacardi.com/ai_alerts_production_pilot/notebooks/Alert 3 RGM Process",
+					"baseParameters": {
+						"path to wheel": {
+							"value": "@variables('analytics_engine_whl_base_name')",
+							"type": "Expression"
+						},
+						"DB_PATH": "EDW/RGM"
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "databricks_dart_sandbox",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"ai_alerts_pilot_cluster_version": {
+							"value": "@variables('databricks_cluster_version')",
+							"type": "Expression"
+						},
+						"ai_alerts_pilot_node_type": {
+							"value": "@variables('databricks_node_type')",
+							"type": "Expression"
+						}
+					}
+				}
+			}
+		],
+		"variables": {
+			"analytics_engine_version": {
+				"type": "String",
+				"defaultValue": "0.0.0"
+			},
+			"analytics_engine_whl_base_name": {
+				"type": "String"
+			},
+			"databricks_cluster_version": {
+				"type": "String"
+			},
+			"databricks_node_type": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-04-19T17:59:45Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

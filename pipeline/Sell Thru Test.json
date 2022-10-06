@@ -1,0 +1,117 @@
+{
+	"name": "Sell Thru Test",
+	"properties": {
+		"description": "Sell Thru prototype pipeline\n",
+		"activities": [
+			{
+				"name": "UI Results",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "Market selection",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Repos/lapablaza@bacardi.com/Bacardi-Sell-Thru/Results for UI"
+				},
+				"linkedServiceName": {
+					"referenceName": "azure_databricks_sell_thru",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "Market selection",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Data Processing",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@variables('markets')",
+						"type": "Expression"
+					},
+					"isSequential": false,
+					"activities": [
+						{
+							"name": "Sell Thru Model",
+							"type": "DatabricksNotebook",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"notebookPath": "/Repos/lapablaza@bacardi.com/Bacardi-Sell-Thru/ST Model/SellThru_Model",
+								"baseParameters": {
+									"Markets": {
+										"value": "@item()",
+										"type": "Expression"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "azure_databricks_sell_thru",
+								"type": "LinkedServiceReference"
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "Data Processing",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Repos/lapablaza@bacardi.com/Bacardi-Sell-Thru/Data Processing"
+				},
+				"linkedServiceName": {
+					"referenceName": "azure_databricks_sell_thru",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"variables": {
+			"markets": {
+				"type": "Array",
+				"defaultValue": [
+					"TX",
+					"FL",
+					"MA",
+					"NH"
+				]
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-07-23T00:10:04Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

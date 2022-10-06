@@ -1,0 +1,21 @@
+{
+	"name": "Fact_Sales_RGM",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ADLS_DART_PROD",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "EDW/RGM/FACT_SALES/CURRENT",
+				"fileSystem": "prod"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

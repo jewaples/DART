@@ -1,0 +1,89 @@
+{
+	"name": "forecast_nb",
+	"properties": {
+		"activities": [
+			{
+				"name": "Forecast_update",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": {
+						"value": "@concat('/Repos/adf_db_repo/adf_db_drc_',pipeline().parameters.stage,'/notebooks/DRC/pipelines_notebooks/forecast_update')",
+						"type": "Expression"
+					},
+					"baseParameters": {
+						"forecast_path": {
+							"value": "@pipeline().parameters.forecast_path",
+							"type": "Expression"
+						},
+						"DIM_DISTRIBUTOR_CCC_PARQUET_FILE": {
+							"value": "@pipeline().parameters.DIM_DISTRIBUTOR_CCC_PARQUET_FILE",
+							"type": "Expression"
+						},
+						"DIM_PRODUCT_PARQUET_FILE": {
+							"value": "@pipeline().parameters.DIM_PRODUCT_PARQUET_FILE",
+							"type": "Expression"
+						},
+						"URL": {
+							"value": "@pipeline().parameters.URL",
+							"type": "Expression"
+						},
+						"USER": {
+							"value": "@pipeline().parameters.USER",
+							"type": "Expression"
+						},
+						"PASS": {
+							"value": "@pipeline().parameters.PASS",
+							"type": "Expression"
+						},
+						"stage": {
+							"value": "@pipeline().parameters.stage",
+							"type": "Expression"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "adf_drc_fixed_cluster",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"parameters": {
+			"forecast_path": {
+				"type": "string"
+			},
+			"DIM_DISTRIBUTOR_CCC_PARQUET_FILE": {
+				"type": "string"
+			},
+			"DIM_PRODUCT_PARQUET_FILE": {
+				"type": "string"
+			},
+			"URL": {
+				"type": "string"
+			},
+			"USER": {
+				"type": "string"
+			},
+			"PASS": {
+				"type": "string"
+			},
+			"stage": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "DRC"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-10-05T19:31:36Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

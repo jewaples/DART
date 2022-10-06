@@ -1,0 +1,113 @@
+{
+	"name": "For Each Market_al2",
+	"properties": {
+		"activities": [
+			{
+				"name": "ForEach market alert2",
+				"type": "ForEach",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@pipeline().parameters.market_list",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "Alert2 Single Market",
+							"type": "DatabricksNotebook",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"notebookPath": {
+									"value": "@concat('/Repos/adf_db_repo/adf_db_al_',pipeline().parameters.stage,'/notebooks/Alerts/pipelines_notebooks/Alert_2_Baseline')",
+									"type": "Expression"
+								},
+								"baseParameters": {
+									"market": {
+										"value": "@item()",
+										"type": "Expression"
+									},
+									"root": {
+										"value": "@pipeline().parameters.root",
+										"type": "Expression"
+									},
+									"stage": {
+										"value": "@pipeline().parameters.stage",
+										"type": "Expression"
+									},
+									"folder": {
+										"value": "@pipeline().parameters.folder",
+										"type": "Expression"
+									},
+									"guardrail_spec": {
+										"value": "@pipeline().parameters.guardrail_spec",
+										"type": "Expression"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "adf_alert_2_dev_ep",
+								"type": "LinkedServiceReference"
+							}
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"market_list": {
+				"type": "array"
+			},
+			"root": {
+				"type": "string",
+				"defaultValue": "/mnt/dartread/EDW/AA/ALERTS"
+			},
+			"stage": {
+				"type": "string"
+			},
+			"folder": {
+				"type": "string"
+			},
+			"guardrail_spec": {
+				"type": "string"
+			}
+		},
+		"variables": {
+			"path_dim_prod": {
+				"type": "String"
+			},
+			"path_FACT_AL": {
+				"type": "String"
+			},
+			"path_dim_mark": {
+				"type": "String"
+			},
+			"path_fact_aler": {
+				"type": "String"
+			},
+			"path_miss_prod": {
+				"type": "String"
+			},
+			"booly": {
+				"type": "Boolean"
+			},
+			"boolstr": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "Alert 2"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-10-05T15:38:21Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

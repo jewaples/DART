@@ -1,0 +1,27 @@
+{
+	"name": "DEL_CURRENT_A1_MARKET_TABLE",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ADLS_DART_PROD",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"path": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": {
+					"value": "@concat(dataset().path,'/DIM_MARKET_ALERT1/CURRENT')",
+					"type": "Expression"
+				},
+				"fileSystem": "prod"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

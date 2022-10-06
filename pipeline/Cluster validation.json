@@ -1,0 +1,145 @@
+{
+	"name": "Cluster validation",
+	"properties": {
+		"activities": [
+			{
+				"name": "check_wheel",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "cluster_id",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "wheel_name",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": {
+						"value": "@concat('/Repos/adf_db_repo/adf_db_al_',pipeline().parameters.stage,'/notebooks/Alerts/pipelines_notebooks/cluster_validation')",
+						"type": "Expression"
+					},
+					"baseParameters": {
+						"cluster_id": {
+							"value": "@variables('cluster_id')",
+							"type": "Expression"
+						},
+						"wheel_name": {
+							"value": "@variables('wheel_name')",
+							"type": "Expression"
+						},
+						"TOKEN": {
+							"value": "@pipeline().parameters.TOKEN",
+							"type": "Expression"
+						},
+						"instance_id": {
+							"value": "@pipeline().parameters.instance_id",
+							"type": "Expression"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "adf_alert_1_prod_ep",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "cluster_id",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "cluster_id",
+					"value": "0622-134541-1wltjybz"
+				}
+			},
+			{
+				"name": "wheel_name",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "wheel_name",
+					"value": "alerts_engine-0.1.5_prod3-py3-none-any.whl"
+				}
+			},
+			{
+				"name": "Validate wheel",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "check_wheel",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@equals(activity('check_wheel').output.runOutput, 'True')",
+						"type": "Expression"
+					},
+					"ifFalseActivities": [
+						{
+							"name": "Fail",
+							"type": "Fail",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"message": "'Wheel validation failed'",
+								"errorCode": "500"
+							}
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"TOKEN": {
+				"type": "string",
+				"defaultValue": "dapi076b3135480607341eb29de78e556c89-3"
+			},
+			"instance_id": {
+				"type": "string",
+				"defaultValue": "adb-3849811141775228.8.azuredatabricks.net"
+			},
+			"stage": {
+				"type": "string"
+			}
+		},
+		"variables": {
+			"cluster_id": {
+				"type": "String"
+			},
+			"wheel_name": {
+				"type": "String"
+			},
+			"booly": {
+				"type": "Boolean"
+			},
+			"boolstr": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "Alert 1"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-10-05T15:38:19Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

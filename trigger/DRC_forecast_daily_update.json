@@ -1,0 +1,42 @@
+{
+	"name": "DRC_forecast_daily_update",
+	"properties": {
+		"description": "Daily update of the power BI",
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "forecast_update",
+					"type": "PipelineReference"
+				},
+				"parameters": {
+					"DIM_DISTRIBUTOR_CCC_PARQUET_FILE": "/mnt/dartread/EDW/RAD/DIM_DISTRIBUTOR_CCC",
+					"DIM_PRODUCT_PARQUET_FILE": "/mnt/dartread/EDW/RAD/DIM_PRODUCT",
+					"URL": "jdbc:sqlserver://bdh-sql-nam-com.database.windows.net:1433;database=bdh-sql-nam-com-dart",
+					"USER": "E2E_READER",
+					"PASS": "PR40dVT12",
+					"stage": "PROD",
+					"receiver": "cshen@bacardi.com; emilio.piotto@accenture.com;sbrenesm@bacardi.com"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Day",
+				"interval": 1,
+				"startTime": "2022-09-07T08:00:00",
+				"timeZone": "Eastern Standard Time",
+				"schedule": {
+					"minutes": [
+						0
+					],
+					"hours": [
+						7
+					]
+				}
+			}
+		}
+	}
+}

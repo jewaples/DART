@@ -1,0 +1,43 @@
+{
+	"name": "DRC_Intervals_Monthly_Update",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "DRC",
+					"type": "PipelineReference"
+				},
+				"parameters": {
+					"FACT_ANAPLAN_PARQUET_FILE": "/mnt/dartread/EDW/ANAPLAN/FACT_ANAPLAN/Current",
+					"DIM_DISTRIBUTOR_CCC_PARQUET_FILE": "/mnt/dartread/EDW/RAD/DIM_DISTRIBUTOR_CCC",
+					"DIM_PRODUCT_PARQUET_FILE": "/mnt/dartread/EDW/RAD/DIM_PRODUCT",
+					"stage": "PROD",
+					"receiver": "cshen@bacardi.com; emilio.piotto@accenture.com;sbrenesm@bacardi.com"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Month",
+				"interval": 15,
+				"startTime": "2022-09-30T00:00:00Z",
+				"timeZone": "UTC",
+				"schedule": {
+					"minutes": [
+						0
+					],
+					"hours": [
+						0
+					],
+					"monthDays": [
+						10,
+						-1
+					]
+				}
+			}
+		}
+	}
+}

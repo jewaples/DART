@@ -1,0 +1,59 @@
+{
+	"name": "DRC_Actuals_Update",
+	"properties": {
+		"activities": [
+			{
+				"name": "Actuals_Update",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Users/sbrenesm@bacardi.com/DRC/data_pipelines/actuals_file_update"
+				},
+				"linkedServiceName": {
+					"referenceName": "databricks_dart_sandbox",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"ai_alerts_pilot_cluster_version": "10.1.x-scala2.12",
+						"ai_alerts_pilot_node_type": "Standard_F8"
+					}
+				}
+			},
+			{
+				"name": "Output_Details",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Actuals_Update",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "validations",
+					"value": {
+						"value": "@activity('Actuals_Update').output.runOutput",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"variables": {
+			"validations": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-07-29T17:38:47Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,107 @@
+{
+	"name": "EXP outp",
+	"properties": {
+		"activities": [
+			{
+				"name": "Output_generator",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "output_path",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "forecast_path",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "intervals_path",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Shared/DRC/data_pipelines/output_generator",
+					"baseParameters": {
+						"forecast_path": {
+							"value": "@variables('forecast_path')",
+							"type": "Expression"
+						},
+						"output_path": {
+							"value": "@variables('output_path')",
+							"type": "Expression"
+						},
+						"intervals_path": {
+							"value": "@variables('intervals_path')",
+							"type": "Expression"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "adf_drc_fixed_cluster",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "output_path",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "output_path",
+					"value": "/mnt/dartread/EDW/AA/DRC/QA/REALITY_CHECK"
+				}
+			},
+			{
+				"name": "forecast_path",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "forecast_path",
+					"value": "/mnt/dartread/EDW/AA/DRC/QA/FORECASTS"
+				}
+			},
+			{
+				"name": "intervals_path",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "intervals_path",
+					"value": "/mnt/dartread/EDW/AA/DRC/QA/INTERVALS"
+				}
+			}
+		],
+		"variables": {
+			"output_path": {
+				"type": "String"
+			},
+			"forecast_path": {
+				"type": "String"
+			},
+			"intervals_path": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "DRC/experiments"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-09-21T12:06:06Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

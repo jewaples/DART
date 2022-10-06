@@ -1,0 +1,9 @@
+{
+	"name": "bdh-datafactory-dart-advanalytics-dev",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "5f19b4f6-49ac-493b-a123-c5b1d58bcc31",
+		"tenantId": "9e16780e-719d-496b-a880-24ac20c30a60"
+	}
+}

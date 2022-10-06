@@ -1,0 +1,505 @@
+{
+	"name": "forecast_update",
+	"properties": {
+		"activities": [
+			{
+				"name": "output_path",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "root",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "output_path",
+					"value": {
+						"value": "@concat(variables('stage'),'/REALITY_CHECK')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "forecast_path",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "root",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "forecast_path",
+					"value": {
+						"value": "@concat(variables('stage'),'/FORECASTS')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "root",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "root",
+					"value": {
+						"value": "@concat('/mnt/dartread/EDW/AA/DRC/',pipeline().parameters.stage)",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "intervals_path",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "intervals_folder",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "root",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "intervals_path",
+					"value": {
+						"value": "@concat(variables('stage'),'/',variables('intervals_folder'))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "intervals_folder",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "intervals_folder",
+					"value": "INTERVALS"
+				}
+			},
+			{
+				"name": "output_path_prod_dim",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "root",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "output_path_prod",
+					"value": {
+						"value": "@concat(variables('stage'),'/PRODUCT')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "output_path_dist_dim",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "root",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "output_path_dist",
+					"value": {
+						"value": "@concat(variables('stage'),'/DISTRIBUTOR')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Forecast_update",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "forecast_path",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "forecast_nb",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"forecast_path": {
+							"value": "@variables('forecast_path')",
+							"type": "Expression"
+						},
+						"DIM_DISTRIBUTOR_CCC_PARQUET_FILE": {
+							"value": "@pipeline().parameters.DIM_DISTRIBUTOR_CCC_PARQUET_FILE",
+							"type": "Expression"
+						},
+						"DIM_PRODUCT_PARQUET_FILE": {
+							"value": "@pipeline().parameters.DIM_PRODUCT_PARQUET_FILE",
+							"type": "Expression"
+						},
+						"URL": {
+							"value": "@pipeline().parameters.URL",
+							"type": "Expression"
+						},
+						"USER": {
+							"value": "@pipeline().parameters.USER",
+							"type": "Expression"
+						},
+						"PASS": {
+							"value": "@pipeline().parameters.PASS",
+							"type": "Expression"
+						},
+						"stage": {
+							"value": "@pipeline().parameters.stage",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "Output_generator",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Forecast_update",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "forecast_path",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "output_path",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "intervals_path",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "output_path_dist_dim",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "output_path_prod_dim",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Output_generator_nb",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"forecast_path": {
+							"value": "@variables('forecast_path')",
+							"type": "Expression"
+						},
+						"output_path": {
+							"value": "@variables('output_path')",
+							"type": "Expression"
+						},
+						"intervals_path": {
+							"value": "@variables('intervals_path')",
+							"type": "Expression"
+						},
+						"DIM_DISTRIBUTOR_CCC_PARQUET_FILE": {
+							"value": "@pipeline().parameters.DIM_DISTRIBUTOR_CCC_PARQUET_FILE",
+							"type": "Expression"
+						},
+						"DIM_PRODUCT_PARQUET_FILE": {
+							"value": "@pipeline().parameters.DIM_PRODUCT_PARQUET_FILE",
+							"type": "Expression"
+						},
+						"output_path_prod": {
+							"value": "@variables('output_path_prod')",
+							"type": "Expression"
+						},
+						"output_path_dist": {
+							"value": "@variables('output_path_dist')",
+							"type": "Expression"
+						},
+						"stage": {
+							"value": "@pipeline().parameters.stage",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "power_apps_output",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Output_generator",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "power_apps_output_nb",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"stage": {
+							"value": "@pipeline().parameters.stage",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "power_apps_output Fail Notification",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "power_apps_output",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Email notification",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"receiver": {
+							"value": "@pipeline().parameters.receiver",
+							"type": "Expression"
+						},
+						"message": {
+							"value": "@concat('DRC>Forecast_update pipeline has failed :', activity('power_apps_output').error.message)",
+							"type": "Expression"
+						},
+						"title": "PIPELINE RUN FAILED",
+						"color": "Red",
+						"pipelineName": {
+							"value": "@pipeline().Pipeline",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "Pipeline Success Notification",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "power_apps_output",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Email notification",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"receiver": {
+							"value": "@pipeline().parameters.receiver",
+							"type": "Expression"
+						},
+						"message": "DRC>forecast_update pipeline run successfully",
+						"title": "PIPELINE RUN FINISHED",
+						"color": "Green",
+						"pipelineName": {
+							"value": "@pipeline().Pipeline",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "Forecast_update Fail Notification",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Forecast_update",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Email notification",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"receiver": {
+							"value": "@pipeline().parameters.receiver",
+							"type": "Expression"
+						},
+						"message": {
+							"value": "@concat('DRC>Forecast_update pipeline has failed :', activity('Forecast_update').error.message)",
+							"type": "Expression"
+						},
+						"title": "PIPELINE RUN FAILED",
+						"color": "Red",
+						"pipelineName": {
+							"value": "@pipeline().Pipeline",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "Output_generator Fail Notification",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Output_generator",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Email notification",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"receiver": {
+							"value": "@pipeline().parameters.receiver",
+							"type": "Expression"
+						},
+						"message": {
+							"value": "@concat('DRC>Forecast_update pipeline has failed :', activity('Output_generator').error.message)",
+							"type": "Expression"
+						},
+						"title": "PIPELINE RUN FAILED",
+						"color": "Red",
+						"pipelineName": {
+							"value": "@pipeline().Pipeline",
+							"type": "Expression"
+						}
+					}
+				}
+			}
+		],
+		"parameters": {
+			"DIM_DISTRIBUTOR_CCC_PARQUET_FILE": {
+				"type": "string",
+				"defaultValue": "/mnt/dartread/EDW/RAD/DIM_DISTRIBUTOR_CCC"
+			},
+			"DIM_PRODUCT_PARQUET_FILE": {
+				"type": "string",
+				"defaultValue": "/mnt/dartread/EDW/RAD/DIM_PRODUCT"
+			},
+			"URL": {
+				"type": "string",
+				"defaultValue": "jdbc:sqlserver://bdh-sql-nam-com.database.windows.net:1433;database=bdh-sql-nam-com-dart"
+			},
+			"USER": {
+				"type": "string",
+				"defaultValue": "E2E_READER"
+			},
+			"PASS": {
+				"type": "string",
+				"defaultValue": "PR40dVT12"
+			},
+			"stage": {
+				"type": "string",
+				"defaultValue": "DEV"
+			},
+			"receiver": {
+				"type": "string",
+				"defaultValue": "emilio.piotto@accenture.com"
+			}
+		},
+		"variables": {
+			"forecast_path": {
+				"type": "String"
+			},
+			"root": {
+				"type": "String"
+			},
+			"stage": {
+				"type": "String"
+			},
+			"intervals_folder": {
+				"type": "String"
+			},
+			"intervals_path": {
+				"type": "String"
+			},
+			"output_path": {
+				"type": "String"
+			},
+			"output_path_prod": {
+				"type": "String"
+			},
+			"output_path_dist": {
+				"type": "String"
+			},
+			"var_in": {
+				"type": "String"
+			},
+			"end": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "DRC"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-10-05T19:31:37Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
