@@ -1,0 +1,25 @@
+{
+	"name": "STG_BILLINGS_RATE_ParquetCopy",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_Data_Foundation_DataLake",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@concat(formatDateTime(utcnow(),'yyyyMMdd'),'/STG_BILLINGS_RATE.parquet')",
+					"type": "Expression"
+				},
+				"folderPath": "EDW/BILLINGS/STG_BILLINGS_RATE",
+				"fileSystem": "dev"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

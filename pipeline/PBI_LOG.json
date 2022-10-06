@@ -1,0 +1,870 @@
+{
+	"name": "PBI_LOG",
+	"properties": {
+		"description": "Move files from one folder to another folder",
+		"activities": [
+			{
+				"name": "GetFileList",
+				"description": "Get the list of file",
+				"type": "GetMetadata",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "RAD_File_Server_DataSource_Folder",
+						"type": "DatasetReference",
+						"parameters": {
+							"FolderPath": {
+								"value": "@pipeline().parameters.FolderPath_SourceStore",
+								"type": "Expression"
+							}
+						}
+					},
+					"fieldList": [
+						"itemName",
+						"childItems"
+					]
+				}
+			},
+			{
+				"name": "ForEachFile",
+				"description": "Iterate each file, and move them one by one.",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "FilterFiles",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('FilterFiles').output.value",
+						"type": "Expression"
+					},
+					"batchCount": 20,
+					"activities": [
+						{
+							"name": "File_Lookup",
+							"type": "Lookup",
+							"dependsOn": [
+								{
+									"activity": "Get_SrcMetadata",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderStoredProcedureName": "[STG].[usp_FILE_LOOKUP]",
+									"storedProcedureParameters": {
+										"FILE_NAME": {
+											"type": "String",
+											"value": {
+												"value": "@activity('Get_SrcMetadata').output.itemName",
+												"type": "Expression"
+											}
+										},
+										"TABLE_NAME": {
+											"type": "String",
+											"value": {
+												"value": "@pipeline().parameters.Destination_Table",
+												"type": "Expression"
+											}
+										}
+									},
+									"partitionOption": "None"
+								},
+								"dataset": {
+									"referenceName": "Staging_Sql_Source",
+									"type": "DatasetReference"
+								},
+								"firstRowOnly": true
+							}
+						},
+						{
+							"name": "If Condition",
+							"type": "IfCondition",
+							"dependsOn": [
+								{
+									"activity": "File_Lookup",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"expression": {
+									"value": "@activity('File_Lookup').output.firstRow.EXIST",
+									"type": "Expression"
+								},
+								"ifFalseActivities": [
+									{
+										"name": "CopyAFile",
+										"description": "Copy a file from the source store to the destination store.",
+										"type": "Copy",
+										"dependsOn": [],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"source": {
+												"type": "FileSystemSource",
+												"recursive": false
+											},
+											"sink": {
+												"type": "AzureBlobFSSink"
+											},
+											"enableStaging": false,
+											"dataIntegrationUnits": 0
+										},
+										"inputs": [
+											{
+												"referenceName": "RAD_File_Server_DataSource_File",
+												"type": "DatasetReference",
+												"parameters": {
+													"path": {
+														"value": "@pipeline().parameters.FolderPath_SourceStore",
+														"type": "Expression"
+													},
+													"filename": {
+														"value": "@item().name",
+														"type": "Expression"
+													}
+												}
+											}
+										],
+										"outputs": [
+											{
+												"referenceName": "RAD_File_Azure_Storage_Destination",
+												"type": "DatasetReference",
+												"parameters": {
+													"path": {
+														"value": "@pipeline().parameters.FolderPath_DestinationStore",
+														"type": "Expression"
+													},
+													"filename": {
+														"value": "@item().name",
+														"type": "Expression"
+													}
+												}
+											}
+										]
+									},
+									{
+										"name": "Insert_Source_Data",
+										"description": "Inserts source file metadata in log table",
+										"type": "SqlServerStoredProcedure",
+										"dependsOn": [],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"storedProcedureName": "[LOGS].[usp_INSERT_SRC_FILES]",
+											"storedProcedureParameters": {
+												"FILE_NAME": {
+													"value": {
+														"value": "@item().name",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"PIPELINE_ID": {
+													"value": {
+														"value": "@pipeline().RunId",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"SOURCE": {
+													"value": {
+														"value": "@pipeline().parameters.SOURCE",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"SRC_CREATED_DATE": {
+													"value": {
+														"value": "@activity('Get_SrcMetadata').output.created",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"SRC_PATH": {
+													"value": {
+														"value": "@pipeline().parameters.FolderPath_SourceStore",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"SRC_SIZE": {
+													"value": {
+														"value": "@activity('Get_SrcMetadata').output.size",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"TABLE_NAME": {
+													"value": {
+														"value": "@pipeline().parameters.Destination_Table",
+														"type": "Expression"
+													},
+													"type": "String"
+												}
+											}
+										},
+										"linkedServiceName": {
+											"referenceName": "NAM_COM_DART_SQL",
+											"type": "LinkedServiceReference"
+										}
+									},
+									{
+										"name": "Get_AdlMetadata",
+										"type": "GetMetadata",
+										"dependsOn": [
+											{
+												"activity": "CopyAFile",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											},
+											{
+												"activity": "Insert_Source_Data",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"dataset": {
+												"referenceName": "RAD_File_Azure_Storage_Destination",
+												"type": "DatasetReference",
+												"parameters": {
+													"path": "@pipeline().parameters.FolderPath_DestinationStore",
+													"filename": "@item().name"
+												}
+											},
+											"fieldList": [
+												"itemName",
+												"size",
+												"lastModified"
+											]
+										}
+									},
+									{
+										"name": "Validate_Destination_Data",
+										"description": "Inserts source file metadata in log table",
+										"type": "SqlServerStoredProcedure",
+										"dependsOn": [
+											{
+												"activity": "Get_AdlMetadata",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"storedProcedureName": "[STG].[usp_VALIDATE_DST_FILES]",
+											"storedProcedureParameters": {
+												"FILE_NAME": {
+													"value": {
+														"value": "@item().name",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"DST_CREATED_DATE": {
+													"value": {
+														"value": "@activity('Get_AdlMetadata').output.lastModified",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"DST_PATH": {
+													"value": {
+														"value": "@pipeline().parameters.FolderPath_DestinationStore",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"DST_SIZE": {
+													"value": {
+														"value": "@activity('Get_AdlMetadata').output.size",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"TABLE_NAME": {
+													"value": {
+														"value": "@pipeline().parameters.Destination_Table",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"IS_ZIP": {
+													"value": {
+														"value": "@pipeline().parameters.Is_Zip",
+														"type": "Expression"
+													},
+													"type": "Int"
+												}
+											}
+										},
+										"linkedServiceName": {
+											"referenceName": "NAM_COM_DART_SQL",
+											"type": "LinkedServiceReference"
+										}
+									},
+									{
+										"name": "Copy logs",
+										"type": "Copy",
+										"dependsOn": [
+											{
+												"activity": "Validate_Destination_Data",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"source": {
+												"type": "DelimitedTextSource",
+												"additionalColumns": [
+													{
+														"name": "SOURCE_FILE",
+														"value": {
+															"value": "@item().name",
+															"type": "Expression"
+														}
+													},
+													{
+														"name": "PIPELINE_ID",
+														"value": {
+															"value": "@pipeline().RunId",
+															"type": "Expression"
+														}
+													}
+												],
+												"storeSettings": {
+													"type": "AzureBlobFSReadSettings",
+													"recursive": true
+												},
+												"formatSettings": {
+													"type": "DelimitedTextReadSettings",
+													"skipLineCount": 1
+												}
+											},
+											"sink": {
+												"type": "AzureSqlSink",
+												"writeBehavior": "insert"
+											},
+											"enableStaging": false,
+											"translator": {
+												"type": "TabularTranslator",
+												"mappings": [
+													{
+														"source": {
+															"type": "String",
+															"ordinal": 1
+														},
+														"sink": {
+															"name": "EVENT_TIME",
+															"type": "DateTime",
+															"physicalType": "datetime2"
+														}
+													},
+													{
+														"source": {
+															"type": "String",
+															"ordinal": 2
+														},
+														"sink": {
+															"name": "USER_ID",
+															"type": "String",
+															"physicalType": "nvarchar"
+														}
+													},
+													{
+														"source": {
+															"type": "String",
+															"ordinal": 3
+														},
+														"sink": {
+															"name": "OPERATION",
+															"type": "String",
+															"physicalType": "nvarchar"
+														}
+													},
+													{
+														"source": {
+															"type": "String",
+															"ordinal": 4
+														},
+														"sink": {
+															"name": "OBJECT_NAME",
+															"type": "String",
+															"physicalType": "nvarchar"
+														}
+													},
+													{
+														"source": {
+															"type": "String",
+															"ordinal": 5
+														},
+														"sink": {
+															"name": "WORKSPACE_NAME",
+															"type": "String",
+															"physicalType": "nvarchar"
+														}
+													},
+													{
+														"source": {
+															"type": "String",
+															"ordinal": 6
+														},
+														"sink": {
+															"name": "CLIENT_IP",
+															"type": "String",
+															"physicalType": "nvarchar"
+														}
+													},
+													{
+														"source": {
+															"type": "String",
+															"ordinal": 7
+														},
+														"sink": {
+															"name": "USER_AGENT",
+															"type": "String",
+															"physicalType": "nvarchar"
+														}
+													},
+													{
+														"source": {
+															"name": "SOURCE_FILE",
+															"type": "String"
+														},
+														"sink": {
+															"name": "SOURCE_FILE",
+															"type": "String",
+															"physicalType": "nvarchar"
+														}
+													},
+													{
+														"source": {
+															"name": "PIPELINE_ID",
+															"type": "String"
+														},
+														"sink": {
+															"name": "PIPELINE_ID",
+															"type": "String",
+															"physicalType": "nvarchar"
+														}
+													}
+												],
+												"typeConversion": true,
+												"typeConversionSettings": {
+													"allowDataTruncation": true,
+													"treatBooleanAsNumber": false
+												}
+											}
+										},
+										"inputs": [
+											{
+												"referenceName": "PBI_Log_Source",
+												"type": "DatasetReference",
+												"parameters": {
+													"path": "@pipeline().parameters.FolderPath_DestinationStore",
+													"filename": "@item().name"
+												}
+											}
+										],
+										"outputs": [
+											{
+												"referenceName": "PBI_Log_Staging",
+												"type": "DatasetReference"
+											}
+										]
+									},
+									{
+										"name": "Copy_Archive",
+										"type": "Copy",
+										"dependsOn": [
+											{
+												"activity": "Copy logs",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"source": {
+												"type": "DelimitedTextSource",
+												"storeSettings": {
+													"type": "AzureBlobFSReadSettings",
+													"recursive": false,
+													"enablePartitionDiscovery": false
+												},
+												"formatSettings": {
+													"type": "DelimitedTextReadSettings"
+												}
+											},
+											"sink": {
+												"type": "DelimitedTextSink",
+												"storeSettings": {
+													"type": "AzureBlobFSWriteSettings"
+												},
+												"formatSettings": {
+													"type": "DelimitedTextWriteSettings",
+													"quoteAllText": true,
+													"fileExtension": ".csv"
+												}
+											},
+											"enableStaging": false
+										},
+										"inputs": [
+											{
+												"referenceName": "BEP_Source_File",
+												"type": "DatasetReference",
+												"parameters": {
+													"path": {
+														"value": "@pipeline().parameters.FolderPath_DestinationStore",
+														"type": "Expression"
+													},
+													"filename": "@item().name"
+												}
+											}
+										],
+										"outputs": [
+											{
+												"referenceName": "BEP_Source_Dir",
+												"type": "DatasetReference",
+												"parameters": {
+													"FolderPath": {
+														"value": "@concat(pipeline().parameters.FolderPath_DestinationStore,'/' ,'Archive' )",
+														"type": "Expression"
+													}
+												}
+											}
+										]
+									},
+									{
+										"name": "Get_AdlMetadata_Archive",
+										"type": "GetMetadata",
+										"dependsOn": [
+											{
+												"activity": "Copy_Archive",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"dataset": {
+												"referenceName": "RAD_File_Azure_Storage_Destination",
+												"type": "DatasetReference",
+												"parameters": {
+													"path": {
+														"value": "@concat(pipeline().parameters.FolderPath_DestinationStore,'/' ,'Archive' )",
+														"type": "Expression"
+													},
+													"filename": "@item().name"
+												}
+											},
+											"fieldList": [
+												"itemName",
+												"size",
+												"lastModified"
+											]
+										}
+									},
+									{
+										"name": "Validate_Destination_Data_Archive",
+										"description": "Inserts source file metadata in log table",
+										"type": "SqlServerStoredProcedure",
+										"dependsOn": [
+											{
+												"activity": "Get_AdlMetadata_Archive",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"storedProcedureName": "[STG].[usp_VALIDATE_DST_FILES_ARCHIVE]",
+											"storedProcedureParameters": {
+												"FILE_NAME": {
+													"value": {
+														"value": "@item().name",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"DST_PATH_ARCHIVE": {
+													"value": {
+														"value": "@concat(pipeline().parameters.FolderPath_DestinationStore,'/' ,'Archive' )",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"DST_SIZE_ARCHIVE": {
+													"value": {
+														"value": "@activity('Get_AdlMetadata_Archive').output.size",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"TABLE_NAME": {
+													"value": {
+														"value": "@pipeline().parameters.Destination_Table",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"IS_ZIP": {
+													"value": {
+														"value": "@pipeline().parameters.Is_Zip",
+														"type": "Expression"
+													},
+													"type": "String"
+												}
+											}
+										},
+										"linkedServiceName": {
+											"referenceName": "NAM_COM_DART_SQL",
+											"type": "LinkedServiceReference"
+										}
+									},
+									{
+										"name": "Delete_From_Source",
+										"type": "Delete",
+										"dependsOn": [
+											{
+												"activity": "Validate_Destination_Data_Archive",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"dataset": {
+												"referenceName": "BEP_Source_File",
+												"type": "DatasetReference",
+												"parameters": {
+													"path": {
+														"value": "@pipeline().parameters.FolderPath_DestinationStore",
+														"type": "Expression"
+													},
+													"filename": "@item().name"
+												}
+											},
+											"enableLogging": false,
+											"storeSettings": {
+												"type": "AzureBlobFSReadSettings",
+												"recursive": true,
+												"enablePartitionDiscovery": false
+											}
+										}
+									}
+								]
+							}
+						},
+						{
+							"name": "Get_SrcMetadata",
+							"type": "GetMetadata",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataset": {
+									"referenceName": "RAD_File_Server_DataSource_File",
+									"type": "DatasetReference",
+									"parameters": {
+										"path": "@pipeline().parameters.FolderPath_SourceStore",
+										"filename": "@item().name"
+									}
+								},
+								"fieldList": [
+									"created",
+									"itemName",
+									"size"
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "FilterFiles",
+				"description": "Only files will be selected, the sub-folders will not be selected.",
+				"type": "Filter",
+				"dependsOn": [
+					{
+						"activity": "GetFileList",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('GetFileList').output.childItems",
+						"type": "Expression"
+					},
+					"condition": {
+						"value": "@endswith(item().name,'.csv')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Update Logs",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "ForEachFile",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[LOGS].[usp_UPDATE_PBI_EVENT_LOG]"
+				},
+				"linkedServiceName": {
+					"referenceName": "NAM_COM_DART_SQL",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"parameters": {
+			"FolderPath_SourceStore": {
+				"type": "String",
+				"defaultValue": "P12/USA/PBI_Logs"
+			},
+			"FolderPath_DestinationStore": {
+				"type": "String",
+				"defaultValue": "prod/PBI_Logs"
+			},
+			"Destination_Table": {
+				"type": "string",
+				"defaultValue": "LOGS.SOURCE_FILES_LOAD_LOG"
+			},
+			"Is_Zip": {
+				"type": "int",
+				"defaultValue": 0
+			},
+			"SOURCE": {
+				"type": "string",
+				"defaultValue": "PBI_Logs"
+			}
+		},
+		"folder": {
+			"name": "STAGING"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-10-06T20:47:34Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

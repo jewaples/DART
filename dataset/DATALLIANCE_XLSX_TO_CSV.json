@@ -1,0 +1,42 @@
+{
+	"name": "DATALLIANCE_XLSX_TO_CSV",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_Data_Foundation_DataLake",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"File": {
+				"type": "string"
+			},
+			"Folder": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "DATALLIANCE"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@dataset().File",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@concat('landing/DATA_ALLIANCE/Archive/',dataset().Folder)",
+					"type": "Expression"
+				},
+				"fileSystem": "prod"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": false,
+			"quoteChar": "\""
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

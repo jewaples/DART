@@ -1,0 +1,39 @@
+{
+	"name": "EXCEL_TO_PARQUET",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_Data_Foundation_DataLake",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"File": {
+				"type": "string"
+			},
+			"FolderDate": {
+				"type": "string"
+			},
+			"FolderType": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@dataset().File",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@concat('EDW/BILLINGS/RYDER/',dataset().FolderType,'/',dataset().FolderDate)",
+					"type": "Expression"
+				},
+				"fileSystem": "prod"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

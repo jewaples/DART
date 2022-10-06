@@ -1,0 +1,25 @@
+{
+	"name": "Staging_Billed_Pending_ADLs_Sink_Current",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_Data_Foundation_DataLake",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "STAGING"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "STG_BILLED_PENDING.parquet",
+				"folderPath": "EDW/BILLINGS/STG_BILLED_PENDING/Current",
+				"fileSystem": "dev"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

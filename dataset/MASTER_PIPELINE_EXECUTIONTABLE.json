@@ -1,0 +1,52 @@
+{
+	"name": "MASTER_PIPELINE_EXECUTIONTABLE",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "Id process",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ADF",
+				"type": "bit"
+			},
+			{
+				"name": "Description",
+				"type": "varchar"
+			},
+			{
+				"name": "Path",
+				"type": "varchar"
+			},
+			{
+				"name": "DB",
+				"type": "varchar"
+			},
+			{
+				"name": "Environment",
+				"type": "varchar"
+			},
+			{
+				"name": "Priority",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Active",
+				"type": "bit"
+			}
+		],
+		"typeProperties": {
+			"schema": "CFG",
+			"table": "MASTER_PIPELINE_EXECUTION"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

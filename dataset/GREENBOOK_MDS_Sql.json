@@ -1,0 +1,23 @@
+{
+	"name": "GREENBOOK_MDS_Sql",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "GREENBOOK"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "GBK",
+			"table": {
+				"value": "@{item().SQL_Name}",
+				"type": "Expression"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,22 @@
+{
+	"name": "FACT_BILLED_PENDING",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_Data_Foundation_DataLake",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "FACT_BILLED_PENDING.parquet",
+				"folderPath": "EDW/BILLINGS/FACT_BILLED_PENDING/Current",
+				"fileSystem": "dev"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

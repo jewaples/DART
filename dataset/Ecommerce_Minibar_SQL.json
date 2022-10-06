@@ -1,0 +1,97 @@
+{
+	"name": "Ecommerce_Minibar_SQL",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "ECOMMERCE"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "DATE",
+				"type": "date"
+			},
+			{
+				"name": "TIME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DELIVERY_ZIPCODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "GIFT_ORDER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ITEM_PRICE",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "QUANTITY",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "SUPPLIER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BRAND",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PRODUCT_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UPC",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "VOLUME_VALUE",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "VOLUME_UNIT",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PACK_SIZE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "T1",
+				"type": "nvarchar"
+			},
+			{
+				"name": "T2",
+				"type": "nvarchar"
+			},
+			{
+				"name": "T3",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PLATFORM",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CORPORATE",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "ECOMM",
+			"table": "MINIBAR_ECOMMERCE"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

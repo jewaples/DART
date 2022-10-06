@@ -1,0 +1,16 @@
+{
+	"name": "Ecommerce_File_Table_Destination",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_RGM_Analytics_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "RGM"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

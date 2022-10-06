@@ -1,0 +1,650 @@
+{
+	"name": "ECOMMERCE_KROGER_STANDARD",
+	"properties": {
+		"description": "Move files from one folder to another folder",
+		"activities": [
+			{
+				"name": "ForEachFile",
+				"description": "Iterate each file, and move them one by one.",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "FilterFiles",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('FilterFiles').output.value",
+						"type": "Expression"
+					},
+					"batchCount": 20,
+					"activities": [
+						{
+							"name": "File_Lookup",
+							"type": "Lookup",
+							"dependsOn": [
+								{
+									"activity": "Get_SrcMetadata",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderStoredProcedureName": "[STG].[usp_FILE_LOOKUP]",
+									"storedProcedureParameters": {
+										"FILE_NAME": {
+											"type": "String",
+											"value": {
+												"value": "@activity('Get_SrcMetadata').output.itemName",
+												"type": "Expression"
+											}
+										},
+										"TABLE_NAME": {
+											"type": "String",
+											"value": {
+												"value": "@pipeline().parameters.Destination_Table",
+												"type": "Expression"
+											}
+										}
+									},
+									"partitionOption": "None"
+								},
+								"dataset": {
+									"referenceName": "RAD_File_Table_Destination",
+									"type": "DatasetReference"
+								},
+								"firstRowOnly": true
+							}
+						},
+						{
+							"name": "If Condition",
+							"type": "IfCondition",
+							"dependsOn": [
+								{
+									"activity": "File_Lookup",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"expression": {
+									"value": "@activity('File_Lookup').output.firstRow.EXIST",
+									"type": "Expression"
+								},
+								"ifFalseActivities": [
+									{
+										"name": "Insert_Source_Data",
+										"description": "Inserts source file metadata in log table",
+										"type": "SqlServerStoredProcedure",
+										"dependsOn": [],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"storedProcedureName": "[LOGS].[usp_INSERT_SRC_FILES]",
+											"storedProcedureParameters": {
+												"FILE_NAME": {
+													"value": {
+														"value": "@item().name",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"SRC_CREATED_DATE": {
+													"value": {
+														"value": "@activity('Get_SrcMetadata').output.lastModified",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"SRC_PATH": {
+													"value": {
+														"value": "@pipeline().parameters.FolderPath_SourceStore",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"TABLE_NAME": {
+													"value": {
+														"value": "@pipeline().parameters.Destination_Table",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"SRC_SIZE": {
+													"value": {
+														"value": "@activity('Get_SrcMetadata').output.size",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"SOURCE": {
+													"value": {
+														"value": "@pipeline().parameters.SOURCE",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"PIPELINE_ID": {
+													"value": {
+														"value": "@pipeline().RunId",
+														"type": "Expression"
+													}
+												}
+											}
+										},
+										"linkedServiceName": {
+											"referenceName": "NAM_COM_DART_SQL",
+											"type": "LinkedServiceReference"
+										}
+									},
+									{
+										"name": "Get_AdlMetadata",
+										"type": "GetMetadata",
+										"dependsOn": [
+											{
+												"activity": "Insert_Source_Data",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"dataset": {
+												"referenceName": "ECOMMERCE_INSTACART_File_Azure_Storage",
+												"type": "DatasetReference",
+												"parameters": {
+													"path": "@pipeline().parameters.FolderPath_DestinationStore",
+													"filename": "@item().name"
+												}
+											},
+											"fieldList": [
+												"itemName",
+												"size",
+												"lastModified"
+											]
+										}
+									},
+									{
+										"name": "Validate_Destination_Data",
+										"description": "Inserts source file metadata in log table",
+										"type": "SqlServerStoredProcedure",
+										"dependsOn": [
+											{
+												"activity": "Load Ecommerce Kroger",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"storedProcedureName": "[STG].[usp_VALIDATE_DST_FILES]",
+											"storedProcedureParameters": {
+												"FILE_NAME": {
+													"value": {
+														"value": "@item().name",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"DST_CREATED_DATE": {
+													"value": {
+														"value": "@activity('Get_AdlMetadata').output.lastModified",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"DST_PATH": {
+													"value": {
+														"value": "@pipeline().parameters.FolderPath_DestinationStore",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"DST_SIZE": {
+													"value": {
+														"value": "@activity('Get_AdlMetadata').output.size",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"TABLE_NAME": {
+													"value": {
+														"value": "@pipeline().parameters.Destination_Table",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"IS_ZIP": {
+													"value": {
+														"value": "@pipeline().parameters.Is_Zip",
+														"type": "Expression"
+													},
+													"type": "String"
+												}
+											}
+										},
+										"linkedServiceName": {
+											"referenceName": "NAM_COM_DART_SQL",
+											"type": "LinkedServiceReference"
+										}
+									},
+									{
+										"name": "Load Ecommerce Kroger",
+										"type": "Copy",
+										"dependsOn": [
+											{
+												"activity": "Get_AdlMetadata",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"source": {
+												"type": "DelimitedTextSource",
+												"storeSettings": {
+													"type": "AzureBlobFSReadSettings",
+													"recursive": false,
+													"enablePartitionDiscovery": false
+												},
+												"formatSettings": {
+													"type": "DelimitedTextReadSettings",
+													"skipLineCount": 21
+												}
+											},
+											"sink": {
+												"type": "AzureSqlSink",
+												"writeBehavior": "insert"
+											},
+											"enableStaging": false,
+											"translator": {
+												"type": "TabularTranslator",
+												"mappings": [
+													{
+														"source": {
+															"name": "KROGER_DESC",
+															"type": "String"
+														},
+														"sink": {
+															"name": "KROGER_DESC",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "PERIOD_DESC",
+															"type": "String"
+														},
+														"sink": {
+															"name": "PERIOD_DESC",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "PRIMARY_DEPARTMENT",
+															"type": "String"
+														},
+														"sink": {
+															"name": "PRIMARY_DEPARTMENT",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "DEPARTMENT",
+															"type": "String"
+														},
+														"sink": {
+															"name": "DEPARTMENT",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "COMMODITY",
+															"type": "String"
+														},
+														"sink": {
+															"name": "COMMODITY",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "UPC",
+															"type": "String"
+														},
+														"sink": {
+															"name": "UPC",
+															"type": "Double"
+														}
+													},
+													{
+														"source": {
+															"name": "ITEM_DESCRIPTION",
+															"type": "String"
+														},
+														"sink": {
+															"name": "ITEM_DESCRIPTION",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "SCANNED_RETAIL_DOLLARS",
+															"type": "String"
+														},
+														"sink": {
+															"name": "SCANNED_RETAIL_DOLLARS",
+															"type": "Double"
+														}
+													},
+													{
+														"source": {
+															"name": "SCANNED_MOVEMENT",
+															"type": "String"
+														},
+														"sink": {
+															"name": "SCANNED_MOVEMENT",
+															"type": "Double"
+														}
+													}
+												]
+											}
+										},
+										"inputs": [
+											{
+												"referenceName": "Ecommerce_Instacart_DataLake",
+												"type": "DatasetReference",
+												"parameters": {
+													"path": "@pipeline().parameters.FolderPath_DestinationStore",
+													"filename": "@item().name"
+												}
+											}
+										],
+										"outputs": [
+											{
+												"referenceName": "Ecommerce_Kroger_Click_SQL",
+												"type": "DatasetReference"
+											}
+										]
+									},
+									{
+										"name": "Copy_Archive",
+										"type": "Copy",
+										"dependsOn": [
+											{
+												"activity": "Validate_Destination_Data",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"source": {
+												"type": "DelimitedTextSource",
+												"storeSettings": {
+													"type": "AzureBlobFSReadSettings",
+													"recursive": false,
+													"enablePartitionDiscovery": false
+												},
+												"formatSettings": {
+													"type": "DelimitedTextReadSettings"
+												}
+											},
+											"sink": {
+												"type": "DelimitedTextSink",
+												"storeSettings": {
+													"type": "AzureBlobFSWriteSettings"
+												},
+												"formatSettings": {
+													"type": "DelimitedTextWriteSettings",
+													"quoteAllText": true,
+													"fileExtension": ".csv"
+												}
+											},
+											"enableStaging": false
+										},
+										"inputs": [
+											{
+												"referenceName": "Ecommerce_Instacart_DataLake",
+												"type": "DatasetReference",
+												"parameters": {
+													"path": "@pipeline().parameters.FolderPath_DestinationStore",
+													"filename": "@item().name"
+												}
+											}
+										],
+										"outputs": [
+											{
+												"referenceName": "Ecommerce_Instacart_DataLake",
+												"type": "DatasetReference",
+												"parameters": {
+													"path": "@concat(pipeline().parameters.FolderPath_DestinationStore,'/' ,'Archive' )",
+													"filename": "@item().name"
+												}
+											}
+										]
+									},
+									{
+										"name": "Delete_From_Source",
+										"type": "Delete",
+										"dependsOn": [
+											{
+												"activity": "Copy_Archive",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"dataset": {
+												"referenceName": "Ecommerce_Instacart_DataLake",
+												"type": "DatasetReference",
+												"parameters": {
+													"path": "@pipeline().parameters.FolderPath_DestinationStore",
+													"filename": "@item().name"
+												}
+											},
+											"enableLogging": false,
+											"storeSettings": {
+												"type": "AzureBlobFSReadSettings",
+												"recursive": true,
+												"enablePartitionDiscovery": false
+											}
+										}
+									}
+								]
+							}
+						},
+						{
+							"name": "Get_SrcMetadata",
+							"type": "GetMetadata",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataset": {
+									"referenceName": "Ecommerce_Instacart_DataLake",
+									"type": "DatasetReference",
+									"parameters": {
+										"path": "@pipeline().parameters.FolderPath_DestinationStore",
+										"filename": "@item().name"
+									}
+								},
+								"fieldList": [
+									"itemName",
+									"lastModified",
+									"size"
+								],
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "FilterFiles",
+				"description": "Only files will be selected, the sub-folders will not be selected.",
+				"type": "Filter",
+				"dependsOn": [
+					{
+						"activity": "GetFileList",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('GetFileList').output.childItems",
+						"type": "Expression"
+					},
+					"condition": {
+						"value": "@contains(item().name,'Kroger Standard')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "GetFileList",
+				"type": "GetMetadata",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "ECOMMERCE_Azure_Storage_Folder",
+						"type": "DatasetReference",
+						"parameters": {
+							"path": "@pipeline().parameters.FolderPath_SourceStore"
+						}
+					},
+					"fieldList": [
+						"itemName",
+						"childItems"
+					]
+				}
+			}
+		],
+		"parameters": {
+			"FolderPath_SourceStore": {
+				"type": "String",
+				"defaultValue": "/prod/Ecommerce/Kroger_Click/"
+			},
+			"FolderPath_DestinationStore": {
+				"type": "String",
+				"defaultValue": "/prod/Ecommerce/Kroger_Click"
+			},
+			"Destination_Table": {
+				"type": "string",
+				"defaultValue": "LOGS.SOURCE_FILES_LOAD_LOG"
+			},
+			"Is_Zip": {
+				"type": "string",
+				"defaultValue": "0"
+			},
+			"STARTDATE": {
+				"type": "string"
+			},
+			"SOURCE": {
+				"type": "string",
+				"defaultValue": "Kroger Click"
+			},
+			"Stage_table": {
+				"type": "string",
+				"defaultValue": "STG.ECOMM_KROGER_CLICK"
+			}
+		},
+		"folder": {
+			"name": "ECOMMERCE"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-08-29T20:30:54Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

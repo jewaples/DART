@@ -1,0 +1,388 @@
+{
+	"name": "VMI_FILE_ARCHIVING",
+	"properties": {
+		"activities": [
+			{
+				"name": "Get Process Files",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "[VMI].[SP_CFG_GET_PROCESS_FILES]",
+						"storedProcedureParameters": {
+							"ExecutionId": {
+								"type": "String",
+								"value": {
+									"value": "@pipeline().parameters.pipeline_ID",
+									"type": "Expression"
+								}
+							}
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "VMI_DWH_SQL",
+						"type": "DatasetReference",
+						"parameters": {
+							"SQLName": "NotApplicable",
+							"SchemaName": "NotApplicable"
+						}
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "For Each - Archive",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Get Process Files",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Get Process Files').output.value",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "Raise Error",
+							"type": "Lookup",
+							"dependsOn": [
+								{
+									"activity": "Log Error - Delete Failed SFTP",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderQuery": "RAISERROR ('File archiving failed on For Each - Archive activity - see details on [VMI].[CFG_ERROR_LOG] table', -- Message text.  \n               16, -- Severity.  \n               1 -- State.  \n               );  ",
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"dataset": {
+									"referenceName": "VMI_DWH_SQL",
+									"type": "DatasetReference",
+									"parameters": {
+										"SQLName": "NotApplicable",
+										"SchemaName": "NotApplicable"
+									}
+								},
+								"firstRowOnly": false
+							}
+						},
+						{
+							"name": "Check where to archive",
+							"type": "IfCondition",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"expression": {
+									"value": "@equals(item().SinkFolderType,'ArchiveFolder')",
+									"type": "Expression"
+								},
+								"ifFalseActivities": [
+									{
+										"name": "Move to Error - SFTP",
+										"type": "Copy",
+										"dependsOn": [],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"source": {
+												"type": "DelimitedTextSource",
+												"storeSettings": {
+													"type": "SftpReadSettings",
+													"recursive": false,
+													"enablePartitionDiscovery": false,
+													"disableChunking": false
+												},
+												"formatSettings": {
+													"type": "DelimitedTextReadSettings"
+												}
+											},
+											"sink": {
+												"type": "DelimitedTextSink",
+												"storeSettings": {
+													"type": "SftpWriteSettings",
+													"operationTimeout": "01:00:00",
+													"useTempFileRename": false
+												},
+												"formatSettings": {
+													"type": "DelimitedTextWriteSettings",
+													"quoteAllText": true,
+													"fileExtension": ".txt"
+												}
+											},
+											"enableStaging": false,
+											"translator": {
+												"type": "TabularTranslator",
+												"typeConversion": true,
+												"typeConversionSettings": {
+													"allowDataTruncation": true,
+													"treatBooleanAsNumber": false
+												}
+											}
+										},
+										"inputs": [
+											{
+												"referenceName": "VMI_DA_SFTP_Folder",
+												"type": "DatasetReference",
+												"parameters": {
+													"FileName": {
+														"value": "@item().FileName",
+														"type": "Expression"
+													},
+													"FolderName": {
+														"value": "@item().SFTPFolderName",
+														"type": "Expression"
+													},
+													"Delimiter": {
+														"value": "@item().Delimiter",
+														"type": "Expression"
+													}
+												}
+											}
+										],
+										"outputs": [
+											{
+												"referenceName": "VMI_DA_SFTP_Folder",
+												"type": "DatasetReference",
+												"parameters": {
+													"FileName": {
+														"value": "@item().FileName",
+														"type": "Expression"
+													},
+													"FolderName": {
+														"value": "@item().SinkFolderName",
+														"type": "Expression"
+													},
+													"Delimiter": {
+														"value": "@item().Delimiter",
+														"type": "Expression"
+													}
+												}
+											}
+										]
+									},
+									{
+										"name": "Log Error - Move to Error - Blob",
+										"type": "SqlServerStoredProcedure",
+										"dependsOn": [
+											{
+												"activity": "Move to Error - SFTP",
+												"dependencyConditions": [
+													"Failed"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"storedProcedureName": "[VMI].[SP_CFG_INITIALIZE_ERROR_LOG]",
+											"storedProcedureParameters": {
+												"ErrorCode": {
+													"value": {
+														"value": "@{activity('Move to Error - SFTP').error.errorCode}",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"ErrorComponentName": {
+													"value": "Archive Input Files",
+													"type": "String"
+												},
+												"ErrorDetails": {
+													"value": {
+														"value": "@{activity('Move to Error - SFTP').error.message}",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"ErrorMessage": {
+													"value": {
+														"value": "@concat('Error encountered on archiving the processed file [',item().FileName,'] to Blob archive folder')",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"ExecutionId": {
+													"value": {
+														"value": "@pipeline().RunId",
+														"type": "Expression"
+													},
+													"type": "String"
+												}
+											}
+										},
+										"linkedServiceName": {
+											"referenceName": "NAM_COM_DART_SQL",
+											"type": "LinkedServiceReference"
+										}
+									}
+								]
+							}
+						},
+						{
+							"name": "Delete from Input - SFTP",
+							"type": "Delete",
+							"dependsOn": [
+								{
+									"activity": "Check where to archive",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataset": {
+									"referenceName": "VMI_DA_SFTP_Folder",
+									"type": "DatasetReference",
+									"parameters": {
+										"FileName": {
+											"value": "@item().FileName",
+											"type": "Expression"
+										},
+										"FolderName": {
+											"value": "@item().SFTPFolderName",
+											"type": "Expression"
+										},
+										"Delimiter": {
+											"value": "@item().Delimiter",
+											"type": "Expression"
+										}
+									}
+								},
+								"enableLogging": false,
+								"storeSettings": {
+									"type": "SftpReadSettings",
+									"recursive": false,
+									"enablePartitionDiscovery": false,
+									"disableChunking": false
+								}
+							}
+						},
+						{
+							"name": "Log Error - Delete Failed SFTP",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [
+								{
+									"activity": "Delete from Input - SFTP",
+									"dependencyConditions": [
+										"Failed"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[VMI].[SP_CFG_INITIALIZE_ERROR_LOG]",
+								"storedProcedureParameters": {
+									"ErrorCode": {
+										"value": {
+											"value": "@{activity('Delete from Input - SFTP').error.errorCode}",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"ErrorComponentName": {
+										"value": "Delete from Input",
+										"type": "String"
+									},
+									"ErrorDetails": {
+										"value": {
+											"value": "@{activity('Delete from Input - SFTP').error.message}",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"ErrorMessage": {
+										"value": {
+											"value": "@concat('Error encountered on archiving the processed file [',item().FileName,'] to Blob archive folder')",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"ExecutionId": {
+										"value": {
+											"value": "@pipeline().RunId",
+											"type": "Expression"
+										},
+										"type": "String"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "NAM_COM_DART_SQL",
+								"type": "LinkedServiceReference"
+							}
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"pipeline_ID": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "VMI"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-07-14T14:26:07Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

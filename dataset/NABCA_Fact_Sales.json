@@ -1,0 +1,111 @@
+{
+	"name": "NABCA_Fact_Sales",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "NABCA COMPETITIVE"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "PRODUCT_ID",
+				"type": "varchar"
+			},
+			{
+				"name": "PRODUCT_DESCRIPTION",
+				"type": "varchar"
+			},
+			{
+				"name": "MONTH_KEY",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "STATE_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "PRODUCT_KEY",
+				"type": "varchar"
+			},
+			{
+				"name": "MO_TIME_KEY",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "STORE_LICENSE_KEY",
+				"type": "varchar"
+			},
+			{
+				"name": "BOTTLES_SOLD",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "ACTUAL_CASES",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "STANDARD_CASES",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "NINE_LITER_CASES",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "FOB_PRICE",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "SHELF_PRICE",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "RETAIL_PRICE",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "SHELF_DOLLAR_VOLUME",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "RETAIL_DOLLAR_VOLUME",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "RUN_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "CREATED_BY",
+				"type": "varchar"
+			},
+			{
+				"name": "CREATED_TIMESTAMP",
+				"type": "datetime2",
+				"scale": 7
+			}
+		],
+		"typeProperties": {
+			"schema": "NABCA",
+			"table": "FACT_SALES"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

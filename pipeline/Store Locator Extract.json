@@ -1,0 +1,168 @@
+{
+	"name": "Store Locator Extract",
+	"properties": {
+		"activities": [
+			{
+				"name": "Brand Extract",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT\n  ITEM_ID  \n  ,[ITEM_DESCRIPTION]   \n  ,PRODUCT_BRAND_LABEL_ID AS BRAND_ID\n  ,[BRAND_GROUP_DESCRIPTION] AS BRAND_GROUP\n  ,[PRODUCT_BRAND_PLANNING_SIZE_DESCRIPTION] AS PRODUCT_BRAND_DESCRIPTION\n  ,BOTTLE_VOLUME\n   FROM [RAD].[DIM_PRODUCT]",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "SftpWriteSettings",
+							"operationTimeout": "01:00:00",
+							"useTempFileRename": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "RAD_Dim_Product_Sql",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "Store_locator_Brand_output",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Location Extract",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Brand Extract",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "  SELECT \n[ACC_KEY_FINAL] as ACC_KEY\n,VIP_CUSTOMER_ID AS CUSTOMER_ID\n,VIP_ACCOUNT_NAME AS [NAME]\n,CUSTOMER_MARKETING_SEGMENT\n,CASE WHEN CUSTOMER_MARKETING_SEGMENT = 'TDLinx Timing Error'   THEN NULL \n\t  WHEN CUSTOMER_MARKETING_SEGMENT = ' '   THEN NULL \n    ELSE CUSTOMER_MARKETING_SEGMENT END AS [TYPE]\n,VIP_COUNTRY  AS COUNTRY\n,VIP_ZIP_CODE AS ZIP_CODE\n,VIP_STATE AS [STATE]\n,VIP_CITY AS CITY\n,VIP_STREET_ADDRESS AS [ADDRESS]\n,VIP_LATITUDE AS [LATITUDE]\n,VIP_LONGITUDE AS [LONGITUDE]\n,CASE WHEN TDLINX_ULTIMATE_OWNER = 'TDLinx Timing Error' THEN NULL \n      WHEN TDLINX_ULTIMATE_OWNER = ' ' THEN NULL\n   ELSE TDLINX_ULTIMATE_OWNER END AS [OWNER]\nFROM [RAD].[DIM_ACCOUNT]\nWHERE VIP_LATITUDE IS NOT NULL\nAND VIP_LONGITUDE IS NOT NULL\nAND VIP_STREET_ADDRESS IS NOT NULL\nAND VIP_CITY IS NOT NULL\nAND VIP_STATE IS NOT NULL",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "SftpWriteSettings",
+							"operationTimeout": "01:00:00",
+							"useTempFileRename": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "RAD_Dim_Product_Sql",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "Store_locator_Location_output",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Location product Xref Extract",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Location Extract",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT fs.[ACC_KEY], da.VIP_ACCOUNT_NAME as CUSTOMER_NAME\n      ,dp.[ITEM_ID], dp.PRODUCT_BRAND_PLANNING_SIZE_DESCRIPTION AS PRODUCT_BRAND_DESCRIPTION\n  FROM [RAD].[FACT_SALES] fs\n  INNER JOIN [RAD].[DIM_ACCOUNT] da ON fs.[ACC_KEY] = da.[ACC_KEY_FINAL]\n  INNER JOIN [RAD].[DIM_PRODUCT] dp ON fs.[ITEM_CODE] = dp.[ITEM_ID]\n  WHERE DEPLETION_PERIOD >= dateadd(year,-1, getdate())\n  group by fs.[ACC_KEY] , da.VIP_ACCOUNT_NAME\n  ,dp.[ITEM_ID], dp.PRODUCT_BRAND_PLANNING_SIZE_DESCRIPTION\n order by [ACC_KEY]",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "SftpWriteSettings",
+							"operationTimeout": "01:00:00",
+							"useTempFileRename": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "RAD_Dim_Product_Sql",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "Store_location_XREF_output",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"folder": {
+			"name": "STORE LOCATOR"
+		},
+		"annotations": [],
+		"lastPublishTime": "2021-08-06T17:23:54Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

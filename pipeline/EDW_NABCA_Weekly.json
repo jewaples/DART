@@ -1,0 +1,755 @@
+{
+	"name": "EDW_NABCA_Weekly",
+	"properties": {
+		"activities": [
+			{
+				"name": "Load_Dim_Licensee",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT * FROM STG.[/BIC/AZOTC_AO372]",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"preCopyScript": "TRUNCATE TABLE NABCA.DIM_LICENSEE",
+						"writeBehavior": "insert",
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "/BIC/ZDATAPROV",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DATA_PROVIDER",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "/BIC/ZPRO_DESC",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DATA_PROVIDER_DETAIL",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "/BIC/ZPROD_KEY",
+									"type": "String"
+								},
+								"sink": {
+									"name": "PRODUCT_ID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "/BIC/ZSTATENUM",
+									"type": "String"
+								},
+								"sink": {
+									"name": "STATE_ID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "RECORDMODE",
+									"type": "String"
+								},
+								"sink": {
+									"name": "RECORD_MODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "/BIC/ZSTLICNO",
+									"type": "String"
+								},
+								"sink": {
+									"name": "STATE_LICENSE_NUMBER",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "/BIC/ZSTLICIND",
+									"type": "String"
+								},
+								"sink": {
+									"name": "STATE_LICENSE_INDICATOR",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "/BIC/ZSTLICNM",
+									"type": "String"
+								},
+								"sink": {
+									"name": "STATE_LICENSE_NAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "/BIC/ZSTLICTYP",
+									"type": "String"
+								},
+								"sink": {
+									"name": "STATE_LICENSE_TYPE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "/BIC/ZADDRESS1",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ADDRESS_1",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "/BIC/ZADDRESS2",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ADDRESS_2",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "/BIC/ZZIP5",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ZIP5",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "/BIC/ZSTCITY",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CITY",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "/BIC/ZCOUNTYNM",
+									"type": "String"
+								},
+								"sink": {
+									"name": "COUNTY_NAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "/BIC/ZSTDISTRN",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DISTRICT_NUMBER",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "/BIC/ZSTDISTR",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DISTRICT_NAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "/BIC/ZSTABREV",
+									"type": "String"
+								},
+								"sink": {
+									"name": "STATE_ABBREVIATION",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "/BIC/ZTDLINXCD",
+									"type": "String"
+								},
+								"sink": {
+									"name": "TDLINX_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "/BIC/ZCREATETS",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CREATED_TIMESTAMP",
+									"type": "String"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "Staging_Sql_Source",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "NABCA_Dim_Licensee",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Load_Dim_Period",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT * FROM STG.NAMIBP_CS_DATE",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"preCopyScript": "TRUNCATE TABLE NABCA.DIM_PERIOD",
+						"writeBehavior": "insert",
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "MONTH_KEY",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "MONTH_KEY",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "PERIOD_ID",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "PERIOD_ID",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "MONTH_NBR",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "MONTH_NUMBER",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "MONTH_NAME",
+									"type": "String"
+								},
+								"sink": {
+									"name": "MONTH_NAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "YEAR",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "YEAR",
+									"type": "Int32"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "Staging_Sql_Source",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "NABCA_Dim_Period",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Load_Dim_States",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT * FROM STG.NAMIBP_CS_STATE",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"preCopyScript": "TRUNCATE TABLE NABCA.DIM_STATE",
+						"writeBehavior": "insert",
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "STATE_ID",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "STATE_ID",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "STATE_ABREV",
+									"type": "String"
+								},
+								"sink": {
+									"name": "STATE_ABBREVIATION",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "STATE_DESC",
+									"type": "String"
+								},
+								"sink": {
+									"name": "STATE_DESCRIPTION",
+									"type": "String"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "Staging_Sql_Source",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "NABCA_Dim_State",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Lookup_Partition_Years",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "Load_Dim_States",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Load_Dim_Period",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Load_Dim_Licensee",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Load_Dim_Product",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": {
+							"value": "TRUNCATE TABLE [NABCA].[FACT_SALES];\n\nSELECT distinct ([YEAR]) AS [YEAR]\n FROM [NABCA].[DIM_PERIOD]\n WHERE [YEAR] <=YEAR('@{formatDateTime(pipeline().parameters.STARTDATE,'yyyy-MM-dd')}') ;",
+							"type": "Expression"
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "NABCA_Dim_Period",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "ForEach_Year",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Lookup_Partition_Years",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Lookup_Partition_Years').output.value",
+						"type": "Expression"
+					},
+					"batchCount": 1,
+					"activities": [
+						{
+							"name": "Load_Fact_Sales",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "SapHanaSource",
+									"query": {
+										"value": "SELECT *\nFROM DISTRIBUTORS_USA.NAMIBP_CS_SALES\nWHERE MONTH_KEY >= TO_VARCHAR(TO_DATE(@{item().YEAR}||'-01-01', 'yyyy-mm-dd'),'YYYYMM')\nAND MONTH_KEY < TO_VARCHAR(add_years(TO_DATE(@{item().YEAR}||'-01-01', 'yyyy-mm-dd'),1),'YYYYMM')\n",
+										"type": "Expression"
+									},
+									"partitionOption": "None"
+								},
+								"sink": {
+									"type": "AzureSqlSink",
+									"writeBehavior": "insert",
+									"disableMetricsCollection": false
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"mappings": [
+										{
+											"source": {
+												"name": "ZPRO_ID",
+												"type": "String"
+											},
+											"sink": {
+												"name": "PRODUCT_ID",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "ZPRO_DESC",
+												"type": "String"
+											},
+											"sink": {
+												"name": "PRODUCT_DESCRIPTION",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "MONTH_KEY",
+												"type": "Int32"
+											},
+											"sink": {
+												"name": "MONTH_KEY",
+												"type": "Int32"
+											}
+										},
+										{
+											"source": {
+												"name": "STATE_ID",
+												"type": "Int32"
+											},
+											"sink": {
+												"name": "STATE_ID",
+												"type": "Int32"
+											}
+										},
+										{
+											"source": {
+												"name": "PRODUCT_KEY",
+												"type": "Int32"
+											},
+											"sink": {
+												"name": "PRODUCT_KEY",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "MO_TIME_KEY",
+												"type": "Int32"
+											},
+											"sink": {
+												"name": "MO_TIME_KEY",
+												"type": "Int32"
+											}
+										},
+										{
+											"source": {
+												"name": "STORE_LIC_KEY",
+												"type": "Int32"
+											},
+											"sink": {
+												"name": "STORE_LICENSE_KEY",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "BOTTLES_SOLD",
+												"type": "Decimal"
+											},
+											"sink": {
+												"name": "BOTTLES_SOLD",
+												"type": "Double"
+											}
+										},
+										{
+											"source": {
+												"name": "ACTUAL_CASES",
+												"type": "Decimal"
+											},
+											"sink": {
+												"name": "ACTUAL_CASES",
+												"type": "Double"
+											}
+										},
+										{
+											"source": {
+												"name": "STANDARD_CASES",
+												"type": "Decimal"
+											},
+											"sink": {
+												"name": "STANDARD_CASES",
+												"type": "Double"
+											}
+										},
+										{
+											"source": {
+												"name": "NINE_LITER_CASES",
+												"type": "Decimal"
+											},
+											"sink": {
+												"name": "NINE_LITER_CASES",
+												"type": "Double"
+											}
+										},
+										{
+											"source": {
+												"name": "FOB_PRICE",
+												"type": "Decimal"
+											},
+											"sink": {
+												"name": "FOB_PRICE",
+												"type": "Double"
+											}
+										},
+										{
+											"source": {
+												"name": "SHELF_PRICE",
+												"type": "Decimal"
+											},
+											"sink": {
+												"name": "SHELF_PRICE",
+												"type": "Double"
+											}
+										},
+										{
+											"source": {
+												"name": "RETAIL_PRICE",
+												"type": "Decimal"
+											},
+											"sink": {
+												"name": "RETAIL_PRICE",
+												"type": "Double"
+											}
+										},
+										{
+											"source": {
+												"name": "SHELF_DOLLAR_VOL",
+												"type": "Decimal"
+											},
+											"sink": {
+												"name": "SHELF_DOLLAR_VOLUME",
+												"type": "Double"
+											}
+										},
+										{
+											"source": {
+												"name": "RETAIL_DOLLAR_VOL",
+												"type": "Decimal"
+											},
+											"sink": {
+												"name": "RETAIL_DOLLAR_VOLUME",
+												"type": "Double"
+											}
+										},
+										{
+											"source": {
+												"name": "RUNID",
+												"type": "Int32"
+											},
+											"sink": {
+												"name": "RUN_ID",
+												"type": "Int32"
+											}
+										},
+										{
+											"source": {
+												"name": "CREATEDBY",
+												"type": "String"
+											},
+											"sink": {
+												"name": "CREATED_BY",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "CREATETS",
+												"type": "DateTime"
+											},
+											"sink": {
+												"name": "CREATED_TIMESTAMP",
+												"type": "DateTime"
+											}
+										}
+									]
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "Hana_Source_Tables",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "NABCA_Fact_Sales",
+									"type": "DatasetReference"
+								}
+							]
+						}
+					]
+				}
+			},
+			{
+				"name": "Load_Dim_Product",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[NABCA].[usp_DIM_PRODUCT_LOAD]"
+				},
+				"linkedServiceName": {
+					"referenceName": "NAM_COM_DART_SQL",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"parameters": {
+			"STARTDATE": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "NABCA COMPETITIVE"
+		},
+		"annotations": [],
+		"lastPublishTime": "2021-09-29T17:19:06Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,40 @@
+{
+	"name": "NewNielsenPipeline",
+	"properties": {
+		"description": "Execute New Nielsen Pipeline",
+		"annotations": [],
+		"runtimeState": "Stopped",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "NIELSEN_IRI_EDW__LOAD_Files",
+					"type": "PipelineReference"
+				},
+				"parameters": {
+					"type_of_loading_data": "full_load",
+					"Enviroment": "PROD"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Week",
+				"interval": 1,
+				"startTime": "2022-04-11T21:05:00",
+				"timeZone": "Central Standard Time",
+				"schedule": {
+					"minutes": [
+						0
+					],
+					"hours": [
+						8
+					],
+					"weekDays": [
+						"Tuesday"
+					]
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,310 @@
+{
+	"name": "MASTER_PIPELINE_PARALLEL_EXECUTION_CLUSTER_BACARDHI_OPS",
+	"properties": {
+		"activities": [
+			{
+				"name": "Lookup Variables",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": {
+							"value": "select PROCESS_ID IdProcess, ADF_FLAG ADF, DESCRIPTION Description, PATH Path, DB, ENVIRONMENT Environment, PRIORITY from CFG.MASTER_PIPELINE_EXECUTION where PRIORITY = @{pipeline().parameters.var_Priority} and ACTIVE_FLAG = 'Yes' order by PRIORITY ASC",
+							"type": "Expression"
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "MASTER_PIPELINE_EXECUTIONTABLE",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "ForEachProcess",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Lookup Variables",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Lookup Variables').output.value",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "If Condition is ADF Process",
+							"type": "IfCondition",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"expression": {
+									"value": "@equals(pipeline().parameters.var_ADF, 'Yes')",
+									"type": "Expression"
+								},
+								"ifFalseActivities": [
+									{
+										"name": "Stored procedure Insert Log Execution",
+										"type": "SqlServerStoredProcedure",
+										"dependsOn": [
+											{
+												"activity": "START_DATE",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"storedProcedureName": "[CFG].[usp_UPSERT_EXECUTION_LOG]",
+											"storedProcedureParameters": {
+												"Enddate": {
+													"value": null,
+													"type": "String"
+												},
+												"Message": {
+													"value": "Notebook Started",
+													"type": "String"
+												},
+												"Process": {
+													"value": {
+														"value": "@string(item().IdProcess)",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"Startdate": {
+													"value": {
+														"value": "@variables('var_STARTDATE')",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"Status": {
+													"value": "In progress",
+													"type": "String"
+												}
+											}
+										},
+										"linkedServiceName": {
+											"referenceName": "NAM_COM_DART_SQL",
+											"type": "LinkedServiceReference"
+										}
+									},
+									{
+										"name": "Notebook Execution",
+										"type": "DatabricksNotebook",
+										"dependsOn": [
+											{
+												"activity": "Stored procedure Insert Log Execution",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"notebookPath": {
+												"value": "@string(item().Path)",
+												"type": "Expression"
+											}
+										},
+										"linkedServiceName": {
+											"referenceName": "bdhdbenam2_AzureDatabricks_Ops_Clone",
+											"type": "LinkedServiceReference"
+										}
+									},
+									{
+										"name": "Stored procedure Update Log Execution",
+										"type": "SqlServerStoredProcedure",
+										"dependsOn": [
+											{
+												"activity": "Notebook Execution",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"storedProcedureName": "[CFG].[usp_UPSERT_EXECUTION_LOG]",
+											"storedProcedureParameters": {
+												"Enddate": {
+													"value": {
+														"value": "@string(formatDateTime(convertFromUtc(utcNow(), 'Central Standard Time'), 'yyyy-MM-dd hh:mm:ss'))",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"Message": {
+													"value": "Notebook Completed",
+													"type": "String"
+												},
+												"Process": {
+													"value": {
+														"value": "@string(item().IdProcess)",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"Startdate": {
+													"value": {
+														"value": "@variables('var_STARTDATE')",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"Status": {
+													"value": "Success",
+													"type": "String"
+												}
+											}
+										},
+										"linkedServiceName": {
+											"referenceName": "NAM_COM_DART_SQL",
+											"type": "LinkedServiceReference"
+										}
+									},
+									{
+										"name": "Stored procedure Update Log Execution_copy1",
+										"type": "SqlServerStoredProcedure",
+										"dependsOn": [
+											{
+												"activity": "Notebook Execution",
+												"dependencyConditions": [
+													"Failed"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"storedProcedureName": "[CFG].[usp_UPSERT_EXECUTION_LOG]",
+											"storedProcedureParameters": {
+												"Enddate": {
+													"value": {
+														"value": "@string(formatDateTime(convertFromUtc(utcNow(), 'Central Standard Time'), 'yyyy-MM-dd hh:mm:ss'))",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"Message": {
+													"value": {
+														"value": "@concat('Notebook Incompleted with errors - ',activity('Notebook Execution')?.Error?.message)",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"Process": {
+													"value": {
+														"value": "@string(item().IdProcess)",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"Startdate": {
+													"value": {
+														"value": "@variables('var_STARTDATE')",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"Status": {
+													"value": "Failed",
+													"type": "String"
+												}
+											}
+										},
+										"linkedServiceName": {
+											"referenceName": "NAM_COM_DART_SQL",
+											"type": "LinkedServiceReference"
+										}
+									},
+									{
+										"name": "START_DATE",
+										"type": "SetVariable",
+										"dependsOn": [],
+										"userProperties": [],
+										"typeProperties": {
+											"variableName": "var_STARTDATE",
+											"value": {
+												"value": "@string(formatDateTime(convertFromUtc(utcNow(), 'Central Standard Time'), 'yyyy-MM-dd hh:mm:ss'))",
+												"type": "Expression"
+											}
+										}
+									}
+								]
+							}
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"var_Priority": {
+				"type": "string"
+			},
+			"STARTDATE": {
+				"type": "string"
+			},
+			"var_ADF": {
+				"type": "string"
+			}
+		},
+		"variables": {
+			"var_STARTDATE": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "MASTER_PIPELINE"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-08-03T20:27:12Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

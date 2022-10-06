@@ -1,0 +1,180 @@
+{
+	"name": "azuresqltbliTemMast",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "DIM_DA_LOC_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "DIM_PA_DATE",
+				"type": "date"
+			},
+			{
+				"name": "DIM_DA_LOC_ITEM_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "DIM_DA_SIM_ITEM_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "DIM_DIST_UPC",
+				"type": "varchar"
+			},
+			{
+				"name": "DIM_DIST_CAT_ID",
+				"type": "varchar"
+			},
+			{
+				"name": "DIM_BUYER_PART_NO",
+				"type": "varchar"
+			},
+			{
+				"name": "DIM_DIST_UOM",
+				"type": "varchar"
+			},
+			{
+				"name": "DIM_PA_ORDER_INFO",
+				"type": "varchar"
+			},
+			{
+				"name": "DIM_SHIPLANE",
+				"type": "varchar"
+			},
+			{
+				"name": "DIM_USED_ITEM_STATUS",
+				"type": "varchar"
+			},
+			{
+				"name": "DIM_PA_STATUS",
+				"type": "varchar"
+			},
+			{
+				"name": "DIM_STATUS_OVRD",
+				"type": "varchar"
+			},
+			{
+				"name": "DIM_STATUS_OVRD_COMMENTS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DIM_STATUS_OVRD_EXPIRE",
+				"type": "date"
+			},
+			{
+				"name": "DIM_CURRENT_SQA",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "DIM_CURRENT_NQA",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "DIM_USED_OP",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "DIM_USED_OP_TYPE",
+				"type": "varchar"
+			},
+			{
+				"name": "DIM_SAFETY_STOCK",
+				"type": "decimal",
+				"precision": 20,
+				"scale": 4
+			},
+			{
+				"name": "DIM_PLANNER_OVRD_OP",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "DIM_PLANNER_OVRD_COMMENTS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DIM_USED_MIN_OQ",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "DIM_PACK_SIZE_OVERRIDE",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "DIM_BEHAVIOR_GROUP_CODE",
+				"type": "varchar"
+			},
+			{
+				"name": "DIM_EXCLUDE_FROM_SUGG_ORDERS",
+				"type": "varchar"
+			},
+			{
+				"name": "DIM_EXCLUDE_FROM_BTT",
+				"type": "varchar"
+			},
+			{
+				"name": "DIM_MASTER_ITEM_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "DIM_CURR_SHIP_IND",
+				"type": "varchar"
+			},
+			{
+				"name": "DIM_CURR_SHIP_ITEM_DATE",
+				"type": "date"
+			},
+			{
+				"name": "DIM_DATE_CREATED",
+				"type": "date"
+			},
+			{
+				"name": "DIM_DATE_LAST_ORDERED",
+				"type": "date"
+			},
+			{
+				"name": "DIM_SS_DAYS_OVRD",
+				"type": "varchar"
+			},
+			{
+				"name": "DIM_MIN_PRESENCE",
+				"type": "varchar"
+			},
+			{
+				"name": "FILE_DATE",
+				"type": "varchar"
+			},
+			{
+				"name": "LAST_UPDATE_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "LAST_UPDATE_BY",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "VMI",
+			"table": "LOCATION_ITEM_MASTER"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

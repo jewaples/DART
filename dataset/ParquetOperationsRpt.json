@@ -1,0 +1,25 @@
+{
+	"name": "ParquetOperationsRpt",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_Data_Foundation_DataLake",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "BILLINGS"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "STG_OPERATIONS_REPORTING.Parquet",
+				"folderPath": "EDW/BILLINGS/STG_OPERATIONS_REPORTING",
+				"fileSystem": "prod"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

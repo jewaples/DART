@@ -1,0 +1,214 @@
+{
+	"name": "VMI_ALERTS",
+	"properties": {
+		"activities": [
+			{
+				"name": "Get Email Config",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "[VMI].[SP_CFG_GET_EMAIL_ALERTS]",
+						"storedProcedureParameters": {
+							"ExecutionId": {
+								"type": "String",
+								"value": {
+									"value": "@pipeline().parameters.Execution_Id",
+									"type": "Expression"
+								}
+							}
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "VMI_DWH_SQL",
+						"type": "DatasetReference",
+						"parameters": {
+							"SQLName": "NotApplicable",
+							"SchemaName": "NotApplicable"
+						}
+					},
+					"firstRowOnly": true
+				}
+			},
+			{
+				"name": "Set Email To",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Get Email Config",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "EmailTo",
+					"value": {
+						"value": "@{activity('Get Email Config').output.firstRow.EmailTo}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set Email To CC",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set Email To",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "EmailToCC",
+					"value": {
+						"value": "@{activity('Get Email Config').output.firstRow.EmailToCC}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set Subject",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set Email To CC",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "Subject",
+					"value": {
+						"value": "@{activity('Get Email Config').output.firstRow.EmailSubject}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set EmailBody",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set Subject",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "EmailBody",
+					"value": {
+						"value": "@{activity('Get Email Config').output.firstRow.EmailBody}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set EmailURL",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set EmailBody",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "EmailURL",
+					"value": {
+						"value": "@{activity('Get Email Config').output.firstRow.EmailURL}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Send Alert",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Set EmailURL",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": {
+						"value": "@variables('EmailURL')",
+						"type": "Expression"
+					},
+					"method": "POST",
+					"headers": {
+						"Content-Type": "application/json"
+					},
+					"body": {
+						"value": "{\n   \"DataFactoryName\": \"@{pipeline().parameters.dataFactoryName}\",\n   \"PipelineName\": \"@{pipeline().parameters.pipelineName}\",\n   \"PipelineRunId\": \"@{pipeline().parameters.Execution_Id}\",\n   \"Subject\": \"@{variables('Subject')}\",\n   \"EmailTo\": \"@{variables('EmailTo')}\",\n   \"EmailToCC\": \"@{variables('EmailToCC')}\",\n   \"ExecutionDate\": \"@{pipeline().TriggerTime}\",\n   \"Details\" : \"@{variables('EmailBody')}\"\n}\t\n",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"Execution_Id": {
+				"type": "string"
+			},
+			"pipelineName": {
+				"type": "string"
+			},
+			"dataFactoryName": {
+				"type": "string"
+			}
+		},
+		"variables": {
+			"EmailBody": {
+				"type": "String"
+			},
+			"EmailTo": {
+				"type": "String"
+			},
+			"EmailToCC": {
+				"type": "String"
+			},
+			"EmailURL": {
+				"type": "String"
+			},
+			"Subject": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "VMI"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-03-01T16:14:29Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

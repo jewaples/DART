@@ -1,0 +1,13 @@
+{
+	"name": "SapHanaTOperationsRpt",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_SAP_HANA_OnPrem",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "SapHanaTable",
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

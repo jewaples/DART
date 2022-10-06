@@ -1,0 +1,161 @@
+{
+	"name": "RAD_Email_Invoice_notificacion",
+	"properties": {
+		"activities": [
+			{
+				"name": "Send Alert",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Set EmailURL",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": {
+						"value": "@variables('EmailURL')",
+						"type": "Expression"
+					},
+					"method": "POST",
+					"headers": {
+						"Content-Type": "application/json"
+					},
+					"body": {
+						"value": "{\n   \"DataFactoryName\": \"@{pipeline().DataFactory}\",\n   \"PipelineName\": \"@{pipeline().Pipeline}\",\n   \"PipelineRunId\": \"@{pipeline().RunId}\",\n   \"Subject\": \"@{pipeline().parameters.subject}\",\n   \"EmailTo\": \"@{variables('EmailTo')}\",\n   \"EmailToCC\": \"@{variables('EmailToCC')}\",\n   \"ExecutionDate\": \"@{pipeline().parameters.STARTDATE}\",\n   \"Details\": \"@{variables('EmailBody')}\"\n}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set EmailBody",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set Email To",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "EmailBody",
+					"value": {
+						"value": "@{activity('Get Email Config').output.firstRow.EmailBody}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Get Email Config",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "RAD.usp_INVOICE_EMAIL_ALERTS",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "VMI_DWH_SQL",
+						"type": "DatasetReference",
+						"parameters": {
+							"SQLName": "NotApplicable",
+							"SchemaName": "NotApplicable"
+						}
+					},
+					"firstRowOnly": true
+				}
+			},
+			{
+				"name": "Set Email To",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Get Email Config",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "EmailTo",
+					"value": {
+						"value": "@{activity('Get Email Config').output.firstRow.EmailTo}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set EmailURL",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Set EmailBody",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "EmailURL",
+					"value": {
+						"value": "@{activity('Get Email Config').output.firstRow.EmailURL}",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"subject": {
+				"type": "string",
+				"defaultValue": "Invoice Date Alert"
+			},
+			"STARTDATE": {
+				"type": "string",
+				"defaultValue": "2022-06-22"
+			}
+		},
+		"variables": {
+			"EmailURL": {
+				"type": "String"
+			},
+			"EmailBody": {
+				"type": "String"
+			},
+			"EmailTo": {
+				"type": "String"
+			},
+			"EmailToCC": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "RAD"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-08-01T17:28:17Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

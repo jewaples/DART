@@ -1,0 +1,18 @@
+{
+	"name": "Drizly_Snowflake",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "Snowflake",
+		"typeProperties": {
+			"connectionString": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "NAM_bdh_AzureKeyVault",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "Drizly-snowflake-connection"
+			}
+		}
+	}
+}

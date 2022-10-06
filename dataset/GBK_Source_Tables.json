@@ -1,0 +1,16 @@
+{
+	"name": "GBK_Source_Tables",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "MDS_GBK_NASQLDB_OPrem",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "STAGING"
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

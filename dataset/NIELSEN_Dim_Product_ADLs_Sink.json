@@ -1,0 +1,25 @@
+{
+	"name": "NIELSEN_Dim_Product_ADLs_Sink",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_Data_Foundation_DataLake",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "NIELSEN"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "DIM_PRODUCT.parquet",
+				"folderPath": "EDW/NIELSEN/DIM_PRODUCT",
+				"fileSystem": "prod"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

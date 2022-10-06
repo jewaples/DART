@@ -1,0 +1,23 @@
+{
+	"name": "Hillebrand_IDs_Shipments",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ID",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": "STG",
+			"table": "HILLEBRAND_SHIPMENTS_IDS"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

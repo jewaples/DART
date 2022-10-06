@@ -1,0 +1,21 @@
+{
+	"name": "NAM_NIELSEN_IRI_FTP",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "FtpServer",
+		"typeProperties": {
+			"host": "10.28.1.5",
+			"port": 21,
+			"enableSsl": false,
+			"enableServerCertificateValidation": false,
+			"authenticationType": "Basic",
+			"userName": "nielseniri",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiIyNTczYzM1My1hOWEwLTRhNTgtOWIwMC1mNWU1YWQ0ZGU4OGMiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+		},
+		"connectVia": {
+			"referenceName": "nlmas005-IRtime",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

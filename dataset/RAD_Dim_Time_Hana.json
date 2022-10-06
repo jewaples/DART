@@ -1,0 +1,16 @@
+{
+	"name": "RAD_Dim_Time_Hana",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_SAP_HANA_OnPrem",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "RAD"
+		},
+		"annotations": [],
+		"type": "SapHanaTable",
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

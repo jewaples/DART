@@ -1,0 +1,813 @@
+{
+	"name": "Pulse_Account_Source_ADL",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "bdhdlsgen21_DataLake",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "PULSE"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "Account.csv",
+				"folderPath": "Pulse",
+				"fileSystem": "prod"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "Id",
+				"type": "String"
+			},
+			{
+				"name": "IsDeleted",
+				"type": "String"
+			},
+			{
+				"name": "MasterRecordId",
+				"type": "String"
+			},
+			{
+				"name": "Name",
+				"type": "String"
+			},
+			{
+				"name": "Type",
+				"type": "String"
+			},
+			{
+				"name": "RecordTypeId",
+				"type": "String"
+			},
+			{
+				"name": "ParentId",
+				"type": "String"
+			},
+			{
+				"name": "BillingStreet",
+				"type": "String"
+			},
+			{
+				"name": "BillingCity",
+				"type": "String"
+			},
+			{
+				"name": "BillingState",
+				"type": "String"
+			},
+			{
+				"name": "BillingPostalCode",
+				"type": "String"
+			},
+			{
+				"name": "BillingCountry",
+				"type": "String"
+			},
+			{
+				"name": "BillingLatitude",
+				"type": "String"
+			},
+			{
+				"name": "BillingLongitude",
+				"type": "String"
+			},
+			{
+				"name": "BillingGeocodeAccuracy",
+				"type": "String"
+			},
+			{
+				"name": "ShippingStreet",
+				"type": "String"
+			},
+			{
+				"name": "ShippingCity",
+				"type": "String"
+			},
+			{
+				"name": "ShippingState",
+				"type": "String"
+			},
+			{
+				"name": "ShippingPostalCode",
+				"type": "String"
+			},
+			{
+				"name": "ShippingCountry",
+				"type": "String"
+			},
+			{
+				"name": "ShippingLatitude",
+				"type": "String"
+			},
+			{
+				"name": "ShippingLongitude",
+				"type": "String"
+			},
+			{
+				"name": "ShippingGeocodeAccuracy",
+				"type": "String"
+			},
+			{
+				"name": "Phone",
+				"type": "String"
+			},
+			{
+				"name": "Fax",
+				"type": "String"
+			},
+			{
+				"name": "AccountNumber",
+				"type": "String"
+			},
+			{
+				"name": "Website",
+				"type": "String"
+			},
+			{
+				"name": "PhotoUrl",
+				"type": "String"
+			},
+			{
+				"name": "Sic",
+				"type": "String"
+			},
+			{
+				"name": "Industry",
+				"type": "String"
+			},
+			{
+				"name": "AnnualRevenue",
+				"type": "String"
+			},
+			{
+				"name": "NumberOfEmployees",
+				"type": "String"
+			},
+			{
+				"name": "Ownership",
+				"type": "String"
+			},
+			{
+				"name": "TickerSymbol",
+				"type": "String"
+			},
+			{
+				"name": "Description",
+				"type": "String"
+			},
+			{
+				"name": "Rating",
+				"type": "String"
+			},
+			{
+				"name": "Site",
+				"type": "String"
+			},
+			{
+				"name": "CurrencyIsoCode",
+				"type": "String"
+			},
+			{
+				"name": "OwnerId",
+				"type": "String"
+			},
+			{
+				"name": "CreatedDate",
+				"type": "String"
+			},
+			{
+				"name": "CreatedById",
+				"type": "String"
+			},
+			{
+				"name": "LastModifiedDate",
+				"type": "String"
+			},
+			{
+				"name": "LastModifiedById",
+				"type": "String"
+			},
+			{
+				"name": "SystemModstamp",
+				"type": "String"
+			},
+			{
+				"name": "LastActivityDate",
+				"type": "String"
+			},
+			{
+				"name": "LastViewedDate",
+				"type": "String"
+			},
+			{
+				"name": "LastReferencedDate",
+				"type": "String"
+			},
+			{
+				"name": "Jigsaw",
+				"type": "String"
+			},
+			{
+				"name": "JigsawCompanyId",
+				"type": "String"
+			},
+			{
+				"name": "AccountSource",
+				"type": "String"
+			},
+			{
+				"name": "SicDesc",
+				"type": "String"
+			},
+			{
+				"name": "Account_Currency__c",
+				"type": "String"
+			},
+			{
+				"name": "Account_Group__c",
+				"type": "String"
+			},
+			{
+				"name": "Account_Holder__c",
+				"type": "String"
+			},
+			{
+				"name": "Account_Number__c",
+				"type": "String"
+			},
+			{
+				"name": "Account_Status__c",
+				"type": "String"
+			},
+			{
+				"name": "Activity_Segment__c",
+				"type": "String"
+			},
+			{
+				"name": "App_Local_Id__c",
+				"type": "String"
+			},
+			{
+				"name": "Approval_status__c",
+				"type": "String"
+			},
+			{
+				"name": "Bank_Country__c",
+				"type": "String"
+			},
+			{
+				"name": "Bank_Key__c",
+				"type": "String"
+			},
+			{
+				"name": "Banner__c",
+				"type": "String"
+			},
+			{
+				"name": "Best_com_path__c",
+				"type": "String"
+			},
+			{
+				"name": "Best_day_to_visit__c",
+				"type": "String"
+			},
+			{
+				"name": "Best_time_to_visit__c",
+				"type": "String"
+			},
+			{
+				"name": "Change_note__c",
+				"type": "String"
+			},
+			{
+				"name": "City__c",
+				"type": "String"
+			},
+			{
+				"name": "Consumer_Activity__c",
+				"type": "String"
+			},
+			{
+				"name": "Consumer_Type__c",
+				"type": "String"
+			},
+			{
+				"name": "Consumption_Cluster__c",
+				"type": "String"
+			},
+			{
+				"name": "Consumption_Moment__c",
+				"type": "String"
+			},
+			{
+				"name": "Control_Key__c",
+				"type": "String"
+			},
+			{
+				"name": "Country__c",
+				"type": "String"
+			},
+			{
+				"name": "Credit_Available__c",
+				"type": "String"
+			},
+			{
+				"name": "Credit_Exposure__c",
+				"type": "String"
+			},
+			{
+				"name": "Credit_Limit_Used__c",
+				"type": "String"
+			},
+			{
+				"name": "Credit_Limit__c",
+				"type": "String"
+			},
+			{
+				"name": "Customer_Name__c",
+				"type": "String"
+			},
+			{
+				"name": "Days_Closed__c",
+				"type": "String"
+			},
+			{
+				"name": "Delivery_Instructions__c",
+				"type": "String"
+			},
+			{
+				"name": "Delivery_Time_From__c",
+				"type": "String"
+			},
+			{
+				"name": "Delivery_Time_To__c",
+				"type": "String"
+			},
+			{
+				"name": "Delivery_days__c",
+				"type": "String"
+			},
+			{
+				"name": "Distribution_Channel__c",
+				"type": "String"
+			},
+			{
+				"name": "E_mail__c",
+				"type": "String"
+			},
+			{
+				"name": "E_mail_of_the_Sales_Rep__c",
+				"type": "String"
+			},
+			{
+				"name": "Geolocation__Latitude__s",
+				"type": "String"
+			},
+			{
+				"name": "Geolocation__Longitude__s",
+				"type": "String"
+			},
+			{
+				"name": "Hierarchy_parent__c",
+				"type": "String"
+			},
+			{
+				"name": "House_nr__c",
+				"type": "String"
+			},
+			{
+				"name": "IBAN__c",
+				"type": "String"
+			},
+			{
+				"name": "Total_Score__c",
+				"type": "String"
+			},
+			{
+				"name": "Indirect_Flag__c",
+				"type": "String"
+			},
+			{
+				"name": "Industry__c",
+				"type": "String"
+			},
+			{
+				"name": "Language__c",
+				"type": "String"
+			},
+			{
+				"name": "LastVisit__c",
+				"type": "String"
+			},
+			{
+				"name": "Lead_Time_to_Deliver__c",
+				"type": "String"
+			},
+			{
+				"name": "Legal_Name_2__c",
+				"type": "String"
+			},
+			{
+				"name": "Legal_Name_3__c",
+				"type": "String"
+			},
+			{
+				"name": "Legal_Name__c",
+				"type": "String"
+			},
+			{
+				"name": "Market__c",
+				"type": "String"
+			},
+			{
+				"name": "Memo__c",
+				"type": "String"
+			},
+			{
+				"name": "Method_of_payment__c",
+				"type": "String"
+			},
+			{
+				"name": "Nielsen_ID__c",
+				"type": "String"
+			},
+			{
+				"name": "Nielsen_number__c",
+				"type": "String"
+			},
+			{
+				"name": "Open_From__c",
+				"type": "String"
+			},
+			{
+				"name": "Open_To__c",
+				"type": "String"
+			},
+			{
+				"name": "Operation__c",
+				"type": "String"
+			},
+			{
+				"name": "Approval_image_URL__c",
+				"type": "String"
+			},
+			{
+				"name": "Outlet_quality__c",
+				"type": "String"
+			},
+			{
+				"name": "Outlet_type__c",
+				"type": "String"
+			},
+			{
+				"name": "Partner_Bank_Type__c",
+				"type": "String"
+			},
+			{
+				"name": "BIC__c",
+				"type": "String"
+			},
+			{
+				"name": "Potential_Annual_Volume__c",
+				"type": "String"
+			},
+			{
+				"name": "Previous_Master_Record_Number__c",
+				"type": "String"
+			},
+			{
+				"name": "Quality_Score__c",
+				"type": "String"
+			},
+			{
+				"name": "Reason_for_pending__c",
+				"type": "String"
+			},
+			{
+				"name": "Reasons_to_delete__c",
+				"type": "String"
+			},
+			{
+				"name": "Reference_Bank_Details__c",
+				"type": "String"
+			},
+			{
+				"name": "Required_Appointment__c",
+				"type": "String"
+			},
+			{
+				"name": "SAP_Customer_ID__c",
+				"type": "String"
+			},
+			{
+				"name": "SAP_Vendor_ID__c",
+				"type": "String"
+			},
+			{
+				"name": "Sales_Area_Order_Block__c",
+				"type": "String"
+			},
+			{
+				"name": "Sales_Channel__c",
+				"type": "String"
+			},
+			{
+				"name": "Sales_Directorate__c",
+				"type": "String"
+			},
+			{
+				"name": "Sales_District__c",
+				"type": "String"
+			},
+			{
+				"name": "Sales_Office__c",
+				"type": "String"
+			},
+			{
+				"name": "Seasonality__c",
+				"type": "String"
+			},
+			{
+				"name": "Social_Connect__c",
+				"type": "String"
+			},
+			{
+				"name": "Street_2__c",
+				"type": "String"
+			},
+			{
+				"name": "Street_3__c",
+				"type": "String"
+			},
+			{
+				"name": "Street__c",
+				"type": "String"
+			},
+			{
+				"name": "Surface__c",
+				"type": "String"
+			},
+			{
+				"name": "Tax_Number_1__c",
+				"type": "String"
+			},
+			{
+				"name": "Tax_Number_2__c",
+				"type": "String"
+			},
+			{
+				"name": "Tax_Number_3__c",
+				"type": "String"
+			},
+			{
+				"name": "Tax_Number_4__c",
+				"type": "String"
+			},
+			{
+				"name": "Term_of_payment__c",
+				"type": "String"
+			},
+			{
+				"name": "Territory_ID__c",
+				"type": "String"
+			},
+			{
+				"name": "Territory_description__c",
+				"type": "String"
+			},
+			{
+				"name": "Under_Contract__c",
+				"type": "String"
+			},
+			{
+				"name": "VAT_Exempted_Reason__c",
+				"type": "String"
+			},
+			{
+				"name": "Vat_Number__c",
+				"type": "String"
+			},
+			{
+				"name": "Visit_Frequency_Days__c",
+				"type": "String"
+			},
+			{
+				"name": "Visit_Frequency__c",
+				"type": "String"
+			},
+			{
+				"name": "Visit_Status__c",
+				"type": "String"
+			},
+			{
+				"name": "Country_to_make_the_link__c",
+				"type": "String"
+			},
+			{
+				"name": "Zip__c",
+				"type": "String"
+			},
+			{
+				"name": "allowed_to_pay_contract__c",
+				"type": "String"
+			},
+			{
+				"name": "attachment__c",
+				"type": "String"
+			},
+			{
+				"name": "free_bottle_agreement__c",
+				"type": "String"
+			},
+			{
+				"name": "isRecentlyModified__c",
+				"type": "String"
+			},
+			{
+				"name": "Account_Type__c",
+				"type": "String"
+			},
+			{
+				"name": "Approval_Action__c",
+				"type": "String"
+			},
+			{
+				"name": "Last_Visit_Relation__c",
+				"type": "String"
+			},
+			{
+				"name": "Order_transfer_mode__c",
+				"type": "String"
+			},
+			{
+				"name": "Out_Frecuency__c",
+				"type": "String"
+			},
+			{
+				"name": "PoS_Segment__c",
+				"type": "String"
+			},
+			{
+				"name": "Reject_Reason__c",
+				"type": "String"
+			},
+			{
+				"name": "Requester_Email__c",
+				"type": "String"
+			},
+			{
+				"name": "Requester_Name__c",
+				"type": "String"
+			},
+			{
+				"name": "Requester_Note__c",
+				"type": "String"
+			},
+			{
+				"name": "Requester_Phone__c",
+				"type": "String"
+			},
+			{
+				"name": "Sales_group__c",
+				"type": "String"
+			},
+			{
+				"name": "Winning_In__c",
+				"type": "String"
+			},
+			{
+				"name": "Image_brand__c",
+				"type": "String"
+			},
+			{
+				"name": "Picture_of_Success__c",
+				"type": "String"
+			},
+			{
+				"name": "District__c",
+				"type": "String"
+			},
+			{
+				"name": "ImageTags__c",
+				"type": "String"
+			},
+			{
+				"name": "What_Success_Looks_Like__c",
+				"type": "String"
+			},
+			{
+				"name": "New_Shipto_Payer__c",
+				"type": "String"
+			},
+			{
+				"name": "Tax__c",
+				"type": "String"
+			},
+			{
+				"name": "Tax_type__c",
+				"type": "String"
+			},
+			{
+				"name": "Market_subdivision__c",
+				"type": "String"
+			},
+			{
+				"name": "SGWS_number__c",
+				"type": "String"
+			},
+			{
+				"name": "TDLinx_number__c",
+				"type": "String"
+			},
+			{
+				"name": "Terrasse__c",
+				"type": "String"
+			},
+			{
+				"name": "USA_DMAName__c",
+				"type": "String"
+			},
+			{
+				"name": "USA_MarketingGroup__c",
+				"type": "String"
+			},
+			{
+				"name": "USA_OutletSubType__c",
+				"type": "String"
+			},
+			{
+				"name": "USA_OwnershipGroup__c",
+				"type": "String"
+			},
+			{
+				"name": "USA_PrimaryFoodTypeIndicator__c",
+				"type": "String"
+			},
+			{
+				"name": "Record_Type_ID__c",
+				"type": "String"
+			},
+			{
+				"name": "USA_TargetConsumerDemographics__c",
+				"type": "String"
+			},
+			{
+				"name": "Count_of_Account_Territories__c",
+				"type": "String"
+			},
+			{
+				"name": "TeamMemberRole__c",
+				"type": "String"
+			},
+			{
+				"name": "Core_AccountPersonality__c",
+				"type": "String"
+			},
+			{
+				"name": "Core_ChannelSegment__c",
+				"type": "String"
+			},
+			{
+				"name": "Core_PulseActivitySegment__c",
+				"type": "String"
+			},
+			{
+				"name": "Core_PulseMarketSubdivision__c",
+				"type": "String"
+			},
+			{
+				"name": "Core_PulseMarket__c",
+				"type": "String"
+			},
+			{
+				"name": "Core_PulseQualityScore__c",
+				"type": "String"
+			},
+			{
+				"name": "PoS_Flag__c",
+				"type": "String"
+			},
+			{
+				"name": "TDLinx_Account__c",
+				"type": "String"
+			},
+			{
+				"name": "Latest_Menu__c",
+				"type": "String"
+			},
+			{
+				"name": "PulseTrade__c",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

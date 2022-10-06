@@ -1,0 +1,133 @@
+{
+	"name": "BART_Exceptions_SqlOnprem",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "USMIA_MDS_NASQLDB_OnPrem",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "BART"
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [
+			{
+				"name": "ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "MUID",
+				"type": "uniqueidentifier"
+			},
+			{
+				"name": "VersionName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VersionNumber",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Version_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "VersionFlag",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Name",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Code",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ChangeTrackingMask",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "TDLINX",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SGWS_NUM",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ACCOUNT_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ADDRESS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CITY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "STATE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DISCIPLINE_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZIP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ADDITIONAL_INFORMATION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ACTIVE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "EnterDateTime",
+				"type": "datetime2",
+				"scale": 3
+			},
+			{
+				"name": "EnterUserName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "EnterVersionNumber",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "LastChgDateTime",
+				"type": "datetime2",
+				"scale": 3
+			},
+			{
+				"name": "LastChgUserName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LastChgVersionNumber",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ValidationStatus",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "stg",
+			"table": "ADVOCACY_DISCIPLINE_EXCEPTIONS_Leaf"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

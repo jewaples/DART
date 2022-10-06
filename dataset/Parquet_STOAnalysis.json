@@ -1,0 +1,21 @@
+{
+	"name": "Parquet_STOAnalysis",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_Data_Foundation_DataLake",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "STO_ANALYSIS.Parquet",
+				"folderPath": "prod/EDW/BILLINGS/STG_STO_ANALYSIS/"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

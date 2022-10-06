@@ -1,0 +1,25 @@
+{
+	"name": "RAD_Selling_Days_Calendar_ADLs_Sink",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_Data_Foundation_DataLake",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "RAD"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "SELLING_DAYS_CALENDAR.parquet",
+				"folderPath": "EDW/RAD/SELLING_DAYS_CALENDAR",
+				"fileSystem": "prod"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

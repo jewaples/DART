@@ -1,0 +1,76 @@
+{
+	"name": "Ecommerce_Kroger_Click_SQL",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "KROGER_DESC",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PERIOD_DESC",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PRIMARY_DEPARTMENT",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DEPARTMENT",
+				"type": "nvarchar"
+			},
+			{
+				"name": "COMMODITY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UPC",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ITEM_DESCRIPTION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SCANNED_RETAIL_DOLLARS",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "SCANNED_MOVEMENT",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "CLICKLIST_SCANNED_RETAIL_DOLLARS",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "CLICKLIST_SCANNED_MOVEMENT",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "HOMEDELIVERY_SCANNED_RETAIL_DOLLARS",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "HOMEDELIVERY_SCANNED_MOVEMENT",
+				"type": "float",
+				"precision": 15
+			}
+		],
+		"typeProperties": {
+			"schema": "STG",
+			"table": "ECOMM_KROGER_CLICK"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

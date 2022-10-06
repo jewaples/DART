@@ -1,0 +1,28 @@
+{
+	"name": "Staging_Billings_Rates_ADLs_Sink_Dated",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_Data_Foundation_DataLake",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "STAGING"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@concat(formatDateTime(utcnow(),'yyyyMMdd'),'/STG_RATES.parquet')",
+					"type": "Expression"
+				},
+				"folderPath": "EDW/BILLINGS/STG_RATES",
+				"fileSystem": "prod"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

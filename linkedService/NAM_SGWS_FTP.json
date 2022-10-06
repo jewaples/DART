@@ -1,0 +1,20 @@
+{
+	"name": "NAM_SGWS_FTP",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "Sftp",
+		"typeProperties": {
+			"host": "10.28.1.5",
+			"port": 22,
+			"skipHostKeyValidation": true,
+			"authenticationType": "Basic",
+			"userName": "SGWS",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiI1NzBlNzYyMy1mODM3LTRhNzctYTQ4Mi0xZDAwNzZjZDU5MDAiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+		},
+		"connectVia": {
+			"referenceName": "nlmas005-IRtime",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

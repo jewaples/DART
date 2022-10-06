@@ -1,0 +1,21 @@
+{
+	"name": "NAM_IRI_FTP",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "FtpServer",
+		"typeProperties": {
+			"host": "10.28.1.5",
+			"port": 21,
+			"enableSsl": false,
+			"enableServerCertificateValidation": false,
+			"authenticationType": "Basic",
+			"userName": "IRIAtlantaLiq",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiIxMWRlN2M4NC1mMzA1LTQ2MDUtYjc3ZS0zZTdhMGZkZTQ3ODEiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+		},
+		"connectVia": {
+			"referenceName": "nlmas005-IRtime",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

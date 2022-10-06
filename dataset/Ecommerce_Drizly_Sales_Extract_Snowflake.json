@@ -1,0 +1,111 @@
+{
+	"name": "Ecommerce_Drizly_Sales_Extract_Snowflake",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_Data_Foundation_BlobStorage",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"FolderPath_DestinationStore": {
+				"type": "string"
+			},
+			"Filename": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "ECOMMERCE"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": {
+					"value": "@dataset().Filename",
+					"type": "Expression"
+				},
+				"container": {
+					"value": "@dataset().FolderPath_DestinationStore",
+					"type": "Expression"
+				}
+			},
+			"columnDelimiter": ",",
+			"rowDelimiter": "\r\n",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "DELIVERED_AT",
+				"type": "String"
+			},
+			{
+				"name": "BRAND_NAME",
+				"type": "String"
+			},
+			{
+				"name": "CATALOG_ITEM_NAME",
+				"type": "String"
+			},
+			{
+				"name": "VERIFIED_UPC",
+				"type": "String"
+			},
+			{
+				"name": "UNIT_PRICE",
+				"type": "String"
+			},
+			{
+				"name": "QUANTITY",
+				"type": "String"
+			},
+			{
+				"name": "CONTAINER_QTY",
+				"type": "String"
+			},
+			{
+				"name": "CONTAINER_TYPE",
+				"type": "String"
+			},
+			{
+				"name": "VOLUME",
+				"type": "String"
+			},
+			{
+				"name": "VOLUME_UNITS",
+				"type": "String"
+			},
+			{
+				"name": "TOP_LEVEL_CATEGORY",
+				"type": "String"
+			},
+			{
+				"name": "TOP_SUBCATEGORY",
+				"type": "String"
+			},
+			{
+				"name": "SUBCATEGORY",
+				"type": "String"
+			},
+			{
+				"name": "DELIVERY_STATE",
+				"type": "String"
+			},
+			{
+				"name": "DELIVERY_ZIP",
+				"type": "String"
+			},
+			{
+				"name": "MARKET",
+				"type": "String"
+			},
+			{
+				"name": "STORE_ZIP",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

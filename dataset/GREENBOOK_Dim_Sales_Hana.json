@@ -1,0 +1,16 @@
+{
+	"name": "GREENBOOK_Dim_Sales_Hana",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_SAP_HANA_OnPrem",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "GREENBOOK"
+		},
+		"annotations": [],
+		"type": "SapHanaTable",
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

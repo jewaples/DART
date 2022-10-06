@@ -1,0 +1,1508 @@
+{
+	"name": "ANAPLAN_FACTS_LOAD_ADL",
+	"properties": {
+		"activities": [
+			{
+				"name": "Load data FACT_ANAPLAN",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "ParquetSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "ParquetWriteSettings"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "DEPLETION_PERIOD",
+									"type": "Int32",
+									"physicalType": "int"
+								},
+								"sink": {
+									"name": "DEPLETION_PERIOD",
+									"type": "Int32",
+									"physicalType": "INT_32"
+								}
+							},
+							{
+								"source": {
+									"name": "PERIOD",
+									"type": "DateTime",
+									"physicalType": "datetime2"
+								},
+								"sink": {
+									"name": "PERIOD",
+									"type": "DateTime",
+									"physicalType": "INT_96"
+								}
+							},
+							{
+								"source": {
+									"name": "Item_Id",
+									"type": "String",
+									"physicalType": "nvarchar"
+								},
+								"sink": {
+									"name": "Item_Id",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "DISTRIBUTOR",
+									"type": "String",
+									"physicalType": "nvarchar"
+								},
+								"sink": {
+									"name": "DISTRIBUTOR",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "CHANNEL",
+									"type": "String",
+									"physicalType": "nvarchar"
+								},
+								"sink": {
+									"name": "CHANNEL",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "FISCAL_YEAR",
+									"type": "Int32",
+									"physicalType": "int"
+								},
+								"sink": {
+									"name": "FISCAL_YEAR",
+									"type": "Int32",
+									"physicalType": "INT_32"
+								}
+							},
+							{
+								"source": {
+									"name": "FISCAL_PERIOD",
+									"type": "Int32",
+									"physicalType": "int"
+								},
+								"sink": {
+									"name": "FISCAL_PERIOD",
+									"type": "Int32",
+									"physicalType": "INT_32"
+								}
+							},
+							{
+								"source": {
+									"name": "TIMESTAMP_PRIOR_LE",
+									"type": "DateTime",
+									"physicalType": "datetime2"
+								},
+								"sink": {
+									"name": "TIMESTAMP_PRIOR_LE",
+									"type": "DateTime",
+									"physicalType": "INT_96"
+								}
+							},
+							{
+								"source": {
+									"name": "TIMESTAMP_SNAPSHOT",
+									"type": "DateTime",
+									"physicalType": "datetime2"
+								},
+								"sink": {
+									"name": "TIMESTAMP_SNAPSHOT",
+									"type": "DateTime",
+									"physicalType": "INT_96"
+								}
+							},
+							{
+								"source": {
+									"name": "VOL_ACT_CS",
+									"type": "Double",
+									"physicalType": "float"
+								},
+								"sink": {
+									"name": "VOL_ACT_CS",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							},
+							{
+								"source": {
+									"name": "VOL_ACT_9L",
+									"type": "Double",
+									"physicalType": "float"
+								},
+								"sink": {
+									"name": "VOL_ACT_9L",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							},
+							{
+								"source": {
+									"name": "VOL_ACT_LE_CS",
+									"type": "Double",
+									"physicalType": "float"
+								},
+								"sink": {
+									"name": "VOL_ACT_LE_CS",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							},
+							{
+								"source": {
+									"name": "VOL_ACT_LE_9L",
+									"type": "Double",
+									"physicalType": "float"
+								},
+								"sink": {
+									"name": "VOL_ACT_LE_9L",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							},
+							{
+								"source": {
+									"name": "VOL_FCST_CS",
+									"type": "Double",
+									"physicalType": "float"
+								},
+								"sink": {
+									"name": "VOL_FCST_CS",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							},
+							{
+								"source": {
+									"name": "VOL_FCST_9L",
+									"type": "Double",
+									"physicalType": "float"
+								},
+								"sink": {
+									"name": "VOL_FCST_9L",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							},
+							{
+								"source": {
+									"name": "VOL_GOAL_CS",
+									"type": "Double",
+									"physicalType": "float"
+								},
+								"sink": {
+									"name": "VOL_GOAL_CS",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							},
+							{
+								"source": {
+									"name": "VOL_GOAL_9L",
+									"type": "Double",
+									"physicalType": "float"
+								},
+								"sink": {
+									"name": "VOL_GOAL_9L",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							},
+							{
+								"source": {
+									"name": "VOL_QUARTER_CS",
+									"type": "Double",
+									"physicalType": "float"
+								},
+								"sink": {
+									"name": "VOL_QUARTER_CS",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							},
+							{
+								"source": {
+									"name": "VOL_QUARTER_9L",
+									"type": "Double",
+									"physicalType": "float"
+								},
+								"sink": {
+									"name": "VOL_QUARTER_9L",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							},
+							{
+								"source": {
+									"name": "NSV_ACT",
+									"type": "Double",
+									"physicalType": "float"
+								},
+								"sink": {
+									"name": "NSV_ACT",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							},
+							{
+								"source": {
+									"name": "NSV_ACT_LE",
+									"type": "Double",
+									"physicalType": "float"
+								},
+								"sink": {
+									"name": "NSV_ACT_LE",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							},
+							{
+								"source": {
+									"name": "NSV_FCST",
+									"type": "Double",
+									"physicalType": "float"
+								},
+								"sink": {
+									"name": "NSV_FCST",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							},
+							{
+								"source": {
+									"name": "NSV_GOAL",
+									"type": "Double",
+									"physicalType": "float"
+								},
+								"sink": {
+									"name": "NSV_GOAL",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							},
+							{
+								"source": {
+									"name": "NSV_QUARTER",
+									"type": "Double",
+									"physicalType": "float"
+								},
+								"sink": {
+									"name": "NSV_QUARTER",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							},
+							{
+								"source": {
+									"name": "GS_ACT",
+									"type": "Double",
+									"physicalType": "float"
+								},
+								"sink": {
+									"name": "GS_ACT",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							},
+							{
+								"source": {
+									"name": "GS_ACT_LE",
+									"type": "Double",
+									"physicalType": "float"
+								},
+								"sink": {
+									"name": "GS_ACT_LE",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							},
+							{
+								"source": {
+									"name": "GS_FCST",
+									"type": "Double",
+									"physicalType": "float"
+								},
+								"sink": {
+									"name": "GS_FCST",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							},
+							{
+								"source": {
+									"name": "GS_GOAL",
+									"type": "Double",
+									"physicalType": "float"
+								},
+								"sink": {
+									"name": "GS_GOAL",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							},
+							{
+								"source": {
+									"name": "DISC_ACT",
+									"type": "Double",
+									"physicalType": "float"
+								},
+								"sink": {
+									"name": "DISC_ACT",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							},
+							{
+								"source": {
+									"name": "DISCOUNT_ACT_LE",
+									"type": "Double",
+									"physicalType": "float"
+								},
+								"sink": {
+									"name": "DISCOUNT_ACT_LE",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							},
+							{
+								"source": {
+									"name": "DISCOUNT_TOTAL_ACT_LE",
+									"type": "Double",
+									"physicalType": "float"
+								},
+								"sink": {
+									"name": "DISCOUNT_TOTAL_ACT_LE",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							},
+							{
+								"source": {
+									"name": "DISCOUNT_SCANS_ACT_LE",
+									"type": "Double",
+									"physicalType": "float"
+								},
+								"sink": {
+									"name": "DISCOUNT_SCANS_ACT_LE",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							},
+							{
+								"source": {
+									"name": "DISCOUNT_FCST",
+									"type": "Double",
+									"physicalType": "float"
+								},
+								"sink": {
+									"name": "DISCOUNT_FCST",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							},
+							{
+								"source": {
+									"name": "DISCOUNT_GOAL",
+									"type": "Double",
+									"physicalType": "float"
+								},
+								"sink": {
+									"name": "DISCOUNT_GOAL",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							},
+							{
+								"source": {
+									"name": "DISCOUNT_TOTAL_FCST",
+									"type": "Double",
+									"physicalType": "float"
+								},
+								"sink": {
+									"name": "DISCOUNT_TOTAL_FCST",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							},
+							{
+								"source": {
+									"name": "DISCOUNT_TOTAL_GOAL",
+									"type": "Double",
+									"physicalType": "float"
+								},
+								"sink": {
+									"name": "DISCOUNT_TOTAL_GOAL",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							},
+							{
+								"source": {
+									"name": "DISCOUNT_SCANS_FCST",
+									"type": "Double",
+									"physicalType": "float"
+								},
+								"sink": {
+									"name": "DISCOUNT_SCANS_FCST",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							},
+							{
+								"source": {
+									"name": "DISCOUNT_SCANS_GOAL",
+									"type": "Double",
+									"physicalType": "float"
+								},
+								"sink": {
+									"name": "DISCOUNT_SCANS_GOAL",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							},
+							{
+								"source": {
+									"name": "VOL_COVID_GOAL_CS",
+									"type": "Double",
+									"physicalType": "float"
+								},
+								"sink": {
+									"name": "VOL_COVID_GOAL_CS",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							},
+							{
+								"source": {
+									"name": "VOL_COVID_GOAL_9L",
+									"type": "Double",
+									"physicalType": "float"
+								},
+								"sink": {
+									"name": "VOL_COVID_GOAL_9L",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							},
+							{
+								"source": {
+									"name": "NSV_COVID_GOAL",
+									"type": "Double",
+									"physicalType": "float"
+								},
+								"sink": {
+									"name": "NSV_COVID_GOAL",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							},
+							{
+								"source": {
+									"name": "GS_COVID_GOAL",
+									"type": "Double",
+									"physicalType": "float"
+								},
+								"sink": {
+									"name": "GS_COVID_GOAL",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							},
+							{
+								"source": {
+									"name": "DISCOUNT_COVID_GOAL",
+									"type": "Double",
+									"physicalType": "float"
+								},
+								"sink": {
+									"name": "DISCOUNT_COVID_GOAL",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							},
+							{
+								"source": {
+									"name": "DISCOUNT_COVID_TOTAL_GOAL",
+									"type": "Double",
+									"physicalType": "float"
+								},
+								"sink": {
+									"name": "DISCOUNT_COVID_TOTAL_GOAL",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							},
+							{
+								"source": {
+									"name": "DISCOUNT_COVID_SCANS_GOAL",
+									"type": "Double",
+									"physicalType": "float"
+								},
+								"sink": {
+									"name": "DISCOUNT_COVID_SCANS_GOAL",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							},
+							{
+								"source": {
+									"name": "GS_QUARTER",
+									"type": "Double",
+									"physicalType": "float"
+								},
+								"sink": {
+									"name": "GS_QUARTER",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							},
+							{
+								"source": {
+									"name": "DISCOUNT_TOTAL_QUARTER",
+									"type": "Double",
+									"physicalType": "float"
+								},
+								"sink": {
+									"name": "DISCOUNT_TOTAL_QUARTER",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							},
+							{
+								"source": {
+									"name": "DISCOUNT_SCANS_QUARTER",
+									"type": "Double",
+									"physicalType": "float"
+								},
+								"sink": {
+									"name": "DISCOUNT_SCANS_QUARTER",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							},
+							{
+								"source": {
+									"name": "DISCOUNT_QUARTER",
+									"type": "Double",
+									"physicalType": "float"
+								},
+								"sink": {
+									"name": "DISCOUNT_QUARTER",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							},
+							{
+								"source": {
+									"name": "PRODUCT_BRAND_PLANNING_SIZE",
+									"type": "String",
+									"physicalType": "nvarchar"
+								},
+								"sink": {
+									"name": "PRODUCT_BRAND_PLANNING_SIZE",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "AzureSqlTableFACT_ANAPLAN",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ParquetFACT_ANAPLAN",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Copy data FACT_ANAPLAN_ADL",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Load data FACT_ANAPLAN",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "ParquetSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						}
+					},
+					"sink": {
+						"type": "ParquetSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "ParquetWriteSettings"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "Parquet_FACT_ANAPLAN",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "Parquet_FACT_ANAPLAN_Copy",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Load data FACT_ANAPLAN_SNAPSHOT",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Copy data FACT_ANAPLAN_ADL",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "ParquetSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "ParquetWriteSettings"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "DEPLETION_PERIOD",
+									"type": "Int32",
+									"physicalType": "int"
+								},
+								"sink": {
+									"name": "DEPLETION_PERIOD",
+									"type": "Int32",
+									"physicalType": "INT_32"
+								}
+							},
+							{
+								"source": {
+									"name": "PERIOD",
+									"type": "DateTime",
+									"physicalType": "datetime2"
+								},
+								"sink": {
+									"name": "PERIOD",
+									"type": "DateTime",
+									"physicalType": "INT_96"
+								}
+							},
+							{
+								"source": {
+									"name": "SNAPSHOT_ID",
+									"type": "DateTime",
+									"physicalType": "datetime2"
+								},
+								"sink": {
+									"name": "SNAPSHOT_ID",
+									"type": "DateTime",
+									"physicalType": "INT_96"
+								}
+							},
+							{
+								"source": {
+									"name": "Item_Id",
+									"type": "String",
+									"physicalType": "nvarchar"
+								},
+								"sink": {
+									"name": "Item_Id",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "DISTRIBUTOR",
+									"type": "String",
+									"physicalType": "nvarchar"
+								},
+								"sink": {
+									"name": "DISTRIBUTOR",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "CHANNEL",
+									"type": "String",
+									"physicalType": "nvarchar"
+								},
+								"sink": {
+									"name": "CHANNEL",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "FISCAL_YEAR",
+									"type": "Int32",
+									"physicalType": "int"
+								},
+								"sink": {
+									"name": "FISCAL_YEAR",
+									"type": "Int32",
+									"physicalType": "INT_32"
+								}
+							},
+							{
+								"source": {
+									"name": "FISCAL_PERIOD",
+									"type": "Int32",
+									"physicalType": "int"
+								},
+								"sink": {
+									"name": "FISCAL_PERIOD",
+									"type": "Int32",
+									"physicalType": "INT_32"
+								}
+							},
+							{
+								"source": {
+									"name": "TIMESTAMP_PRIOR_LE",
+									"type": "DateTime",
+									"physicalType": "datetime2"
+								},
+								"sink": {
+									"name": "TIMESTAMP_PRIOR_LE",
+									"type": "DateTime",
+									"physicalType": "INT_96"
+								}
+							},
+							{
+								"source": {
+									"name": "TIMESTAMP_SNAPSHOT",
+									"type": "DateTime",
+									"physicalType": "datetime2"
+								},
+								"sink": {
+									"name": "TIMESTAMP_SNAPSHOT",
+									"type": "DateTime",
+									"physicalType": "INT_96"
+								}
+							},
+							{
+								"source": {
+									"name": "VOL_SNAPSHOT_CS",
+									"type": "Double",
+									"physicalType": "float"
+								},
+								"sink": {
+									"name": "VOL_SNAPSHOT_CS",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							},
+							{
+								"source": {
+									"name": "VOL_SNAPSHOT_9L",
+									"type": "Double",
+									"physicalType": "float"
+								},
+								"sink": {
+									"name": "VOL_SNAPSHOT_9L",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							},
+							{
+								"source": {
+									"name": "NSV_SNAPSHOT",
+									"type": "Double",
+									"physicalType": "float"
+								},
+								"sink": {
+									"name": "NSV_SNAPSHOT",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							},
+							{
+								"source": {
+									"name": "GS_SNAPSHOT",
+									"type": "Double",
+									"physicalType": "float"
+								},
+								"sink": {
+									"name": "GS_SNAPSHOT",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							},
+							{
+								"source": {
+									"name": "DISCOUNT_SNAPSHOT",
+									"type": "Double",
+									"physicalType": "float"
+								},
+								"sink": {
+									"name": "DISCOUNT_SNAPSHOT",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							},
+							{
+								"source": {
+									"name": "DISCOUNT_TOTAL_SNAPSHOT",
+									"type": "Double",
+									"physicalType": "float"
+								},
+								"sink": {
+									"name": "DISCOUNT_TOTAL_SNAPSHOT",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							},
+							{
+								"source": {
+									"name": "DISCOUNT_SCANS_SNAPSHOT",
+									"type": "Double",
+									"physicalType": "float"
+								},
+								"sink": {
+									"name": "DISCOUNT_SCANS_SNAPSHOT",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "AzureSqlTableFACT_ANAPLAN_SNAPSHOT",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ParquetFACT_ANAPLAN_SNAPSHOT",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Copy data FACT_ANAPLAN_SNAPSHOT_ADL",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Load data FACT_ANAPLAN_SNAPSHOT",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "ParquetSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						}
+					},
+					"sink": {
+						"type": "ParquetSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "ParquetWriteSettings"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "Parquet_FACT_ANAPLAN_SNAPSHOT",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "Parquet_FACT_ANAPLAN_SNAPSHOT_Copy",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Load data FACT_TM1_DISCOUNT",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Copy data FACT_ANAPLAN_SNAPSHOT_ADL",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "ParquetSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "ParquetWriteSettings"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "AzureSqlTableFACT_TM1_DISCOUNT",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ParquetFACT_TM1_DISCOUNT",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Copy data FACT_TM1_DISCOUNT_ADL",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Load data FACT_TM1_DISCOUNT",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "ParquetSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						}
+					},
+					"sink": {
+						"type": "ParquetSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "ParquetWriteSettings"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "Parquet_FACT_TM1_DISCOUNT",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "Parquet_FACT_TM1_DISCOUNTCopy",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Load data FACT_TM1_SNAPSHOT_DISCOUNTS",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Copy data FACT_TM1_DISCOUNT_ADL",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "ParquetSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "ParquetWriteSettings"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "BRAND_PLANNING_SIZE_P5_CODE",
+									"type": "String",
+									"physicalType": "nvarchar"
+								},
+								"sink": {
+									"name": "BRAND_PLANNING_SIZE_P5_CODE",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "REGION_DISTRIBUTOR_C6_CODE",
+									"type": "String",
+									"physicalType": "nvarchar"
+								},
+								"sink": {
+									"name": "REGION_DISTRIBUTOR_C6_CODE",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "EXPORT_VERSION",
+									"type": "String",
+									"physicalType": "nvarchar"
+								},
+								"sink": {
+									"name": "EXPORT_VERSION",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "DISCOUNT_TYPES_BILLINGS",
+									"type": "String",
+									"physicalType": "nvarchar"
+								},
+								"sink": {
+									"name": "DISCOUNT_TYPES_BILLINGS",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "TM1_PLANNING_CYCLE",
+									"type": "String",
+									"physicalType": "nvarchar"
+								},
+								"sink": {
+									"name": "TM1_PLANNING_CYCLE",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "TIME",
+									"type": "DateTime",
+									"physicalType": "datetime2"
+								},
+								"sink": {
+									"name": "TIME",
+									"type": "DateTime",
+									"physicalType": "INT_96"
+								}
+							},
+							{
+								"source": {
+									"name": "TOTAL_DISCOUNT",
+									"type": "Decimal",
+									"physicalType": "decimal",
+									"scale": 5,
+									"precision": 25
+								},
+								"sink": {
+									"name": "TOTAL_DISCOUNT",
+									"type": "Decimal",
+									"physicalType": "DECIMAL"
+								}
+							},
+							{
+								"source": {
+									"name": "PHASED_DISCOUNT",
+									"type": "Decimal",
+									"physicalType": "decimal",
+									"scale": 5,
+									"precision": 25
+								},
+								"sink": {
+									"name": "PHASED_DISCOUNT",
+									"type": "Decimal",
+									"physicalType": "DECIMAL"
+								}
+							},
+							{
+								"source": {
+									"name": "SNAPSHOT_ID",
+									"type": "DateTime",
+									"physicalType": "datetime2"
+								},
+								"sink": {
+									"name": "SNAPSHOT_ID",
+									"type": "DateTime",
+									"physicalType": "INT_96"
+								}
+							},
+							{
+								"source": {
+									"name": "TOTAL_DISCOUNT_SNAPSHOT",
+									"type": "Decimal",
+									"physicalType": "decimal",
+									"scale": 5,
+									"precision": 25
+								},
+								"sink": {
+									"name": "TOTAL_DISCOUNT_SNAPSHOT",
+									"type": "Decimal",
+									"physicalType": "DECIMAL"
+								}
+							},
+							{
+								"source": {
+									"name": "PHASED_DISCOUNT_SNAPSHOT",
+									"type": "Decimal",
+									"physicalType": "decimal",
+									"scale": 5,
+									"precision": 25
+								},
+								"sink": {
+									"name": "PHASED_DISCOUNT_SNAPSHOT",
+									"type": "Decimal",
+									"physicalType": "DECIMAL"
+								}
+							},
+							{
+								"source": {
+									"name": "TOTAL_DISCOUNT_BUDGET",
+									"type": "Decimal",
+									"physicalType": "decimal",
+									"scale": 5,
+									"precision": 25
+								},
+								"sink": {
+									"name": "TOTAL_DISCOUNT_BUDGET",
+									"type": "Decimal",
+									"physicalType": "DECIMAL"
+								}
+							},
+							{
+								"source": {
+									"name": "PHASED_DISCOUNT_BUDGET",
+									"type": "Decimal",
+									"physicalType": "decimal",
+									"scale": 5,
+									"precision": 25
+								},
+								"sink": {
+									"name": "PHASED_DISCOUNT_BUDGET",
+									"type": "Decimal",
+									"physicalType": "DECIMAL"
+								}
+							},
+							{
+								"source": {
+									"name": "TOTAL_DISCOUNT_ACT",
+									"type": "Decimal",
+									"physicalType": "decimal",
+									"scale": 5,
+									"precision": 25
+								},
+								"sink": {
+									"name": "TOTAL_DISCOUNT_ACT",
+									"type": "Decimal",
+									"physicalType": "DECIMAL"
+								}
+							},
+							{
+								"source": {
+									"name": "PHASED_DISCOUNT_ACT",
+									"type": "Decimal",
+									"physicalType": "decimal",
+									"scale": 5,
+									"precision": 25
+								},
+								"sink": {
+									"name": "PHASED_DISCOUNT_ACT",
+									"type": "Decimal",
+									"physicalType": "DECIMAL"
+								}
+							},
+							{
+								"source": {
+									"name": "TOTAL_DISCOUNT_PRIOR",
+									"type": "Decimal",
+									"physicalType": "decimal",
+									"scale": 5,
+									"precision": 25
+								},
+								"sink": {
+									"name": "TOTAL_DISCOUNT_PRIOR",
+									"type": "Decimal",
+									"physicalType": "DECIMAL"
+								}
+							},
+							{
+								"source": {
+									"name": "PHASED_DISCOUNT_PRIOR",
+									"type": "Decimal",
+									"physicalType": "decimal",
+									"scale": 5,
+									"precision": 25
+								},
+								"sink": {
+									"name": "PHASED_DISCOUNT_PRIOR",
+									"type": "Decimal",
+									"physicalType": "DECIMAL"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "AzureSqlTableFACT_TM1_SNAPSHOT_DISCOUNTS",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ParquetFACT_TM1_SNAPSHOT_DISCOUNTS",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Copy data FACT_TM1_SNAPSHOT_DISCOUNTS_ADL",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Load data FACT_TM1_SNAPSHOT_DISCOUNTS",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "ParquetSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						}
+					},
+					"sink": {
+						"type": "ParquetSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "ParquetWriteSettings"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "Parquet_FACT_TM1_SNAPSHOT_DISCOUNTS",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "Parquet_FACT_TM1_SNAPSHOT_DISCOUNTSCopy",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"folder": {
+			"name": "RAD"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-01-12T23:11:53Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

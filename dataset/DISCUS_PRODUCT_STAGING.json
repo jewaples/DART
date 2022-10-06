@@ -1,0 +1,263 @@
+{
+	"name": "DISCUS_PRODUCT_STAGING",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "DISCUS"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "/BIC/ZDATAPROV",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZSALESORG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZMEDISTCD",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZMEDPPRCD",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZME_DPNM",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZME_DISNM",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZME_SUPCD",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZSUPLNAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZMEDISPCD",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RECORDMODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZMATERIAL",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZME_PRD_D",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZEAN11",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZPRODH_D",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZMAT_DES",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZME_PRABV",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZMEDP_VOL",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZMEDP_PRF",
+				"type": "decimal",
+				"precision": 17,
+				"scale": 3
+			},
+			{
+				"name": "/BIC/ZMEDP_AGE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZMEDPH1CD",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZMEDPH1_1",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZMEDPH1_2",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZMEDPH1_3",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZMEDPH1_4",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZMEDPH1_5",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZMEDPH2CD",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZMEDPH2_1",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZMEDPH2_2",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZMEDPH2_3",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZMEDPH2_4",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZMEDPH2_5",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZMEDBRC",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZMEDBRC_D",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZMEDPRACT",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZMEDPCOMM",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZREPC_FLG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZRETGTNUP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZSELUNTCS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZUNITCS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZMEDPRSCC",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZMEDPFLDT",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZMEDPFLVC",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZMEDPFLV",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZMEDPMEMB",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZMEDPACDY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZMEDPACDM",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZMEDPXREF",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZMEDPXRFC",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZMED2FLVC",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZMED2FLV",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZMEDCOMM2",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZMEDCOMM3",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZMEDCOMM4",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZMEDCOMM5",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZMED3FLVC",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZMED3FLV",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZMEDPDTEY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZMEDPDTEM",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZACCOUNT",
+				"type": "nvarchar"
+			},
+			{
+				"name": "/BIC/ZTMSTMP",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "STG",
+			"table": "/BIC/AZOTC_AO142"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

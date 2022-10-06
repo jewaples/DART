@@ -1,0 +1,78 @@
+{
+	"name": "Canada_Inventory_ADL",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_Data_Foundation_DataLake",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"FILE_NAME": {
+				"type": "string"
+			},
+			"FILE_PATH": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "CANADA"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@dataset().FILE_NAME",
+					"type": "Expression"
+				},
+				"fileSystem": {
+					"value": "@dataset().FILE_PATH",
+					"type": "Expression"
+				}
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "CSPC Code",
+				"type": "String"
+			},
+			{
+				"name": "Customer Code",
+				"type": "String"
+			},
+			{
+				"name": "IPC Code",
+				"type": "String"
+			},
+			{
+				"name": "Period",
+				"type": "String"
+			},
+			{
+				"name": "Baseline Vol 9L",
+				"type": "String"
+			},
+			{
+				"name": "Uplift Vol 9L",
+				"type": "String"
+			},
+			{
+				"name": "Baseline Vol CS",
+				"type": "String"
+			},
+			{
+				"name": "Uplift Vol CS",
+				"type": "String"
+			},
+			{
+				"name": "Version",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

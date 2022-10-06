@@ -1,0 +1,44 @@
+{
+	"name": "Store_location_XREF_output",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_EPAM_FTP",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "STORE LOCATOR"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "SftpLocation",
+				"fileName": "Location_products_xref.csv",
+				"folderPath": "/out"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "ACC_KEY",
+				"type": "String"
+			},
+			{
+				"name": "CUSTOMER_NAME",
+				"type": "String"
+			},
+			{
+				"name": "ITEM_ID",
+				"type": "String"
+			},
+			{
+				"name": "PRODUCT_BRAND_DESCRIPTION",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

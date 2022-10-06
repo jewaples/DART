@@ -1,0 +1,16 @@
+{
+	"name": "Ecommerce_Drizly_Snowflake_Source",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Drizly_Snowflake",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "ECOMMERCE"
+		},
+		"annotations": [],
+		"type": "SnowflakeTable",
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

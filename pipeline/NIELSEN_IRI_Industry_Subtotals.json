@@ -1,0 +1,974 @@
+{
+	"name": "NIELSEN_IRI_Industry_Subtotals",
+	"properties": {
+		"description": "Move files from one folder to another folder",
+		"activities": [
+			{
+				"name": "ForEachFile",
+				"description": "Iterate each file, and move them one by one.",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "FilterFiles",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('FilterFiles').output.value",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "File_Lookup",
+							"type": "Lookup",
+							"dependsOn": [
+								{
+									"activity": "Get_SrcMetadata",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderStoredProcedureName": "[STG].[usp_FILE_LOOKUP]",
+									"storedProcedureParameters": {
+										"FILE_NAME": {
+											"type": "String",
+											"value": {
+												"value": "@activity('Get_SrcMetadata').output.itemName",
+												"type": "Expression"
+											}
+										},
+										"TABLE_NAME": {
+											"type": "String",
+											"value": {
+												"value": "@pipeline().parameters.Destination_Table",
+												"type": "Expression"
+											}
+										}
+									},
+									"partitionOption": "None"
+								},
+								"dataset": {
+									"referenceName": "RAD_File_Table_Destination",
+									"type": "DatasetReference"
+								},
+								"firstRowOnly": true
+							}
+						},
+						{
+							"name": "If Condition",
+							"type": "IfCondition",
+							"dependsOn": [
+								{
+									"activity": "File_Lookup",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"expression": {
+									"value": "@activity('File_Lookup').output.firstRow.EXIST",
+									"type": "Expression"
+								},
+								"ifFalseActivities": [
+									{
+										"name": "Get_AdlMetadata",
+										"type": "GetMetadata",
+										"dependsOn": [
+											{
+												"activity": "Insert_Source_Data",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"dataset": {
+												"referenceName": "NIELSEN_IRI_File_Azure_Storage",
+												"type": "DatasetReference",
+												"parameters": {
+													"path": "@pipeline().parameters.FolderPath_DestinationStore",
+													"filename": "@item().name"
+												}
+											},
+											"fieldList": [
+												"itemName",
+												"size",
+												"lastModified"
+											]
+										}
+									},
+									{
+										"name": "Validate_Destination_Data",
+										"description": "Inserts source file metadata in log table",
+										"type": "SqlServerStoredProcedure",
+										"dependsOn": [
+											{
+												"activity": "Get_AdlMetadata",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"storedProcedureName": "[STG].[usp_VALIDATE_DST_FILES]",
+											"storedProcedureParameters": {
+												"FILE_NAME": {
+													"value": {
+														"value": "@item().name",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"DST_CREATED_DATE": {
+													"value": {
+														"value": "@activity('Get_AdlMetadata').output.lastModified",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"DST_PATH": {
+													"value": {
+														"value": "@pipeline().parameters.FolderPath_DestinationStore",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"DST_SIZE": {
+													"value": {
+														"value": "@activity('Get_AdlMetadata').output.size",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"TABLE_NAME": {
+													"value": {
+														"value": "@pipeline().parameters.Destination_Table",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"IS_ZIP": {
+													"value": {
+														"value": "@pipeline().parameters.Is_Zip",
+														"type": "Expression"
+													},
+													"type": "String"
+												}
+											}
+										},
+										"linkedServiceName": {
+											"referenceName": "NAM_COM_DART_SQL",
+											"type": "LinkedServiceReference"
+										}
+									},
+									{
+										"name": "Load Staging",
+										"type": "Copy",
+										"dependsOn": [
+											{
+												"activity": "Validate_Destination_Data",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"source": {
+												"type": "DelimitedTextSource",
+												"storeSettings": {
+													"type": "AzureBlobFSReadSettings",
+													"recursive": false,
+													"enablePartitionDiscovery": false
+												},
+												"formatSettings": {
+													"type": "DelimitedTextReadSettings"
+												}
+											},
+											"sink": {
+												"type": "AzureSqlSink",
+												"preCopyScript": "TRUNCATE TABLE [STG].[NIELSEN_INDUSTRY_SUBTOTALS]",
+												"writeBehavior": "insert",
+												"disableMetricsCollection": false
+											},
+											"enableStaging": false,
+											"translator": {
+												"type": "TabularTranslator",
+												"mappings": [
+													{
+														"source": {
+															"name": "Market Description",
+															"type": "String"
+														},
+														"sink": {
+															"name": "MARKET_DESCRIPTION",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "BA MEGACATEGORY",
+															"type": "String"
+														},
+														"sink": {
+															"name": "BA_MEGACATEGORY",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "BA CATEGORY",
+															"type": "String"
+														},
+														"sink": {
+															"name": "BA_CATEGORY",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "BA SUBCATEGORY",
+															"type": "String"
+														},
+														"sink": {
+															"name": "BA_SUBCATEGORY",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "BA WHISKEY TYPE",
+															"type": "String"
+														},
+														"sink": {
+															"name": "BA_WHISKEY_TYPE",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "BA MANUFACTURER",
+															"type": "String"
+														},
+														"sink": {
+															"name": "BA_MANUFACTER",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "BA FLAVORED",
+															"type": "String"
+														},
+														"sink": {
+															"name": "BA_FLAVORED",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "BA SPIRITS PRICE TIER",
+															"type": "String"
+														},
+														"sink": {
+															"name": "BA_SPIRITS_PRICE_TIER",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "BA BRAND FAMILY",
+															"type": "String"
+														},
+														"sink": {
+															"name": "BA_BRAND_FAMILY",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "BA BRAND EXTENSION",
+															"type": "String"
+														},
+														"sink": {
+															"name": "BA_BRAND_EXTENSION",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "BA SIZE",
+															"type": "String"
+														},
+														"sink": {
+															"name": "BA_SIZE",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "BA VALUE ADD",
+															"type": "String"
+														},
+														"sink": {
+															"name": "BA_VALUE_ADD",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "PACKAGE GENERAL SHAPE",
+															"type": "String"
+														},
+														"sink": {
+															"name": "PACKAGE_GENERAL_SHAPE",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "BA FLAVOR",
+															"type": "String"
+														},
+														"sink": {
+															"name": "BA_FLAVOR",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "BA PACK SIZE",
+															"type": "String"
+														},
+														"sink": {
+															"name": "BA_PACK_SIZE",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "BA CONTAINER",
+															"type": "String"
+														},
+														"sink": {
+															"name": "BA_CONTAINER",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "Period Description",
+															"type": "String"
+														},
+														"sink": {
+															"name": "PERIOD_DESCRIPTION",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "Wghtd Dist - Context",
+															"type": "String"
+														},
+														"sink": {
+															"name": "WGHTD_DIST_CONTEXT",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "$ / Wghtd Dist - Context",
+															"type": "String"
+														},
+														"sink": {
+															"name": "$_WGHTD_DIST_CONTEXT",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "9L EQ / Wghtd Dist - Context",
+															"type": "String"
+														},
+														"sink": {
+															"name": "9L_EQ_WGHTD_DIST_CONTEXT",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": "Number of Stores Selling",
+															"type": "String"
+														},
+														"sink": {
+															"name": "NUMBER_OF_STORES_SELLING",
+															"type": "String"
+														}
+													}
+												]
+											}
+										},
+										"inputs": [
+											{
+												"referenceName": "NIELSEN_Fact_Market_DataLake",
+												"type": "DatasetReference",
+												"parameters": {
+													"path": "@pipeline().parameters.FolderPath_DestinationStore",
+													"filename": "@item().name"
+												}
+											}
+										],
+										"outputs": [
+											{
+												"referenceName": "NIELSEN_IRI_Industry_Subtotals_Sql",
+												"type": "DatasetReference"
+											}
+										]
+									},
+									{
+										"name": "Insert_Source_Data",
+										"description": "Inserts source file metadata in log table",
+										"type": "SqlServerStoredProcedure",
+										"dependsOn": [],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"storedProcedureName": "[STG].[usp_INSERT_SRC_FILES_SOURCE]",
+											"storedProcedureParameters": {
+												"FILE_NAME": {
+													"value": {
+														"value": "@item().name",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"SOURCE": {
+													"value": {
+														"value": "@pipeline().parameters.SOURCE",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"SRC_CREATED_DATE": {
+													"value": {
+														"value": "@activity('Get_SrcMetadata').output.lastModified",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"SRC_PATH": {
+													"value": {
+														"value": "@pipeline().parameters.FolderPath_SourceStore",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"SRC_SIZE": {
+													"value": {
+														"value": "@activity('Get_SrcMetadata').output.size",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"TABLE_NAME": {
+													"value": {
+														"value": "@pipeline().parameters.Destination_Table",
+														"type": "Expression"
+													},
+													"type": "String"
+												}
+											}
+										},
+										"linkedServiceName": {
+											"referenceName": "NAM_COM_DART_SQL",
+											"type": "LinkedServiceReference"
+										}
+									},
+									{
+										"name": "Update Staging  Filename PipelineID",
+										"type": "SqlServerStoredProcedure",
+										"dependsOn": [
+											{
+												"activity": "Load Staging",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"storedProcedureName": "STG.usp_UPDATE_STG_TABLE_FILENAME",
+											"storedProcedureParameters": {
+												"FILE_NAME": {
+													"value": {
+														"value": "@item().name",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"PIPELINE_ID": {
+													"value": {
+														"value": "@pipeline().RunId",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"TABLE_NAME": {
+													"value": {
+														"value": "@pipeline().parameters.Stage_table",
+														"type": "Expression"
+													},
+													"type": "String"
+												}
+											}
+										},
+										"linkedServiceName": {
+											"referenceName": "NAM_COM_DART_SQL",
+											"type": "LinkedServiceReference"
+										}
+									}
+								]
+							}
+						},
+						{
+							"name": "Get_SrcMetadata",
+							"type": "GetMetadata",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataset": {
+									"referenceName": "NIELSEN_IRI_File_Azure_Storage",
+									"type": "DatasetReference",
+									"parameters": {
+										"path": {
+											"value": "@pipeline().parameters.FolderPath_DestinationStore",
+											"type": "Expression"
+										},
+										"filename": "@item().name"
+									}
+								},
+								"fieldList": [
+									"itemName",
+									"size",
+									"lastModified"
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "FilterFiles",
+				"description": "Only files will be selected, the sub-folders will not be selected.",
+				"type": "Filter",
+				"dependsOn": [
+					{
+						"activity": "GetFileList",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('GetFileList').output.childItems",
+						"type": "Expression"
+					},
+					"condition": {
+						"value": "@contains(item().name,'Spirits_Totals_Extract_fct')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "GetFileList",
+				"type": "GetMetadata",
+				"dependsOn": [
+					{
+						"activity": "Copy_File",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "NIELSEN_IRI_Folder_Azure_Storage",
+						"type": "DatasetReference",
+						"parameters": {
+							"path": {
+								"value": "@pipeline().parameters.FolderPath_DestinationStore",
+								"type": "Expression"
+							}
+						}
+					},
+					"fieldList": [
+						"itemName",
+						"childItems"
+					]
+				}
+			},
+			{
+				"name": "Update Industry Subtotals",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "ForEachFile",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[NIELSEN].[usp_UPDATE_INDUSTRY_SUBTOTALS]"
+				},
+				"linkedServiceName": {
+					"referenceName": "NAM_COM_DART_SQL",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "usp_FACT_VELOCITY_LOAD",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "Stop SSIS IR",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[NIELSEN].[usp_FACT_VELOCITY_LOAD]"
+				},
+				"linkedServiceName": {
+					"referenceName": "NAM_COM_DART_SQL",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "Execute SSIS package1",
+				"type": "ExecuteSSISPackage",
+				"dependsOn": [
+					{
+						"activity": "Start SSIS IR",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"packageLocation": {
+						"packagePath": "\\\\bdhdlsgen2nam.file.core.windows.net\\ssis\\NIELSEN\\STG_NIELSEN_FACT_EQ_VOL.dtsx",
+						"type": "File",
+						"typeProperties": {
+							"accessCredential": {
+								"domain": "Azure",
+								"userName": "bdhdlsgen2nam",
+								"password": {
+									"type": "AzureKeyVaultSecret",
+									"store": {
+										"referenceName": "NAM_bdh_AzureKeyVault",
+										"type": "LinkedServiceReference"
+									},
+									"secretName": "NAM-SAS"
+								}
+							}
+						}
+					},
+					"connectVia": {
+						"referenceName": "ssis-nam",
+						"type": "IntegrationRuntimeReference"
+					},
+					"packageConnectionManagers": {
+						"DART": {
+							"Password": {
+								"value": {
+									"type": "AzureKeyVaultSecret",
+									"store": {
+										"referenceName": "NAM_bdh_AzureKeyVault",
+										"type": "LinkedServiceReference"
+									},
+									"secretName": "devDartPassword"
+								}
+							}
+						},
+						"AAS_NIELSEN": {
+							"UserName": {
+								"value": {
+									"type": "AzureKeyVaultSecret",
+									"store": {
+										"referenceName": "NAM_bdh_AzureKeyVault",
+										"type": "LinkedServiceReference"
+									},
+									"secretName": "AppId"
+								}
+							},
+							"Password": {
+								"value": {
+									"type": "AzureKeyVaultSecret",
+									"store": {
+										"referenceName": "NAM_bdh_AzureKeyVault",
+										"type": "LinkedServiceReference"
+									},
+									"secretName": "AppKey"
+								}
+							}
+						}
+					}
+				}
+			},
+			{
+				"name": "Copy_File",
+				"description": "Copy a file from the source store to the destination store.",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "BinarySource",
+						"storeSettings": {
+							"type": "FtpReadSettings",
+							"recursive": true,
+							"wildcardFolderPath": {
+								"value": "@pipeline().parameters.FolderPath_SourceStore",
+								"type": "Expression"
+							},
+							"wildcardFileName": "Spirits_Totals_Extract_fct*",
+							"useBinaryTransfer": true,
+							"deleteFilesAfterCompletion": false,
+							"disableChunking": false
+						},
+						"formatSettings": {
+							"type": "BinaryReadSettings"
+						}
+					},
+					"sink": {
+						"type": "AzureBlobFSSink"
+					},
+					"enableStaging": false,
+					"dataIntegrationUnits": 0
+				},
+				"inputs": [
+					{
+						"referenceName": "NIELSEN_IRI_File_FTP",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "NIELSEN_IRI_Folder_Azure_Storage",
+						"type": "DatasetReference",
+						"parameters": {
+							"path": {
+								"value": "@pipeline().parameters.FolderPath_DestinationStore",
+								"type": "Expression"
+							}
+						}
+					}
+				]
+			},
+			{
+				"name": "Start SSIS IR",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Update Industry Subtotals",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://management.azure.com/subscriptions/bfdd0a4a-b14b-466c-96f0-47620227e40b/resourcegroups/bigdata_hub-eu/providers/Microsoft.DataFactory/factories/bdh-datafactory-dart-nam/integrationruntimes/ssis-nam/start?api-version=2018-06-01",
+					"method": "POST",
+					"body": {
+						"value": "{\"message\":\"Start SSIS Integration Runtime\"}",
+						"type": "Expression"
+					},
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://management.azure.com/"
+					}
+				}
+			},
+			{
+				"name": "Stop SSIS IR",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Execute SSIS package1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://management.azure.com/subscriptions/bfdd0a4a-b14b-466c-96f0-47620227e40b/resourcegroups/bigdata_hub-eu/providers/Microsoft.DataFactory/factories/bdh-datafactory-dart-nam/integrationruntimes/ssis-nam/stop?api-version=2018-06-01",
+					"method": "POST",
+					"body": {
+						"value": "{\"message\":\"Stop SSIS Integration Runtime\"}",
+						"type": "Expression"
+					},
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://management.azure.com/"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"FolderPath_SourceStore": {
+				"type": "String",
+				"defaultValue": "/ad_hoc"
+			},
+			"FolderPath_DestinationStore": {
+				"type": "String",
+				"defaultValue": "/prod/Nielsen_IRI/Subtotals"
+			},
+			"Destination_Table": {
+				"type": "string",
+				"defaultValue": "LOGS.SOURCE_FILES_LOAD_LOG"
+			},
+			"Is_Zip": {
+				"type": "string",
+				"defaultValue": "0"
+			},
+			"STARTDATE": {
+				"type": "string"
+			},
+			"SOURCE": {
+				"type": "string",
+				"defaultValue": "Nielsen"
+			},
+			"Stage_table": {
+				"type": "string",
+				"defaultValue": "[STG].[NIELSEN_INDUSTRY_SUBTOTALS]"
+			}
+		},
+		"folder": {
+			"name": "NIELSEN/Industry Subtotals"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-08-22T14:11:24Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

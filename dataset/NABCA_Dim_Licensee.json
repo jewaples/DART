@@ -1,0 +1,97 @@
+{
+	"name": "NABCA_Dim_Licensee",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "NABCA COMPETITIVE"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "DATA_PROVIDER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DATA_PROVIDER_DETAIL",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PRODUCT_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "STATE_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RECORD_MODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "STATE_LICENSE_NUMBER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "STATE_LICENSE_INDICATOR",
+				"type": "nvarchar"
+			},
+			{
+				"name": "STATE_LICENSE_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "STATE_LICENSE_TYPE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ADDRESS_1",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ADDRESS_2",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZIP5",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CITY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "COUNTY_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DISTRICT_NUMBER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DISTRICT_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "STATE_ABBREVIATION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TDLINX_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CREATED_TIMESTAMP",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "NABCA",
+			"table": "DIM_LICENSEE"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

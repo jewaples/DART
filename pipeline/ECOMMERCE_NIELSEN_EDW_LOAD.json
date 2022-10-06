@@ -1,0 +1,87 @@
+{
+	"name": "ECOMMERCE_NIELSEN_EDW_LOAD",
+	"properties": {
+		"activities": [
+			{
+				"name": "Load Nielsen Sales",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[ECOMM].[usp_UPDATE_NIELSEN_ECOMMERCE]"
+				},
+				"linkedServiceName": {
+					"referenceName": "NAM_COM_DART_SQL",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "Load DIM_PRODUCTS",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "Load Nielsen Sales",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[ECOMM].[usp_DIM_PRODUCT_NIELSEN_LOAD]"
+				},
+				"linkedServiceName": {
+					"referenceName": "NAM_COM_DART_SQL",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "Load FACT_ECOMMERCE",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "Load DIM_PRODUCTS",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[ECOMM].[usp_FACT_ECOMMERCE_NIELSEN_LOAD]"
+				},
+				"linkedServiceName": {
+					"referenceName": "NAM_COM_DART_SQL",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"folder": {
+			"name": "ECOMMERCE"
+		},
+		"annotations": [],
+		"lastPublishTime": "2021-11-29T18:23:03Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,441 @@
+{
+	"name": "NIELSEN_IRI_EDW__LOAD_Files",
+	"properties": {
+		"activities": [
+			{
+				"name": "DIM_MARKET_Spirit",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Delete Dim Market folder",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "NIELSEN_IRI_DIM_MARKET_Spirit_File",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"STARTDATE": {
+							"value": "@pipeline().parameters.STARTDATE",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "DIM_PRODUCT_Spirit",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Delete Dim Product folder",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "NIELSEN_IRI_DIM_PRODUCT_Spirit_File",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"STARTDATE": {
+							"value": "@pipeline().parameters.STARTDATE",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "DIM_PERIOD_Spirit",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Delete Dim Period folder",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "NIELSEN_IRI_DIM_PERIOD_Spirit_File",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"STARTDATE": {
+							"value": "@pipeline().parameters.STARTDATE",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "FACT_MARKET_Spirit",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "DIM_MARKET_Spirit",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "DIM_PRODUCT_Spirit",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "DIM_PERIOD_Spirit",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "NIELSEN_IRI_FACT_MARKETS_Spirit_File",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"STARTDATE": {
+							"value": "@pipeline().parameters.STARTDATE",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "DIM_MARKET_Wine",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "FACT_MARKET_Spirit",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "NIELSEN_IRI_DIM_MARKET_Wine_File",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "DIM_PRODUCT_Wine",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "FACT_MARKET_Spirit",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "NIELSEN_IRI_DIM_PRODUCT_Wine_File",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "DIM_PERIOD_Wine",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "FACT_MARKET_Spirit",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "NIELSEN_IRI_DIM_PERIOD_Wine_File",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "FACT_MARKETS_Wine",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "DIM_PERIOD_Wine",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "DIM_PRODUCT_Wine",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "DIM_MARKET_Wine",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "NIELSEN_IRI_FACT_MARKETS_Wine_File",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "NIELSEN Notebook",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "FACT_MARKETS_Wine",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/NIELSEN IRI FACT MARKETS/02. weekly nielsen load",
+					"baseParameters": {
+						"type_of_loading_data": {
+							"value": "@pipeline().parameters.type_of_loading_data",
+							"type": "Expression"
+						},
+						"Enviroment": {
+							"value": "@pipeline().parameters.Enviroment",
+							"type": "Expression"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "bdhdbenam2_AzureDatabricks",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "Delete Dim Market folder",
+				"type": "Delete",
+				"dependsOn": [
+					{
+						"activity": "Delete Fact Market folder",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "NIELSEN_IRI_Folder_Azure_Storage",
+						"type": "DatasetReference",
+						"parameters": {
+							"path": {
+								"value": "@concat(pipeline().parameters.FolderPath_DestinationStore,'Markets')",
+								"type": "Expression"
+							}
+						}
+					},
+					"enableLogging": false,
+					"recursive": true
+				}
+			},
+			{
+				"name": "Delete Dim Product folder",
+				"type": "Delete",
+				"dependsOn": [
+					{
+						"activity": "Delete Fact Market folder",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "NIELSEN_IRI_Folder_Azure_Storage",
+						"type": "DatasetReference",
+						"parameters": {
+							"path": {
+								"value": "@concat(pipeline().parameters.FolderPath_DestinationStore,'Product')",
+								"type": "Expression"
+							}
+						}
+					},
+					"enableLogging": false,
+					"recursive": true
+				}
+			},
+			{
+				"name": "Delete Dim Period folder",
+				"type": "Delete",
+				"dependsOn": [
+					{
+						"activity": "Delete Fact Market folder",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "NIELSEN_IRI_Folder_Azure_Storage",
+						"type": "DatasetReference",
+						"parameters": {
+							"path": {
+								"value": "@concat(pipeline().parameters.FolderPath_DestinationStore,'Period')",
+								"type": "Expression"
+							}
+						}
+					},
+					"enableLogging": false,
+					"recursive": true
+				}
+			},
+			{
+				"name": "Delete Fact Market folder",
+				"type": "Delete",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "NIELSEN_IRI_Folder_Azure_Storage",
+						"type": "DatasetReference",
+						"parameters": {
+							"path": {
+								"value": "@concat(pipeline().parameters.FolderPath_DestinationStore,'Fact_Market')",
+								"type": "Expression"
+							}
+						}
+					},
+					"enableLogging": false,
+					"recursive": true
+				}
+			},
+			{
+				"name": "NIELSEN Notebook Update Fact Market",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "NIELSEN Notebook",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/NIELSEN IRI FACT MARKETS/03. nielsen by data",
+					"baseParameters": {
+						"type_of_loading_data": {
+							"value": "@pipeline().parameters.type_of_loading_data",
+							"type": "Expression"
+						},
+						"Enviroment": {
+							"value": "@pipeline().parameters.Enviroment",
+							"type": "Expression"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "bdhdbenam2_AzureDatabricks",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"parameters": {
+			"STARTDATE": {
+				"type": "string"
+			},
+			"type_of_loading_data": {
+				"type": "string",
+				"defaultValue": "full_load"
+			},
+			"Enviroment": {
+				"type": "string",
+				"defaultValue": "PROD"
+			},
+			"FolderPath_DestinationStore": {
+				"type": "string",
+				"defaultValue": "/prod/landing/NIELSEN/"
+			}
+		},
+		"folder": {
+			"name": "NIELSEN/FILES_COPY"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-06-06T20:10:06Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

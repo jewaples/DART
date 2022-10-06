@@ -1,0 +1,583 @@
+{
+	"name": "METRIXLAB_DATA",
+	"properties": {
+		"description": "Move files from one folder to another folder",
+		"activities": [
+			{
+				"name": "ForEachFile",
+				"description": "Iterate each file, and move them one by one.",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "FilterList",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('FilterList').output.value",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "Copy data",
+							"description": "Copy data to METRIX.METRIXLAB table",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "Insert_Source_Data",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "DelimitedTextSource",
+									"storeSettings": {
+										"type": "AzureBlobFSReadSettings",
+										"recursive": true,
+										"enablePartitionDiscovery": false
+									},
+									"formatSettings": {
+										"type": "DelimitedTextReadSettings",
+										"skipLineCount": 7
+									}
+								},
+								"sink": {
+									"type": "AzureSqlSink",
+									"preCopyScript": "IF EXISTS(SELECT 'Y' FROM sysobjects where name like '%METRIXLAB_TMP%') BEGIN DROP TABLE METRIX.METRIXLAB_TMP END",
+									"writeBehavior": "insert",
+									"sqlWriterUseTableLock": true,
+									"tableOption": "autoCreate",
+									"disableMetricsCollection": false
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "METRIXLAB_Source",
+									"type": "DatasetReference",
+									"parameters": {
+										"env": {
+											"value": "@pipeline().parameters.Environment",
+											"type": "Expression"
+										},
+										"path": {
+											"value": "@pipeline().parameters.PathSource",
+											"type": "Expression"
+										},
+										"file": {
+											"value": "@item().name",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "METRIXLAB_TMP_Sql",
+									"type": "DatasetReference"
+								}
+							]
+						},
+						{
+							"name": "SP Load METRIXLAB Table",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [
+								{
+									"activity": "Validate_Destination_Data",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[METRIX].[usp_LOAD_METRIXLAB_TABLE]"
+							},
+							"linkedServiceName": {
+								"referenceName": "NAM_COM_DART_SQL",
+								"type": "LinkedServiceReference"
+							}
+						},
+						{
+							"name": "Insert_Source_Data",
+							"description": "Inserts source file metadata in log table",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [
+								{
+									"activity": "Get_SrcMetadata",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[LOGS].[usp_INSERT_SRC_FILES]",
+								"storedProcedureParameters": {
+									"FILE_NAME": {
+										"value": {
+											"value": "@item().name",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"SOURCE": {
+										"value": {
+											"value": "@pipeline().parameters.SOURCE",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"SRC_CREATED_DATE": {
+										"value": {
+											"value": "@activity('Get_SrcMetadata').output.lastModified",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"SRC_PATH": {
+										"value": {
+											"value": "@pipeline().parameters.FolderPath_SourceStore",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"SRC_SIZE": {
+										"value": {
+											"value": "@activity('Get_SrcMetadata').output.size",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"TABLE_NAME": {
+										"value": {
+											"value": "@pipeline().parameters.Log_Table",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"PIPELINE_ID": {
+										"value": {
+											"value": "@pipeline().RunId",
+											"type": "Expression"
+										},
+										"type": "String"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "NAM_COM_DART_SQL",
+								"type": "LinkedServiceReference"
+							}
+						},
+						{
+							"name": "Get_SrcMetadata",
+							"type": "GetMetadata",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataset": {
+									"referenceName": "METRIXLAB_Source",
+									"type": "DatasetReference",
+									"parameters": {
+										"env": "@pipeline().parameters.Environment",
+										"path": {
+											"value": "@pipeline().parameters.PathSource",
+											"type": "Expression"
+										},
+										"file": {
+											"value": "@item().name",
+											"type": "Expression"
+										}
+									}
+								},
+								"fieldList": [
+									"itemName",
+									"lastModified",
+									"size"
+								],
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							}
+						},
+						{
+							"name": "Validate_Destination_Data",
+							"description": "Inserts source file metadata in log table",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [
+								{
+									"activity": "Copy data",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[STG].[usp_VALIDATE_DST_FILES]",
+								"storedProcedureParameters": {
+									"FILE_NAME": {
+										"value": {
+											"value": "@item().name",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"DST_CREATED_DATE": {
+										"value": {
+											"value": "@pipeline().parameters.STARTDATE",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"DST_PATH": {
+										"value": {
+											"value": "@pipeline().parameters.FolderPath_DestinationStore",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"DST_SIZE": {
+										"value": {
+											"value": "@activity('Get_SrcMetadata').output.size",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"TABLE_NAME": {
+										"value": {
+											"value": "@pipeline().parameters.Log_Table",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"IS_ZIP": {
+										"value": {
+											"value": "@pipeline().parameters.Is_Zip",
+											"type": "Expression"
+										},
+										"type": "String"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "NAM_COM_DART_SQL",
+								"type": "LinkedServiceReference"
+							}
+						},
+						{
+							"name": "Update Staging  Filename PipelineID",
+							"description": "",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [
+								{
+									"activity": "SP Load METRIXLAB Table",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "STG.usp_UPDATE_STG_TABLE_FILENAME",
+								"storedProcedureParameters": {
+									"FILE_NAME": {
+										"value": {
+											"value": "@item().name",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"TABLE_NAME": {
+										"value": {
+											"value": "@pipeline().parameters.FolderPath_DestinationStore",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"PIPELINE_ID": {
+										"value": {
+											"value": "@pipeline().RunId",
+											"type": "Expression"
+										},
+										"type": "String"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "NAM_COM_DART_SQL",
+								"type": "LinkedServiceReference"
+							}
+						},
+						{
+							"name": "Copy data Archive",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "Update Staging  Filename PipelineID",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureBlobFSSource",
+									"recursive": true
+								},
+								"sink": {
+									"type": "AzureBlobFSSink"
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "METRIXLAB_FileSource_Azure_Storage",
+									"type": "DatasetReference",
+									"parameters": {
+										"path": {
+											"value": "@pipeline().parameters.FolderPath_SourceStore",
+											"type": "Expression"
+										},
+										"filename": {
+											"value": "@item().name",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "METRIXLAB_FileSource_Azure_Storage",
+									"type": "DatasetReference",
+									"parameters": {
+										"path": {
+											"value": "@concat(pipeline().parameters.FolderPath_SourceStore,'/Archive')",
+											"type": "Expression"
+										},
+										"filename": {
+											"value": "@item().name",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						},
+						{
+							"name": "Delete source",
+							"type": "Delete",
+							"dependsOn": [
+								{
+									"activity": "Copy data Archive",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataset": {
+									"referenceName": "METRIXLAB_FileSource_Azure_Storage",
+									"type": "DatasetReference",
+									"parameters": {
+										"path": {
+											"value": "@pipeline().parameters.FolderPath_SourceStore",
+											"type": "Expression"
+										},
+										"filename": {
+											"value": "@item().name",
+											"type": "Expression"
+										}
+									}
+								},
+								"enableLogging": false
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "GetFileList",
+				"type": "GetMetadata",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "METRIXLAB_File_Azure_Storage",
+						"type": "DatasetReference",
+						"parameters": {
+							"path": {
+								"value": "@pipeline().parameters.FolderPath_SourceStore",
+								"type": "Expression"
+							}
+						}
+					},
+					"fieldList": [
+						"itemName",
+						"childItems",
+						"lastModified"
+					]
+				}
+			},
+			{
+				"name": "FilterList",
+				"type": "Filter",
+				"dependsOn": [
+					{
+						"activity": "GetFileList",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('GetFileList').output.childItems",
+						"type": "Expression"
+					},
+					"condition": {
+						"value": "@contains(item().name,'.csv')",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"FolderPath_SourceStore": {
+				"type": "String",
+				"defaultValue": "/prod/Metrixlab"
+			},
+			"Filename_Source": {
+				"type": "String",
+				"defaultValue": "Power BI Dashboard_United States_stacked.csv"
+			},
+			"Destination_Table": {
+				"type": "string",
+				"defaultValue": "METRIX.METRIXLAB_TMP"
+			},
+			"Environment": {
+				"type": "string",
+				"defaultValue": "prod"
+			},
+			"PathSource": {
+				"type": "string",
+				"defaultValue": "Metrixlab"
+			},
+			"Log_Table": {
+				"type": "string",
+				"defaultValue": "LOGS.SOURCE_FILES_LOAD_LOG"
+			},
+			"Is_Zip": {
+				"type": "string",
+				"defaultValue": "0"
+			},
+			"STARTDATE": {
+				"type": "string"
+			},
+			"SOURCE": {
+				"type": "string",
+				"defaultValue": "Metrix"
+			},
+			"Stage_table": {
+				"type": "string",
+				"defaultValue": "METRIX.METRIXLAB_TMP"
+			},
+			"FolderPath_DestinationStore": {
+				"type": "string",
+				"defaultValue": "METRIX.METRIXLAB"
+			}
+		},
+		"folder": {
+			"name": "METRIXLAB"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-04-29T05:16:14Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

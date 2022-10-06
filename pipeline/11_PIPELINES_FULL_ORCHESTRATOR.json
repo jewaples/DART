@@ -1,0 +1,86 @@
+{
+	"name": "11_PIPELINES_FULL_ORCHESTRATOR",
+	"properties": {
+		"activities": [
+			{
+				"name": "1_API_GENERIC_CALL",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "1_API_GENERIC_CALL",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "2_API_SHIPMENTS_CALL",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "1_API_GENERIC_CALL",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "2_API_SHIPMENTS_CALL",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "3_API_SHIPMENTS_LEGS_CALL",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "2_API_SHIPMENTS_CALL",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "3_API_SHIPMENTS_LEGS_CALL",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "4_API_SHIPMENTS_CONTACTS_CALL",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "3_API_SHIPMENTS_LEGS_CALL",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "4_API_SHIPMENTS_CONTACTS_CALL",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"folder": {
+			"name": "HILLEBRAND"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-05-10T19:11:41Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

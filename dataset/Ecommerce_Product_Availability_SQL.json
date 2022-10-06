@@ -1,0 +1,82 @@
+{
+	"name": "Ecommerce_Product_Availability_SQL",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "ECOMMERCE"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "CATALOG_ITEM_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "STORE_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "STORE_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TDLINX_OUTLET_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CITY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZIP_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "STATE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CONTAINER_QUANTITY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CONTAINER_TYPE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VOLUME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VOLUME_UNITS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VINTAGE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "STORE_INVENTORY_TYPE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "STOCK_MESSAGES",
+				"type": "nvarchar"
+			},
+			{
+				"name": "REPORT_DATE",
+				"type": "datetime2",
+				"scale": 7
+			}
+		],
+		"typeProperties": {
+			"schema": "ECOMM",
+			"table": "PRODUCT_AVAILABILITY"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

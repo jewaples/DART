@@ -1,0 +1,52 @@
+{
+	"name": "VMI_DA_SFTP_Folder",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_VMI_DA_SFTP",
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"HostParameter": "datahub.datalliance.net",
+				"PortParameter": 22,
+				"UserNameParameter": "bacardi_dart-lftp"
+			}
+		},
+		"parameters": {
+			"FileName": {
+				"type": "string"
+			},
+			"FolderName": {
+				"type": "string"
+			},
+			"Delimiter": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "VMI"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "SftpLocation",
+				"fileName": {
+					"value": "@dataset().FileName",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@dataset().FolderName",
+					"type": "Expression"
+				}
+			},
+			"columnDelimiter": {
+				"value": "@dataset().Delimiter",
+				"type": "Expression"
+			},
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,223 @@
+{
+	"name": "BEP_MISSION_TASK_RESPONSE",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "BEP"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "SITE_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "STATE_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PERIOD_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PRODUCT_UNIVERSE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ITEM_PRODUCT",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ITEM_SUPPLIER_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PLACE_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "PLACE_TYPE_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PLACE_TD_LINK_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PLACE_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PLACE_ADDRESS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PLACE_CITY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "POSTAL_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CUSTOMER_PREMISE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CUSTOMER_NO",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "MISSION_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "MISSION_VERSION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MISSION_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MISSION_RESPONSE_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "MISSION_LATITUDE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MISSION_LONGITUDE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MISSION_CREATED_AT",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "MISSION_UPDATED_AT",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "MISSION_COMPLETED_AT",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "MISSION_STATE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TASK_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "TASK_VERSION",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "PARENT_TASK_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "PARENT_TASK_VALUE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TASK_TYPE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TASK_TITLE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TASK_DESCRIPTION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TASK_POSITION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SECTION_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "SECTION_TITLE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TASK_RESPONSE_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "TASK_RESPONSE_CREATED_AT",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "TASK_RESPONSE_COMPLETED_AT",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "TASK_RESPONSE_FIREBASE_URL",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TASK_RESPONSE_FILE_PICKER_URL",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TASK_RESPONSE_SHORT_RESPONSE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TASK_RESPONSE_LONG_RESPONSE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TASK_RESPONSE_INT_RESPONSE",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "TASK_RESPONSE_FLOAT_RESPONSE",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "TASK_RESPONSE_DATE_RESPONSE",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "TASK_RESPONSE_IS_DELETED",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "BEP",
+			"table": "MISSION_TASK_RESPONSE"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

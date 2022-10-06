@@ -1,0 +1,739 @@
+{
+	"name": "NIELSEN_RAKUTEN_ECOMMERCE",
+	"properties": {
+		"description": "Move files from one folder to another folder",
+		"activities": [
+			{
+				"name": "ForEachFile",
+				"description": "Iterate each file, and move them one by one.",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "FilterFiles",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('FilterFiles').output.value",
+						"type": "Expression"
+					},
+					"batchCount": 20,
+					"activities": [
+						{
+							"name": "File_Lookup",
+							"type": "Lookup",
+							"dependsOn": [
+								{
+									"activity": "Get_SrcMetadata",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderStoredProcedureName": "[STG].[usp_FILE_LOOKUP]",
+									"storedProcedureParameters": {
+										"FILE_NAME": {
+											"type": "String",
+											"value": {
+												"value": "@activity('Get_SrcMetadata').output.itemName",
+												"type": "Expression"
+											}
+										},
+										"TABLE_NAME": {
+											"type": "String",
+											"value": {
+												"value": "@pipeline().parameters.Destination_Table",
+												"type": "Expression"
+											}
+										}
+									},
+									"partitionOption": "None"
+								},
+								"dataset": {
+									"referenceName": "RAD_File_Table_Destination",
+									"type": "DatasetReference"
+								},
+								"firstRowOnly": true
+							}
+						},
+						{
+							"name": "If Condition",
+							"type": "IfCondition",
+							"dependsOn": [
+								{
+									"activity": "File_Lookup",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"expression": {
+									"value": "@activity('File_Lookup').output.firstRow.EXIST",
+									"type": "Expression"
+								},
+								"ifFalseActivities": [
+									{
+										"name": "Insert_Source_Data",
+										"description": "Inserts source file metadata in log table",
+										"type": "SqlServerStoredProcedure",
+										"dependsOn": [],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"storedProcedureName": "[LOGS].[usp_INSERT_SRC_FILES]",
+											"storedProcedureParameters": {
+												"FILE_NAME": {
+													"value": {
+														"value": "@item().name",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"PIPELINE_ID": {
+													"value": {
+														"value": "@pipeline().RunId",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"SOURCE": {
+													"value": {
+														"value": "@pipeline().parameters.SOURCE",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"SRC_CREATED_DATE": {
+													"value": {
+														"value": "@activity('Get_SrcMetadata').output.lastModified",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"SRC_PATH": {
+													"value": {
+														"value": "@pipeline().parameters.FolderPath_SourceStore",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"SRC_SIZE": {
+													"value": {
+														"value": "@activity('Get_SrcMetadata').output.size",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"TABLE_NAME": {
+													"value": {
+														"value": "@pipeline().parameters.Destination_Table",
+														"type": "Expression"
+													},
+													"type": "String"
+												}
+											}
+										},
+										"linkedServiceName": {
+											"referenceName": "NAM_COM_DART_SQL",
+											"type": "LinkedServiceReference"
+										}
+									},
+									{
+										"name": "Get_AdlMetadata",
+										"type": "GetMetadata",
+										"dependsOn": [
+											{
+												"activity": "Insert_Source_Data",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"dataset": {
+												"referenceName": "NIELSEN_Rakuten_DataLake",
+												"type": "DatasetReference",
+												"parameters": {
+													"path": "@pipeline().parameters.FolderPath_DestinationStore",
+													"filename": "@item().name"
+												}
+											},
+											"fieldList": [
+												"itemName",
+												"size",
+												"lastModified"
+											],
+											"storeSettings": {
+												"type": "AzureBlobFSReadSettings",
+												"recursive": true,
+												"enablePartitionDiscovery": false
+											},
+											"formatSettings": {
+												"type": "DelimitedTextReadSettings"
+											}
+										}
+									},
+									{
+										"name": "Validate_Destination_Data",
+										"description": "Inserts source file metadata in log table",
+										"type": "SqlServerStoredProcedure",
+										"dependsOn": [
+											{
+												"activity": "Load Rakuten_Ecommerce",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"storedProcedureName": "[STG].[usp_VALIDATE_DST_FILES]",
+											"storedProcedureParameters": {
+												"FILE_NAME": {
+													"value": {
+														"value": "@item().name",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"DST_CREATED_DATE": {
+													"value": {
+														"value": "@activity('Get_AdlMetadata').output.lastModified",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"DST_PATH": {
+													"value": {
+														"value": "@pipeline().parameters.FolderPath_DestinationStore",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"DST_SIZE": {
+													"value": {
+														"value": "@activity('Get_AdlMetadata').output.size",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"TABLE_NAME": {
+													"value": {
+														"value": "@pipeline().parameters.Destination_Table",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"IS_ZIP": {
+													"value": {
+														"value": "@pipeline().parameters.Is_Zip",
+														"type": "Expression"
+													},
+													"type": "String"
+												}
+											}
+										},
+										"linkedServiceName": {
+											"referenceName": "NAM_COM_DART_SQL",
+											"type": "LinkedServiceReference"
+										}
+									},
+									{
+										"name": "Load Rakuten_Ecommerce",
+										"type": "Copy",
+										"dependsOn": [
+											{
+												"activity": "Get_AdlMetadata",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"source": {
+												"type": "DelimitedTextSource",
+												"storeSettings": {
+													"type": "AzureBlobFSReadSettings",
+													"recursive": true,
+													"enablePartitionDiscovery": false
+												},
+												"formatSettings": {
+													"type": "DelimitedTextReadSettings"
+												}
+											},
+											"sink": {
+												"type": "AzureSqlSink",
+												"preCopyScript": "TRUNCATE TABLE [NIELSEN].[RAKUTEN_ECOMMERCE]",
+												"writeBehavior": "insert",
+												"sqlWriterUseTableLock": false,
+												"disableMetricsCollection": false
+											},
+											"enableStaging": false,
+											"translator": {
+												"type": "TabularTranslator",
+												"mappings": [
+													{
+														"source": {
+															"name": "Time Period",
+															"type": "String"
+														},
+														"sink": {
+															"name": "TIME_PERIOD"
+														}
+													},
+													{
+														"source": {
+															"name": "Period Value",
+															"type": "String"
+														},
+														"sink": {
+															"name": "PERIOD_VALUE"
+														}
+													},
+													{
+														"source": {
+															"name": "Category",
+															"type": "String"
+														},
+														"sink": {
+															"name": "CATEGORY"
+														}
+													},
+													{
+														"source": {
+															"name": "Segment",
+															"type": "String"
+														},
+														"sink": {
+															"name": "SEGMENT"
+														}
+													},
+													{
+														"source": {
+															"name": "Merchant",
+															"type": "String"
+														},
+														"sink": {
+															"name": "MERCHANT"
+														}
+													},
+													{
+														"source": {
+															"name": "Manufacturer",
+															"type": "String"
+														},
+														"sink": {
+															"name": "MANUFACTURER"
+														}
+													},
+													{
+														"source": {
+															"name": "Brand",
+															"type": "String"
+														},
+														"sink": {
+															"name": "BRAND"
+														}
+													},
+													{
+														"source": {
+															"name": "Dollars",
+															"type": "String"
+														},
+														"sink": {
+															"name": "DOLLARS"
+														}
+													},
+													{
+														"source": {
+															"name": "Units",
+															"type": "String"
+														},
+														"sink": {
+															"name": "UNITS"
+														}
+													},
+													{
+														"source": {
+															"name": "Sample",
+															"type": "String"
+														},
+														"sink": {
+															"name": "SAMPLE"
+														}
+													},
+													{
+														"source": {
+															"name": "Orders",
+															"type": "String"
+														},
+														"sink": {
+															"name": "ORDERS"
+														}
+													},
+													{
+														"source": {
+															"name": "Dollars/Unit",
+															"type": "String"
+														},
+														"sink": {
+															"name": "DOLLARS_UNIT"
+														}
+													},
+													{
+														"source": {
+															"name": "Dollars/Order",
+															"type": "String"
+														},
+														"sink": {
+															"name": "DOLLARS_ORDER"
+														}
+													},
+													{
+														"source": {
+															"name": "Units/Order",
+															"type": "String"
+														},
+														"sink": {
+															"name": "UNITS_ORDER"
+														}
+													}
+												]
+											}
+										},
+										"inputs": [
+											{
+												"referenceName": "NIELSEN_Rakuten_DataLake",
+												"type": "DatasetReference",
+												"parameters": {
+													"path": "@pipeline().parameters.FolderPath_DestinationStore",
+													"filename": "@item().name"
+												}
+											}
+										],
+										"outputs": [
+											{
+												"referenceName": "NIELSEN_Rakuten_Ecommerce_Sql",
+												"type": "DatasetReference"
+											}
+										]
+									},
+									{
+										"name": "Update Staging  Filename PipelineID",
+										"type": "SqlServerStoredProcedure",
+										"dependsOn": [
+											{
+												"activity": "Validate_Destination_Data",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"storedProcedureName": "STG.usp_UPDATE_STG_TABLE_FILENAME",
+											"storedProcedureParameters": {
+												"FILE_NAME": {
+													"value": {
+														"value": "@item().name",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"PIPELINE_ID": {
+													"value": {
+														"value": "@pipeline().RunId",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"TABLE_NAME": {
+													"value": {
+														"value": "@pipeline().parameters.Stage_table",
+														"type": "Expression"
+													},
+													"type": "String"
+												}
+											}
+										},
+										"linkedServiceName": {
+											"referenceName": "NAM_COM_DART_SQL",
+											"type": "LinkedServiceReference"
+										}
+									},
+									{
+										"name": "Delete Source From Source",
+										"type": "Delete",
+										"dependsOn": [
+											{
+												"activity": "Update Staging  Filename PipelineID",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"dataset": {
+												"referenceName": "NIELSEN_IRI_File_FTP_bkp",
+												"type": "DatasetReference",
+												"parameters": {
+													"path": "@pipeline().parameters.FolderPath_SourceStore",
+													"filename": "@item().name"
+												}
+											},
+											"enableLogging": false
+										}
+									}
+								]
+							}
+						},
+						{
+							"name": "Get_SrcMetadata",
+							"type": "GetMetadata",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataset": {
+									"referenceName": "NIELSEN_IRI_File_Azure_Storage",
+									"type": "DatasetReference",
+									"parameters": {
+										"path": {
+											"value": "@pipeline().parameters.FolderPath_DestinationStore",
+											"type": "Expression"
+										},
+										"filename": "@item().name"
+									}
+								},
+								"fieldList": [
+									"itemName",
+									"size",
+									"lastModified"
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "FilterFiles",
+				"description": "Only files will be selected, the sub-folders will not be selected.",
+				"type": "Filter",
+				"dependsOn": [
+					{
+						"activity": "GetFileList",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('GetFileList').output.childItems",
+						"type": "Expression"
+					},
+					"condition": {
+						"value": "@contains(item().name,'BACARDI_data_download')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "GetFileList",
+				"type": "GetMetadata",
+				"dependsOn": [
+					{
+						"activity": "Copy_File",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "NIELSEN_IRI_Folder_Azure_Storage",
+						"type": "DatasetReference",
+						"parameters": {
+							"path": {
+								"value": "@pipeline().parameters.FolderPath_DestinationStore",
+								"type": "Expression"
+							}
+						}
+					},
+					"fieldList": [
+						"itemName",
+						"childItems"
+					]
+				}
+			},
+			{
+				"name": "Copy_File",
+				"description": "Copy a file from the source store to the destination store.",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "BinarySource",
+						"storeSettings": {
+							"type": "FtpReadSettings",
+							"recursive": true,
+							"wildcardFolderPath": {
+								"value": "@pipeline().parameters.FolderPath_SourceStore",
+								"type": "Expression"
+							},
+							"wildcardFileName": "BACARDI_data_download*",
+							"useBinaryTransfer": true,
+							"deleteFilesAfterCompletion": false,
+							"disableChunking": false
+						},
+						"formatSettings": {
+							"type": "BinaryReadSettings"
+						}
+					},
+					"sink": {
+						"type": "AzureBlobFSSink"
+					},
+					"enableStaging": false,
+					"dataIntegrationUnits": 0
+				},
+				"inputs": [
+					{
+						"referenceName": "NIELSEN_IRI_File_FTP",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "NIELSEN_IRI_Folder_Azure_Storage",
+						"type": "DatasetReference",
+						"parameters": {
+							"path": {
+								"value": "@pipeline().parameters.FolderPath_DestinationStore",
+								"type": "Expression"
+							}
+						}
+					}
+				]
+			}
+		],
+		"parameters": {
+			"FolderPath_SourceStore": {
+				"type": "String",
+				"defaultValue": "/Ecommerce"
+			},
+			"FolderPath_DestinationStore": {
+				"type": "String",
+				"defaultValue": "/prod/Nielsen_IRI/Rakuten_Ecommerce"
+			},
+			"Destination_Table": {
+				"type": "string",
+				"defaultValue": "LOGS.SOURCE_FILES_LOAD_LOG"
+			},
+			"Is_Zip": {
+				"type": "string",
+				"defaultValue": "0"
+			},
+			"STARTDATE": {
+				"type": "string"
+			},
+			"SOURCE": {
+				"type": "string",
+				"defaultValue": "Nielsen"
+			},
+			"Stage_table": {
+				"type": "string",
+				"defaultValue": "NIELSEN.RAKUTEN_ECOMMERCE"
+			}
+		},
+		"folder": {
+			"name": "NIELSEN/RAKUTEN"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-05-04T19:23:04Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

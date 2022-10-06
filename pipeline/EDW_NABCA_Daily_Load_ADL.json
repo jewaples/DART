@@ -1,0 +1,1973 @@
+{
+	"name": "EDW_NABCA_Daily_Load_ADL",
+	"properties": {
+		"activities": [
+			{
+				"name": "Load_Dim_Licensee ADLs",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "ParquetSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "ParquetWriteSettings"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "DATA_PROVIDER",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DATA_PROVIDER",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "DATA_PROVIDER_DETAIL",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DATA_PROVIDER_DETAIL",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "PRODUCT_ID",
+									"type": "String"
+								},
+								"sink": {
+									"name": "PRODUCT_ID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "STATE_ID",
+									"type": "String"
+								},
+								"sink": {
+									"name": "STATE_ID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "RECORD_MODE",
+									"type": "String"
+								},
+								"sink": {
+									"name": "RECORD_MODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "STATE_LICENSE_NUMBER",
+									"type": "String"
+								},
+								"sink": {
+									"name": "STATE_LICENSE_NUMBER",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "STATE_LICENSE_INDICATOR",
+									"type": "String"
+								},
+								"sink": {
+									"name": "STATE_LICENSE_INDICATOR",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "STATE_LICENSE_NAME",
+									"type": "String"
+								},
+								"sink": {
+									"name": "STATE_LICENSE_NAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "STATE_LICENSE_TYPE",
+									"type": "String"
+								},
+								"sink": {
+									"name": "STATE_LICENSE_TYPE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ADDRESS_1",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ADDRESS_1",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ADDRESS_2",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ADDRESS_2",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ZIP5",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ZIP5",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "CITY",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CITY",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "COUNTY_NAME",
+									"type": "String"
+								},
+								"sink": {
+									"name": "COUNTY_NAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "DISTRICT_NUMBER",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DISTRICT_NUMBER",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "DISTRICT_NAME",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DISTRICT_NAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "STATE_ABBREVIATION",
+									"type": "String"
+								},
+								"sink": {
+									"name": "STATE_ABBREVIATION",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "TDLINX_CODE",
+									"type": "String"
+								},
+								"sink": {
+									"name": "TDLINX_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "CREATED_TIMESTAMP",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CREATED_TIMESTAMP",
+									"type": "String"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "NABCA_Dim_Licensee",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "NABCA_Dim_Licensee_ADLs_Sink",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Load_Dim_Period ADLs",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "ParquetSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "ParquetWriteSettings"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "MONTH_KEY",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "MONTH_KEY",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "PERIOD_ID",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "PERIOD_ID",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "MONTH_NUMBER",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "MONTH_NUMBER",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "MONTH_NAME",
+									"type": "String"
+								},
+								"sink": {
+									"name": "MONTH_NAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "YEAR",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "YEAR",
+									"type": "Int32"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "NABCA_Dim_Period",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "NABCA_Dim_Period_ADLs_Sink",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Load_Dim_Product ADLs",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "ParquetSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "ParquetWriteSettings"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "PRODUCT_KEY",
+									"type": "String"
+								},
+								"sink": {
+									"name": "PRODUCT_KEY",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "COM_CODE",
+									"type": "String"
+								},
+								"sink": {
+									"name": "COM_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "CLASS",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CLASS",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "NABCA_BRAND_ABBREVIATION",
+									"type": "String"
+								},
+								"sink": {
+									"name": "NABCA_BRAND_ABBREVIATION",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "NABCA_COMPETITIVE_BRAND",
+									"type": "String"
+								},
+								"sink": {
+									"name": "NABCA_COMPETITIVE_BRAND",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "PACK_SIZE",
+									"type": "String"
+								},
+								"sink": {
+									"name": "PACK_SIZE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "UPC_CODE",
+									"type": "String"
+								},
+								"sink": {
+									"name": "UPC_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "SCC_CODE",
+									"type": "String"
+								},
+								"sink": {
+									"name": "SCC_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "VENDOR",
+									"type": "String"
+								},
+								"sink": {
+									"name": "VENDOR",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "DISCUS_VENDOR",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DISCUS_VENDOR",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "IMP_DOM_FLAG",
+									"type": "String"
+								},
+								"sink": {
+									"name": "IMP_DOM_FLAG",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "AGE",
+									"type": "String"
+								},
+								"sink": {
+									"name": "AGE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "BEVERAGE_TYPE",
+									"type": "String"
+								},
+								"sink": {
+									"name": "BEVERAGE_TYPE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "BRAND_SIZE",
+									"type": "String"
+								},
+								"sink": {
+									"name": "BRAND_SIZE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "SALES_ORGANIZATION",
+									"type": "String"
+								},
+								"sink": {
+									"name": "SALES_ORGANIZATION",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "CATEGORY",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CATEGORY",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "DISCUS_BRAND",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DISCUS_BRAND",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "DISCUS_BRAND_GROUP",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DISCUS_BRAND_GROUP",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "XREF_COM_CODE",
+									"type": "String"
+								},
+								"sink": {
+									"name": "XREF_COM_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "DISCUS_LEVEL_1",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DISCUS_LEVEL_1",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "DISCUS_LEVEL_2",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DISCUS_LEVEL_2",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "DISCUS_LEVEL_3",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DISCUS_LEVEL_3",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "DISCUS_LEVEL_4",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DISCUS_LEVEL_4",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ITEM_ID",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ITEM_ID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "BRAND",
+									"type": "String"
+								},
+								"sink": {
+									"name": "BRAND",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "BRAND_GROUP_SRC",
+									"type": "String"
+								},
+								"sink": {
+									"name": "BRAND_GROUP_SRC",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "BRAND_HOUSE_SRC",
+									"type": "String"
+								},
+								"sink": {
+									"name": "BRAND_HOUSE_SRC",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "BOTTLES_PER_CASE",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "BOTTLES_PER_CASE",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "PRODUCT_PLANNING_TYPE",
+									"type": "String"
+								},
+								"sink": {
+									"name": "PRODUCT_PLANNING_TYPE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "RN",
+									"type": "Int64"
+								},
+								"sink": {
+									"name": "RN",
+									"type": "Int64"
+								}
+							},
+							{
+								"source": {
+									"name": "PRODUCT_BRAND_PLANNING_SIZE_ID",
+									"type": "String"
+								},
+								"sink": {
+									"name": "PRODUCT_BRAND_PLANNING_SIZE_ID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "PRODUCT_BRAND_PLANNING_SIZE_DESCRIPTION",
+									"type": "String"
+								},
+								"sink": {
+									"name": "PRODUCT_BRAND_PLANNING_SIZE_DESCRIPTION",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "PRODUCT_BRAND_SIZE_DESCRIPTION",
+									"type": "String"
+								},
+								"sink": {
+									"name": "PRODUCT_BRAND_SIZE_DESCRIPTION",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "PRODUCT_BRAND_SIZE_ID",
+									"type": "String"
+								},
+								"sink": {
+									"name": "PRODUCT_BRAND_SIZE_ID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "PRODUCT_BRAND_LABEL_DESCRIPTION",
+									"type": "String"
+								},
+								"sink": {
+									"name": "PRODUCT_BRAND_LABEL_DESCRIPTION",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "PRODUCT_BRAND_LABEL_ID",
+									"type": "String"
+								},
+								"sink": {
+									"name": "PRODUCT_BRAND_LABEL_ID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "PRODUCT_BRAND_GROUP_DESCRIPTION",
+									"type": "String"
+								},
+								"sink": {
+									"name": "PRODUCT_BRAND_GROUP_DESCRIPTION",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "PRODUCT_BRAND_GROUP_ID",
+									"type": "String"
+								},
+								"sink": {
+									"name": "PRODUCT_BRAND_GROUP_ID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "PRODUCT_BRAND_HOUSE_DESCRIPTION",
+									"type": "String"
+								},
+								"sink": {
+									"name": "PRODUCT_BRAND_HOUSE_DESCRIPTION",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "PRODUCT_BRAND_HOUSE_ID",
+									"type": "String"
+								},
+								"sink": {
+									"name": "PRODUCT_BRAND_HOUSE_ID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "BOTTLE_SIZE",
+									"type": "String"
+								},
+								"sink": {
+									"name": "BOTTLE_SIZE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "DISCUS_BRAND_CODE",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DISCUS_BRAND_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "H1_L1",
+									"type": "String"
+								},
+								"sink": {
+									"name": "H1_L1",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "H1_L2",
+									"type": "String"
+								},
+								"sink": {
+									"name": "H1_L2",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "H1_L3",
+									"type": "String"
+								},
+								"sink": {
+									"name": "H1_L3",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "H1_L4",
+									"type": "String"
+								},
+								"sink": {
+									"name": "H1_L4",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "DISCUS_FLAVOR",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DISCUS_FLAVOR",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "PRODUCT_ID",
+									"type": "String"
+								},
+								"sink": {
+									"name": "PRODUCT_ID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "STATE_ID",
+									"type": "String"
+								},
+								"sink": {
+									"name": "STATE_ID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "STATE_CODE",
+									"type": "String"
+								},
+								"sink": {
+									"name": "STATE_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "STATE_ABBREVIATION",
+									"type": "String"
+								},
+								"sink": {
+									"name": "STATE_ABBREVIATION",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "CLASS_NUMBER",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CLASS_NUMBER",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "DM_FLAG",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DM_FLAG",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "BRAND_NUMBER",
+									"type": "String"
+								},
+								"sink": {
+									"name": "BRAND_NUMBER",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "BRAND_ABBREVIATION",
+									"type": "String"
+								},
+								"sink": {
+									"name": "BRAND_ABBREVIATION",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "BRAND_FULL_NAME",
+									"type": "String"
+								},
+								"sink": {
+									"name": "BRAND_FULL_NAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "PRODUCT_CLASS_ABBREVIATION",
+									"type": "String"
+								},
+								"sink": {
+									"name": "PRODUCT_CLASS_ABBREVIATION",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "BEVERAGE_TYPE_CODE",
+									"type": "String"
+								},
+								"sink": {
+									"name": "BEVERAGE_TYPE_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "SIZE",
+									"type": "String"
+								},
+								"sink": {
+									"name": "SIZE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "CS_PACK_SIZE",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CS_PACK_SIZE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "PACK_SIZE_CODE",
+									"type": "String"
+								},
+								"sink": {
+									"name": "PACK_SIZE_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "PRODUCT_AGE",
+									"type": "String"
+								},
+								"sink": {
+									"name": "PRODUCT_AGE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "PRODUCT_PROOF",
+									"type": "String"
+								},
+								"sink": {
+									"name": "PRODUCT_PROOF",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "CS_COM_CODE",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CS_COM_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "COM_CODE_NAME",
+									"type": "String"
+								},
+								"sink": {
+									"name": "COM_CODE_NAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "STATUS_CODE",
+									"type": "String"
+								},
+								"sink": {
+									"name": "STATUS_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "VENDOR_NUMBER",
+									"type": "String"
+								},
+								"sink": {
+									"name": "VENDOR_NUMBER",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "VENDOR_ABBREVIATION",
+									"type": "String"
+								},
+								"sink": {
+									"name": "VENDOR_ABBREVIATION",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "STATE_FULL_NAME",
+									"type": "String"
+								},
+								"sink": {
+									"name": "STATE_FULL_NAME",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "CREATED_TIMESTAMP",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CREATED_TIMESTAMP",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "CATEGORY_FILTER_SRC",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CATEGORY_FILTER_SRC",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "SPIRIT_WINE_FILTER",
+									"type": "String"
+								},
+								"sink": {
+									"name": "SPIRIT_WINE_FILTER",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "SIZE_FILTER",
+									"type": "String"
+								},
+								"sink": {
+									"name": "SIZE_FILTER",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "VENDOR_FITER",
+									"type": "String"
+								},
+								"sink": {
+									"name": "VENDOR_FITER",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "UNMAPPEDBRANDS_UPC",
+									"type": "String"
+								},
+								"sink": {
+									"name": "UNMAPPEDBRANDS_UPC",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "UNMAPPEDBRANDS_BRAND",
+									"type": "String"
+								},
+								"sink": {
+									"name": "UNMAPPEDBRANDS_BRAND",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "UNMAPPEDBRANDS_CATEGORY",
+									"type": "String"
+								},
+								"sink": {
+									"name": "UNMAPPEDBRANDS_CATEGORY",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "UNMAPPEDBRANDS_PRODUCT_BRAND_GROUP_DESCRIPTION",
+									"type": "String"
+								},
+								"sink": {
+									"name": "UNMAPPEDBRANDS_PRODUCT_BRAND_GROUP_DESCRIPTION",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "UNMAPPEDBRANDS_PRODUCT_BRAND_HOUSE_DESCRIPTION",
+									"type": "String"
+								},
+								"sink": {
+									"name": "UNMAPPEDBRANDS_PRODUCT_BRAND_HOUSE_DESCRIPTION",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "CATEGORY_FILTER",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CATEGORY_FILTER",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "BRAND_HOUSE",
+									"type": "String"
+								},
+								"sink": {
+									"name": "BRAND_HOUSE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "BRAND_GROUP",
+									"type": "String"
+								},
+								"sink": {
+									"name": "BRAND_GROUP",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "BRAND_GROUP_LINK",
+									"type": "String"
+								},
+								"sink": {
+									"name": "BRAND_GROUP_LINK",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "TARGET_COMPETITIVE_SET_BRAND_GROUP_BRANDGROUPLINK",
+									"type": "String"
+								},
+								"sink": {
+									"name": "TARGET_COMPETITIVE_SET_BRAND_GROUP_BRANDGROUPLINK",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "TARGET_COMPETITIVE_SET_BRAND_GROUP_NABCA_BRAND_GROUP",
+									"type": "String"
+								},
+								"sink": {
+									"name": "TARGET_COMPETITIVE_SET_BRAND_GROUP_NABCA_BRAND_GROUP",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "TARGET_COMPETITIVE_SET_BRAND_GROUP_NABCA_BRAND_LABEL",
+									"type": "String"
+								},
+								"sink": {
+									"name": "TARGET_COMPETITIVE_SET_BRAND_GROUP_NABCA_BRAND_LABEL",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "TARGET_COMPETITIVE_SET_BRAND_GROUP_REPORTING_LABEL",
+									"type": "String"
+								},
+								"sink": {
+									"name": "TARGET_COMPETITIVE_SET_BRAND_GROUP_REPORTING_LABEL",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "TARGET_COMPETITIVE_SET_BRAND_LABEL_BRANDLABELLINK",
+									"type": "String"
+								},
+								"sink": {
+									"name": "TARGET_COMPETITIVE_SET_BRAND_LABEL_BRANDLABELLINK",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "TARGET_COMPETITIVE_SET_BRAND_LABEL_NABCA_BRAND_GROUP",
+									"type": "String"
+								},
+								"sink": {
+									"name": "TARGET_COMPETITIVE_SET_BRAND_LABEL_NABCA_BRAND_GROUP",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "TARGET_COMPETITIVE_SET_BRAND_LABEL_NABCA_BRAND_LABEL",
+									"type": "String"
+								},
+								"sink": {
+									"name": "TARGET_COMPETITIVE_SET_BRAND_LABEL_NABCA_BRAND_LABEL",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "TARGET_COMPETITIVE_SET_BRAND_LABEL_REPORTING_LABEL",
+									"type": "String"
+								},
+								"sink": {
+									"name": "TARGET_COMPETITIVE_SET_BRAND_LABEL_REPORTING_LABEL",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "TARGET_BRANDS",
+									"type": "String"
+								},
+								"sink": {
+									"name": "TARGET_BRANDS",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "TOP_SUPPLIERS",
+									"type": "String"
+								},
+								"sink": {
+									"name": "TOP_SUPPLIERS",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "TARGET_CATEGORIES",
+									"type": "String"
+								},
+								"sink": {
+									"name": "TARGET_CATEGORIES",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "WHISKEY_SUB_CATEGORY",
+									"type": "String"
+								},
+								"sink": {
+									"name": "WHISKEY_SUB_CATEGORY",
+									"type": "String"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "NABCA_Dim_Product",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "NABCA_Dim_Product_ADLs_Sink",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Load_Dim_States ADLs",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "ParquetSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "ParquetWriteSettings"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "STATE_ID",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "STATE_ID",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "STATE_ABBREVIATION",
+									"type": "String"
+								},
+								"sink": {
+									"name": "STATE_ABBREVIATION",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "STATE_DESCRIPTION",
+									"type": "String"
+								},
+								"sink": {
+									"name": "STATE_DESCRIPTION",
+									"type": "String"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "NABCA_Dim_State",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "NABCA_Dim_State_ADLs_Sink",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Load_Fact_Sales ADLs",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Load_Dim_Licensee ADLs",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Load_Dim_Period ADLs",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Load_Dim_Product ADLs",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Load_Dim_States ADLs",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "ParquetSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "ParquetWriteSettings"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "PRODUCT_ID",
+									"type": "String"
+								},
+								"sink": {
+									"name": "PRODUCT_ID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "PRODUCT_DESCRIPTION",
+									"type": "String"
+								},
+								"sink": {
+									"name": "PRODUCT_DESCRIPTION",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "MONTH_KEY",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "MONTH_KEY",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "STATE_ID",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "STATE_ID",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "PRODUCT_KEY",
+									"type": "String"
+								},
+								"sink": {
+									"name": "PRODUCT_KEY",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "MO_TIME_KEY",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "MO_TIME_KEY",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "STORE_LICENSE_KEY",
+									"type": "String"
+								},
+								"sink": {
+									"name": "STORE_LICENSE_KEY",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "BOTTLES_SOLD",
+									"type": "Double"
+								},
+								"sink": {
+									"name": "BOTTLES_SOLD",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "ACTUAL_CASES",
+									"type": "Double"
+								},
+								"sink": {
+									"name": "ACTUAL_CASES",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "STANDARD_CASES",
+									"type": "Double"
+								},
+								"sink": {
+									"name": "STANDARD_CASES",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "NINE_LITER_CASES",
+									"type": "Double"
+								},
+								"sink": {
+									"name": "NINE_LITER_CASES",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "FOB_PRICE",
+									"type": "Double"
+								},
+								"sink": {
+									"name": "FOB_PRICE",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "SHELF_PRICE",
+									"type": "Double"
+								},
+								"sink": {
+									"name": "SHELF_PRICE",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "RETAIL_PRICE",
+									"type": "Double"
+								},
+								"sink": {
+									"name": "RETAIL_PRICE",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "SHELF_DOLLAR_VOLUME",
+									"type": "Double"
+								},
+								"sink": {
+									"name": "SHELF_DOLLAR_VOLUME",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "RETAIL_DOLLAR_VOLUME",
+									"type": "Double"
+								},
+								"sink": {
+									"name": "RETAIL_DOLLAR_VOLUME",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "RUN_ID",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "RUN_ID",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "CREATED_BY",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CREATED_BY",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "CREATED_TIMESTAMP",
+									"type": "DateTime"
+								},
+								"sink": {
+									"name": "CREATED_TIMESTAMP",
+									"type": "DateTime"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "NABCA_Fact_Sales",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "NABCA_Fact_Sales_ADLs_Sink_Current",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Copy_Fact_Sales_Dated ADLs",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Load_Fact_Sales ADLs",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "ParquetSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						}
+					},
+					"sink": {
+						"type": "ParquetSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "ParquetWriteSettings"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "PRODUCT_ID",
+									"type": "String",
+									"physicalType": "UTF8"
+								},
+								"sink": {
+									"name": "PRODUCT_ID",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "PRODUCT_DESCRIPTION",
+									"type": "String",
+									"physicalType": "UTF8"
+								},
+								"sink": {
+									"name": "PRODUCT_DESCRIPTION",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "MONTH_KEY",
+									"type": "Int32",
+									"physicalType": "INT32"
+								},
+								"sink": {
+									"name": "MONTH_KEY",
+									"type": "Int32",
+									"physicalType": "INT_32"
+								}
+							},
+							{
+								"source": {
+									"name": "STATE_ID",
+									"type": "Int32",
+									"physicalType": "INT32"
+								},
+								"sink": {
+									"name": "STATE_ID",
+									"type": "Int32",
+									"physicalType": "INT_32"
+								}
+							},
+							{
+								"source": {
+									"name": "PRODUCT_KEY",
+									"type": "String",
+									"physicalType": "UTF8"
+								},
+								"sink": {
+									"name": "PRODUCT_KEY",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "MO_TIME_KEY",
+									"type": "Int32",
+									"physicalType": "INT32"
+								},
+								"sink": {
+									"name": "MO_TIME_KEY",
+									"type": "Int32",
+									"physicalType": "INT_32"
+								}
+							},
+							{
+								"source": {
+									"name": "STORE_LICENSE_KEY",
+									"type": "String",
+									"physicalType": "UTF8"
+								},
+								"sink": {
+									"name": "STORE_LICENSE_KEY",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "BOTTLES_SOLD",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								},
+								"sink": {
+									"name": "BOTTLES_SOLD",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							},
+							{
+								"source": {
+									"name": "ACTUAL_CASES",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								},
+								"sink": {
+									"name": "ACTUAL_CASES",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							},
+							{
+								"source": {
+									"name": "STANDARD_CASES",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								},
+								"sink": {
+									"name": "STANDARD_CASES",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							},
+							{
+								"source": {
+									"name": "NINE_LITER_CASES",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								},
+								"sink": {
+									"name": "NINE_LITER_CASES",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							},
+							{
+								"source": {
+									"name": "FOB_PRICE",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								},
+								"sink": {
+									"name": "FOB_PRICE",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							},
+							{
+								"source": {
+									"name": "SHELF_PRICE",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								},
+								"sink": {
+									"name": "SHELF_PRICE",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							},
+							{
+								"source": {
+									"name": "RETAIL_PRICE",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								},
+								"sink": {
+									"name": "RETAIL_PRICE",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							},
+							{
+								"source": {
+									"name": "SHELF_DOLLAR_VOLUME",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								},
+								"sink": {
+									"name": "SHELF_DOLLAR_VOLUME",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							},
+							{
+								"source": {
+									"name": "RETAIL_DOLLAR_VOLUME",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								},
+								"sink": {
+									"name": "RETAIL_DOLLAR_VOLUME",
+									"type": "Double",
+									"physicalType": "DOUBLE"
+								}
+							},
+							{
+								"source": {
+									"name": "RUN_ID",
+									"type": "Int32",
+									"physicalType": "INT32"
+								},
+								"sink": {
+									"name": "RUN_ID",
+									"type": "Int32",
+									"physicalType": "INT_32"
+								}
+							},
+							{
+								"source": {
+									"name": "CREATED_BY",
+									"type": "String",
+									"physicalType": "UTF8"
+								},
+								"sink": {
+									"name": "CREATED_BY",
+									"type": "String",
+									"physicalType": "UTF8"
+								}
+							},
+							{
+								"source": {
+									"name": "CREATED_TIMESTAMP",
+									"type": "DateTime",
+									"physicalType": "INT96"
+								},
+								"sink": {
+									"name": "CREATED_TIMESTAMP",
+									"type": "DateTime",
+									"physicalType": "INT_96"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "NABCA_Fact_Sales_ADLs_Sink_Current",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "NABCA_Fact_Sales_ADLs_Sink_Dated",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"folder": {
+			"name": "NABCA COMPETITIVE"
+		},
+		"annotations": [],
+		"lastPublishTime": "2021-09-29T17:19:06Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

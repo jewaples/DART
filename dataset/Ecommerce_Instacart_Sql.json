@@ -1,0 +1,62 @@
+{
+	"name": "Ecommerce_Instacart_Sql",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "ECOMMERCE"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "UPC",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "PRODUCT",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PRODUCT_SIZE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BRAND",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BRAND_L1",
+				"type": "nvarchar"
+			},
+			{
+				"name": "WEEK",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "DELIVERIES",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "DOLLAR_VOLUME",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "UNIT_VOLUME",
+				"type": "float",
+				"precision": 15
+			}
+		],
+		"typeProperties": {
+			"schema": "ECOMM",
+			"table": "INSTACART_ECOMMERCE"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

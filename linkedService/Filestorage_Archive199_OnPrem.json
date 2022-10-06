@@ -1,0 +1,17 @@
+{
+	"name": "Filestorage_Archive199_OnPrem",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "FileServer",
+		"typeProperties": {
+			"host": "\\\\usbms199\\dataload\\",
+			"userId": "bl\\cmedina",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiIyOWE5YWQ3MS0zODA3LTQ2MDItYWNmMC0wZmNkZWZkNmQ2OGIiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+		},
+		"connectVia": {
+			"referenceName": "nlmas005-IRtime",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

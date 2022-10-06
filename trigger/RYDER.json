@@ -1,0 +1,34 @@
+{
+	"name": "RYDER",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Stopped",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "EXCEL_TO_PARQUET",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Day",
+				"interval": 15,
+				"startTime": "2022-08-22T14:09:00",
+				"timeZone": "Central America Standard Time",
+				"schedule": {
+					"minutes": [
+						0
+					],
+					"hours": [
+						9,
+						15,
+						20
+					]
+				}
+			}
+		}
+	}
+}

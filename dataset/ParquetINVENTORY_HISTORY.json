@@ -1,0 +1,22 @@
+{
+	"name": "ParquetINVENTORY_HISTORY",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_Data_Foundation_DataLake",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "INVENTORY_HISTORY.parquet",
+				"folderPath": "EDW/BILLINGS/STG_VMI_INVENTORY_HISTORY/CURRENT",
+				"fileSystem": "prod"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

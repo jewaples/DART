@@ -1,0 +1,23 @@
+{
+	"name": "Hana_Source_Special_Tables",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_SAP_HANA_OnPrem",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "STAGING"
+		},
+		"annotations": [],
+		"type": "SapHanaTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "SAPP30",
+			"table": {
+				"value": "@{item().SQL_NAME}",
+				"type": "Expression"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

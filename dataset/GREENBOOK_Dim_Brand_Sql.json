@@ -1,0 +1,302 @@
+{
+	"name": "GREENBOOK_Dim_Brand_Sql",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "GREENBOOK"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "SEQUENCE_NUMBER",
+				"type": "decimal",
+				"precision": 20,
+				"scale": 0
+			},
+			{
+				"name": "CLASS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "GREENBOOK_BRAND_ABBREVIATION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "GREENBOOK_BRAND",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PACK_SIZE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UPC_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SCC_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VENDOR",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DISCUS_VENDOR",
+				"type": "nvarchar"
+			},
+			{
+				"name": "IMP_DOM_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AGE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BEVERAGE_TYPE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BRAND_SIZE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SALES_ORGANIZATION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CATEGORY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DISCUS_BRAND",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DISCUS_BRAND_GROUP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DISCUS_LEVEL_1",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DISCUS_LEVEL_2",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DISCUS_LEVEL_3",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DISCUS_LEVEL_4",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ITEM_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BRAND",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BRAND_GROUP_SRC",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BRAND_HOUSE_SRC",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BOTTLES_PER_CASE",
+				"type": "decimal",
+				"precision": 38,
+				"scale": 0
+			},
+			{
+				"name": "PRODUCT_PLANNING_TYPE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RN",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "PRODUCT_BRAND_PLANNING_SIZE_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PRODUCT_BRAND_PLANNING_SIZE_DESCRIPTION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PRODUCT_BRAND_SIZE_DESCRIPTION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PRODUCT_BRAND_SIZE_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PRODUCT_BRAND_LABEL_DESCRIPTION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PRODUCT_BRAND_LABEL_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PRODUCT_BRAND_GROUP_DESCRIPTION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PRODUCT_BRAND_GROUP_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PRODUCT_BRAND_HOUSE_DESCRIPTION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PRODUCT_BRAND_HOUSE_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BOTTLE_SIZE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CATEGORY_FILTER_SRC",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SPIRIT_WINE_FILTER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SIZE_FILTER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VENDOR_FITER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UNMAPPEDBRANDS_UPC",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UNMAPPEDBRANDS_BRAND",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UNMAPPEDBRANDS_CATEGORY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UNMAPPEDBRANDS_PRODUCT_BRAND_GROUP_DESCRIPTION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UNMAPPEDBRANDS_PRODUCT_BRAND_HOUSE_DESCRIPTION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CATEGORY_FILTER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BRAND_HOUSE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BRAND_GROUP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BRAND_GROUP_LINK",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TARGET_COMPETITIVE_SET_BRAND_GROUP_BRANDGROUPLINK",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TARGET_COMPETITIVE_SET_BRAND_GROUP_NABCA_BRAND_GROUP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TARGET_COMPETITIVE_SET_BRAND_GROUP_NABCA_BRAND_LABEL",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TARGET_COMPETITIVE_SET_BRAND_GROUP_REPORTING_LABEL",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TARGET_COMPETITIVE_SET_BRAND_LABEL_BRANDLABELLINK",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TARGET_COMPETITIVE_SET_BRAND_LABEL_NABCA_BRAND_GROUP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TARGET_COMPETITIVE_SET_BRAND_LABEL_NABCA_BRAND_LABEL",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TARGET_COMPETITIVE_SET_BRAND_LABEL_REPORTING_LABEL",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TARGET_BRANDS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TOP_SUPPLIERS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TARGET_CATEGORIES",
+				"type": "nvarchar"
+			},
+			{
+				"name": "WHISKEY_SUB_CATEGORY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DISCUS_BRAND_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "H1_L1",
+				"type": "nvarchar"
+			},
+			{
+				"name": "H1_L2",
+				"type": "nvarchar"
+			},
+			{
+				"name": "H1_L3",
+				"type": "nvarchar"
+			},
+			{
+				"name": "H1_L4",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "GBK",
+			"table": "DIM_BRAND"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

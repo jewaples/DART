@@ -1,0 +1,195 @@
+{
+	"name": "16_MERGE_FILES",
+	"properties": {
+		"activities": [
+			{
+				"name": "MERGE_STG_SHIPMENTS_IDS",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"sink": {
+						"type": "JsonSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings",
+							"copyBehavior": "MergeFiles"
+						},
+						"formatSettings": {
+							"type": "JsonWriteSettings",
+							"filePattern": "arrayOfObjects"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "Sink_DataLake_dev_EDW_HILLEBRAND",
+						"type": "DatasetReference",
+						"parameters": {
+							"FileName": "STG_SHIPMENTS_IDS_UPDATE"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "Sink_DataLake_dev_EDW_HILLEBRAND",
+						"type": "DatasetReference",
+						"parameters": {
+							"FileName": "STG_SHIPMENTS_IDS"
+						}
+					}
+				]
+			},
+			{
+				"name": "MERGE_STG_SHIPMENTS_IDS_LEGS",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "MERGE_STG_SHIPMENTS_IDS",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"sink": {
+						"type": "JsonSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings",
+							"copyBehavior": "MergeFiles"
+						},
+						"formatSettings": {
+							"type": "JsonWriteSettings",
+							"filePattern": "arrayOfObjects"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "Sink_DataLake_dev_EDW_HILLEBRAND",
+						"type": "DatasetReference",
+						"parameters": {
+							"FileName": "STG_SHIPMENTS_IDS_LEGS_UPDATE"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "Sink_DataLake_dev_EDW_HILLEBRAND",
+						"type": "DatasetReference",
+						"parameters": {
+							"FileName": "STG_SHIPMENTS_IDS_LEGS"
+						}
+					}
+				]
+			},
+			{
+				"name": "MERGE_STG_SHIPMENTS_IDS_CONTACTS",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "MERGE_STG_SHIPMENTS_IDS_LEGS",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"sink": {
+						"type": "JsonSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings",
+							"copyBehavior": "MergeFiles"
+						},
+						"formatSettings": {
+							"type": "JsonWriteSettings",
+							"filePattern": "arrayOfObjects"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "Sink_DataLake_dev_EDW_HILLEBRAND",
+						"type": "DatasetReference",
+						"parameters": {
+							"FileName": "STG_SHIPMENTS_IDS_CONTACTS_UPDATE"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "Sink_DataLake_dev_EDW_HILLEBRAND",
+						"type": "DatasetReference",
+						"parameters": {
+							"FileName": "STG_SHIPMENTS_IDS_CONTACTS"
+						}
+					}
+				]
+			}
+		],
+		"folder": {
+			"name": "HILLEBRAND"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-06-07T14:26:48Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

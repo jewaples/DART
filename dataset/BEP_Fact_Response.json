@@ -1,0 +1,297 @@
+{
+	"name": "BEP_Fact_Response",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "BEP"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "SITE",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "COMPANY_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CAMPAIGN_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "VERSION_IDENTIFIER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VERSION_NUMBER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CAMPAIGN_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TASK_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "TASK_VERSION_IDENTIFIER",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "TASK_VERSION_NUMBER",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "TASK_TYPE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TASK_TITLE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TASK_POSITION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PARENT_TASK_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "PARENT_TASK_VALUE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "B_QUESTION_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CALENDAR_YEAR",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "FISCAL_YEAR",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "B_STANDARD_QUARTERLY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BUSA_SEGMENT",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PREMISE2",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SECTION_TITLE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PLACE_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CUSTOM_PLACE_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PLACE_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PLACE_ADDRESS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PLACE_CITY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PLACE_STATE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "POSTAL_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PLACE_STATUS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LAT",
+				"type": "decimal",
+				"precision": 30,
+				"scale": 15
+			},
+			{
+				"name": "LON",
+				"type": "decimal",
+				"precision": 30,
+				"scale": 15
+			},
+			{
+				"name": "TDLINX_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PREMISE_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RTM_CHANNEL_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CUSTOMER_MARKETING_SEGMENT",
+				"type": "nvarchar"
+			},
+			{
+				"name": "USER_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "EMAIL",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FIRST_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LAST_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FULL_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DIVISION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "POSITION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TEAM",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TERRITORY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PERSONNEL_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PERSONNEL_NO",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UNIQUE_PERSONNEL_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "USER_ROLE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MISSION_RESPONSE_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TASK_RESPONSE_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SHORT_STR",
+				"type": "nvarchar"
+			},
+			{
+				"name": "INT_VAL",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "FLOAT_VAL",
+				"type": "decimal",
+				"precision": 30,
+				"scale": 15
+			},
+			{
+				"name": "FILEPICKER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "S3",
+				"type": "nvarchar"
+			},
+			{
+				"name": "COMPLETED_AT",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "YEAR_COMPLETED_AT",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "QUARTER_COMPLETED_AT",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "MONTH_COMPLETED_AT",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "DAY_COMPLETED_AT",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "HOUR_COMPLETED_AT",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "MINUTE_COMPLETED_AT",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": "BEP",
+			"table": "FACT_RESPONSE"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

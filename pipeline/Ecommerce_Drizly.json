@@ -1,0 +1,541 @@
+{
+	"name": "Ecommerce_Drizly",
+	"properties": {
+		"description": "Move files from one folder to another folder",
+		"activities": [
+			{
+				"name": "ForEachFile",
+				"description": "Iterate each file, and move them one by one.",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "FilterFiles",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('FilterFiles').output.value",
+						"type": "Expression"
+					},
+					"batchCount": 20,
+					"activities": [
+						{
+							"name": "File_Lookup",
+							"type": "Lookup",
+							"dependsOn": [
+								{
+									"activity": "Get_SrcMetadata",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderStoredProcedureName": "[dbo].[usp_FILE_LOOKUP]",
+									"storedProcedureParameters": {
+										"FILE_NAME": {
+											"type": "String",
+											"value": {
+												"value": "@activity('Get_SrcMetadata').output.itemName",
+												"type": "Expression"
+											}
+										},
+										"TABLE_NAME": {
+											"type": "String",
+											"value": {
+												"value": "@pipeline().parameters.Destination_Table",
+												"type": "Expression"
+											}
+										}
+									},
+									"partitionOption": "None"
+								},
+								"dataset": {
+									"referenceName": "Ecommerce_File_Table_Destination",
+									"type": "DatasetReference"
+								},
+								"firstRowOnly": true
+							}
+						},
+						{
+							"name": "If Condition",
+							"type": "IfCondition",
+							"dependsOn": [
+								{
+									"activity": "File_Lookup",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"expression": {
+									"value": "@activity('File_Lookup').output.firstRow.EXIST",
+									"type": "Expression"
+								},
+								"ifFalseActivities": [
+									{
+										"name": "Insert_Source_Data",
+										"description": "Inserts source file metadata in log table",
+										"type": "SqlServerStoredProcedure",
+										"dependsOn": [],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"storedProcedureName": "[dbo].[usp_INSERT_SRC_FILES]",
+											"storedProcedureParameters": {
+												"FILE_NAME": {
+													"value": {
+														"value": "@item().name",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"SRC_CREATED_DATE": {
+													"value": {
+														"value": "@activity('Get_SrcMetadata').output.lastModified",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"SRC_PATH": {
+													"value": {
+														"value": "@pipeline().parameters.FolderPath_SourceStore",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"SRC_SIZE": {
+													"value": {
+														"value": "@activity('Get_SrcMetadata').output.size",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"TABLE_NAME": {
+													"value": {
+														"value": "@pipeline().parameters.Destination_Table",
+														"type": "Expression"
+													},
+													"type": "String"
+												}
+											}
+										},
+										"linkedServiceName": {
+											"referenceName": "NAM_RGM_Analytics_SQL",
+											"type": "LinkedServiceReference"
+										}
+									},
+									{
+										"name": "Validate_Destination_Data",
+										"description": "Inserts source file metadata in log table",
+										"type": "SqlServerStoredProcedure",
+										"dependsOn": [
+											{
+												"activity": "load_drizly",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"storedProcedureName": "[dbo].[usp_VALIDATE_DST_FILES]",
+											"storedProcedureParameters": {
+												"FILE_NAME": {
+													"value": {
+														"value": "@item().name",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"DST_CREATED_DATE": {
+													"value": {
+														"value": "@pipeline().parameters.STARTDATE",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"DST_PATH": {
+													"value": {
+														"value": "@pipeline().parameters.FolderPath_DestinationStore",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"DST_SIZE": {
+													"value": {
+														"value": "@activity('Get_SrcMetadata').output.size",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"TABLE_NAME": {
+													"value": {
+														"value": "@pipeline().parameters.Destination_Table",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"IS_ZIP": {
+													"value": {
+														"value": "@pipeline().parameters.Is_Zip",
+														"type": "Expression"
+													},
+													"type": "String"
+												}
+											}
+										},
+										"linkedServiceName": {
+											"referenceName": "NAM_RGM_Analytics_SQL",
+											"type": "LinkedServiceReference"
+										}
+									},
+									{
+										"name": "load_drizly",
+										"type": "Copy",
+										"dependsOn": [
+											{
+												"activity": "Insert_Source_Data",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"source": {
+												"type": "DelimitedTextSource",
+												"storeSettings": {
+													"type": "AzureBlobFSReadSettings",
+													"recursive": false,
+													"enablePartitionDiscovery": false
+												},
+												"formatSettings": {
+													"type": "DelimitedTextReadSettings"
+												}
+											},
+											"sink": {
+												"type": "AzureSqlSink",
+												"sqlWriterStoredProcedureName": "[dbo].[usp_LOAD_DRIZLY]",
+												"sqlWriterTableType": "DRIZLY_TYPE",
+												"storedProcedureTableTypeParameterName": "TVP",
+												"disableMetricsCollection": false
+											},
+											"enableStaging": false,
+											"translator": {
+												"type": "TabularTranslator",
+												"mappings": [
+													{
+														"source": {
+															"name": "Country ",
+															"type": "String"
+														},
+														"sink": {
+															"name": "COUNTRY",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": " State ",
+															"type": "String"
+														},
+														"sink": {
+															"name": "STATE",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": " Representative Address ",
+															"type": "String"
+														},
+														"sink": {
+															"name": "REPRESENTATIVE_ADDRESS",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": " Zip ",
+															"type": "String"
+														},
+														"sink": {
+															"name": "ZIP",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": " Bottle Name ",
+															"type": "String"
+														},
+														"sink": {
+															"name": "BOTTLE_NAME",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": " Quantity ",
+															"type": "String"
+														},
+														"sink": {
+															"name": "QUANTITY",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": " Product type ",
+															"type": "String"
+														},
+														"sink": {
+															"name": "PRODUCT_TYPE",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": " Store Name ",
+															"type": "String"
+														},
+														"sink": {
+															"name": "STORE_NAME",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": " Rating ",
+															"type": "String"
+														},
+														"sink": {
+															"name": "RATING",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": " Currency(ISO) ",
+															"type": "String"
+														},
+														"sink": {
+															"name": "CURRENCY_ISO",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": " Price ",
+															"type": "String"
+														},
+														"sink": {
+															"name": "PRICE",
+															"type": "Double"
+														}
+													},
+													{
+														"source": {
+															"name": " Discounts ",
+															"type": "String"
+														},
+														"sink": {
+															"name": "DISCOUNTS",
+															"type": "String"
+														}
+													},
+													{
+														"source": {
+															"name": " Date",
+															"type": "String"
+														},
+														"sink": {
+															"name": "DATE",
+															"type": "DateTime"
+														}
+													}
+												]
+											}
+										},
+										"inputs": [
+											{
+												"referenceName": "Ecommerce_Source_File",
+												"type": "DatasetReference",
+												"parameters": {
+													"path": "@pipeline().parameters.FolderPath_SourceStore",
+													"filename": "@item().name"
+												}
+											}
+										],
+										"outputs": [
+											{
+												"referenceName": "Ecommerce_Drizly_Staging_SQL",
+												"type": "DatasetReference"
+											}
+										]
+									}
+								]
+							}
+						},
+						{
+							"name": "Get_SrcMetadata",
+							"type": "GetMetadata",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataset": {
+									"referenceName": "Ecommerce_Source_File",
+									"type": "DatasetReference",
+									"parameters": {
+										"path": "@pipeline().parameters.FolderPath_SourceStore",
+										"filename": "@item().name"
+									}
+								},
+								"fieldList": [
+									"itemName",
+									"lastModified",
+									"size"
+								],
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "FilterFiles",
+				"description": "Only files will be selected, the sub-folders will not be selected.",
+				"type": "Filter",
+				"dependsOn": [
+					{
+						"activity": "GetFileList",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('GetFileList').output.childItems",
+						"type": "Expression"
+					},
+					"condition": {
+						"value": "@endswith(item().name,'.csv')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "GetFileList",
+				"type": "GetMetadata",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "Ecommerce_Source_Dir",
+						"type": "DatasetReference",
+						"parameters": {
+							"FolderPath": "@pipeline().parameters.FolderPath_SourceStore"
+						}
+					},
+					"fieldList": [
+						"itemName",
+						"childItems"
+					],
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"recursive": true
+					},
+					"formatSettings": {
+						"type": "DelimitedTextReadSettings"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"FolderPath_SourceStore": {
+				"type": "String",
+				"defaultValue": "rgm/Inputs/Beezlabs/Drizly"
+			},
+			"FolderPath_DestinationStore": {
+				"type": "String",
+				"defaultValue": "dbo.Ecommerce"
+			},
+			"Destination_Table": {
+				"type": "string",
+				"defaultValue": "dbo.ECOMM_FILES_LOAD_LOG"
+			},
+			"Is_Zip": {
+				"type": "string",
+				"defaultValue": "0"
+			},
+			"STARTDATE": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "RGM"
+		},
+		"annotations": [],
+		"lastPublishTime": "2021-04-20T22:28:27Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,55 @@
+{
+	"name": "Ecommerce_INSTACART_FTP",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_Instacart_Sftp",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "ECOMMERCE"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "SftpLocation",
+				"folderPath": "/outbox"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "UPC",
+				"type": "String"
+			},
+			{
+				"name": "product",
+				"type": "String"
+			},
+			{
+				"name": "brand",
+				"type": "String"
+			},
+			{
+				"name": "DATE",
+				"type": "String"
+			},
+			{
+				"name": "Day_Of_Week",
+				"type": "String"
+			},
+			{
+				"name": "dollar_volume",
+				"type": "String"
+			},
+			{
+				"name": "unit_volume",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

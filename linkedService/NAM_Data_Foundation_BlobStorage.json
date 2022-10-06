@@ -1,0 +1,19 @@
+{
+	"name": "NAM_Data_Foundation_BlobStorage",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureBlobStorage",
+		"typeProperties": {
+			"sasUri": "https://bdhdlsgen2nam.blob.core.windows.net/prod",
+			"sasToken": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "NAM_bdh_AzureKeyVault",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "Nam-bdhblob-QueryString"
+			}
+		}
+	}
+}

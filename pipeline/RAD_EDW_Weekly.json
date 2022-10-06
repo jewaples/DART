@@ -1,0 +1,28 @@
+{
+	"name": "RAD_EDW_Weekly",
+	"properties": {
+		"activities": [
+			{
+				"name": "Set variable1",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "A",
+					"value": "A"
+				}
+			}
+		],
+		"variables": {
+			"A": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "RAD"
+		},
+		"annotations": [],
+		"lastPublishTime": "2021-08-12T20:11:41Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,187 @@
+{
+	"name": "DISCUS_Dim_Product_EDW",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "DISCUS"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "DISCUS_BRAND_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "H1_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BRAND_FAMILY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BRAND_NAME_FULL",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BRAND_NAME_ABBR",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VENDOR_DISCUS_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FULL_VENDOR_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VENDOR_ABBREV",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MEMBER_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ACTIVE_DATE_YYYY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ACTIVE_DATE_MM",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PROOF",
+				"type": "decimal",
+				"precision": 17,
+				"scale": 3
+			},
+			{
+				"name": "AGE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ACTIVE_FLAG",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CROSS_REF_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "H2_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "H1_L1",
+				"type": "nvarchar"
+			},
+			{
+				"name": "H1_L2",
+				"type": "nvarchar"
+			},
+			{
+				"name": "H1_L3",
+				"type": "nvarchar"
+			},
+			{
+				"name": "H1_L4",
+				"type": "nvarchar"
+			},
+			{
+				"name": "H2_L0",
+				"type": "nvarchar"
+			},
+			{
+				"name": "H2_L1",
+				"type": "nvarchar"
+			},
+			{
+				"name": "H2_L2",
+				"type": "nvarchar"
+			},
+			{
+				"name": "H2_L3",
+				"type": "nvarchar"
+			},
+			{
+				"name": "H1_L5",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CROSS_REF_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BRAND_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SECONDARY_FLAVOR_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SECONDARY_FLAVOR",
+				"type": "nvarchar"
+			},
+			{
+				"name": "V1_COMMENT",
+				"type": "nvarchar"
+			},
+			{
+				"name": "V2_COMMENT",
+				"type": "nvarchar"
+			},
+			{
+				"name": "V3_COMMENT",
+				"type": "nvarchar"
+			},
+			{
+				"name": "V4_COMMENT",
+				"type": "nvarchar"
+			},
+			{
+				"name": "V5_COMMENT",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MAJOR_FLAVOR_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MAJOR_FLAVOR",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PRIMARY_FLAVOR_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PRIMARY_FLAVOR",
+				"type": "nvarchar"
+			},
+			{
+				"name": "HISTORY_AS_OF_MONTH",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TIMESTAMP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "H2_L4",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "DISCUS",
+			"table": "DIM_PRODUCT"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

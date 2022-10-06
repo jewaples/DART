@@ -1,0 +1,17 @@
+{
+	"name": "NAM_SAP_HANA_OnPrem",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"description": "connection to Sap Hana DB On-premises ",
+		"annotations": [],
+		"type": "SapHana",
+		"typeProperties": {
+			"connectionString": "servernode=bachanaq30.gva.data:32215;uid=cmedina",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiI2ODY3MDc1Ny0xOTA4LTQzMTMtYTE4Zi02Y2MxYTQ0MDQ3NmEiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+		},
+		"connectVia": {
+			"referenceName": "nlmas005-IRtime",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

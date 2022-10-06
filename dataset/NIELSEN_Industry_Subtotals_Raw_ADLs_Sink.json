@@ -1,0 +1,25 @@
+{
+	"name": "NIELSEN_Industry_Subtotals_Raw_ADLs_Sink",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_Data_Foundation_DataLake",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "NIELSEN"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "INDUSTRY_SUBTOTALS.parquet",
+				"folderPath": "EDW/NIELSEN/INDUSTRY_SUBTOTALS",
+				"fileSystem": "prod"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

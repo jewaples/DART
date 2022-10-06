@@ -1,0 +1,94 @@
+{
+	"name": "Ecommerce_Drizly_Sales_Staging_SQL",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "ECOMMERCE"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "DELIVERED_AT",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "BRAND_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CATALOG_ITEM_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VERIFIED_UPC",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UNIT_PRICE",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "QUANTITY",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "CONTAINER_QTY",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "CONTAINER_TYPE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VOLUME",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "VOLUME_UNITS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TOP_LEVEL_CATEGORY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TOP_SUBCATEGORY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SUBCATEGORY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DELIVERY_STATE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DELIVERY_ZIP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MARKET",
+				"type": "nvarchar"
+			},
+			{
+				"name": "STORE_ZIP",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "STG",
+			"table": "DRIZLY_ECOMMERCE"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

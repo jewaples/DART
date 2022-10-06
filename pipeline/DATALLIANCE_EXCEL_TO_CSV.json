@@ -1,0 +1,894 @@
+{
+	"name": "DATALLIANCE_EXCEL_TO_CSV",
+	"properties": {
+		"activities": [
+			{
+				"name": "GET_EXCEL_FILES",
+				"type": "GetMetadata",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "DATALLIANCE_GET_EXCEL",
+						"type": "DatasetReference"
+					},
+					"fieldList": [
+						"childItems"
+					],
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
+						"enablePartitionDiscovery": false
+					}
+				}
+			},
+			{
+				"name": "GET_EACH_EXCEL_FILE",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Filter xlsx",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Filter xlsx').output.value",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "NAME_OF_THE_FILE",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "FilesString",
+								"value": {
+									"value": "@{item()}",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "TRANSFORM_TO_CSV",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "NAME_OF_THE_FILE",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "ExcelSource",
+									"storeSettings": {
+										"type": "AzureBlobFSReadSettings",
+										"recursive": true,
+										"enablePartitionDiscovery": false
+									}
+								},
+								"sink": {
+									"type": "DelimitedTextSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "DelimitedTextWriteSettings",
+										"quoteAllText": true,
+										"fileExtension": ".txt"
+									}
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "DATALLIANCE_EXCEL_Dataset",
+									"type": "DatasetReference",
+									"parameters": {
+										"Filename": "@replace(replace(replace(replace(variables('FilesString'),'[',''),']',''),'{\"name\":\"',''),'\",\"type\":\"File\"}','')"
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "DATALLIANCE_XLSX_TO_CSV",
+									"type": "DatasetReference",
+									"parameters": {
+										"File": {
+											"value": "@replace(replace(replace(replace(replace(replace(replace(variables('FilesString'),'[',''),']',''),'{\"name\":\"',''),'\",\"type\":\"File\"}',''),'.xlsx','.csv'),':','-'),' ','_')",
+											"type": "Expression"
+										},
+										"Folder": {
+											"value": "@replace(substring(replace(replace(replace(replace(variables('FilesString'),'[',''),']',''),'{\"name\":\"',''),'\",\"type\":\"File\"}',''),0,10),'-','')",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						},
+						{
+							"name": "TRANSFORM_CSV_TO_PARKET",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "TRANSFORM_TO_CSV",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "DelimitedTextSource",
+									"storeSettings": {
+										"type": "AzureBlobFSReadSettings",
+										"recursive": true,
+										"enablePartitionDiscovery": false
+									},
+									"formatSettings": {
+										"type": "DelimitedTextReadSettings",
+										"skipLineCount": 3
+									}
+								},
+								"sink": {
+									"type": "ParquetSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "ParquetWriteSettings"
+									}
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"mappings": [
+										{
+											"source": {
+												"name": "Product\nActivity\nDate",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "ProductActivityDate",
+												"type": "String",
+												"physicalType": "UTF8"
+											}
+										},
+										{
+											"source": {
+												"name": "Location",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "Location",
+												"type": "String",
+												"physicalType": "UTF8"
+											}
+										},
+										{
+											"source": {
+												"name": "Shipping Lane",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "ShippingLane",
+												"type": "String",
+												"physicalType": "UTF8"
+											}
+										},
+										{
+											"source": {
+												"name": "Supplier\nUPC",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "SupplierUPC",
+												"type": "String",
+												"physicalType": "UTF8"
+											}
+										},
+										{
+											"source": {
+												"name": "Supplier\nCat ID",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "SupplierCatID",
+												"type": "String",
+												"physicalType": "UTF8"
+											}
+										},
+										{
+											"source": {
+												"name": "Distributor\nCat ID",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "DistributorCatID",
+												"type": "String",
+												"physicalType": "UTF8"
+											}
+										},
+										{
+											"source": {
+												"name": "Description",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "Description",
+												"type": "String",
+												"physicalType": "UTF8"
+											}
+										},
+										{
+											"source": {
+												"name": "Used\nStatus",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "UsedStatus",
+												"type": "String",
+												"physicalType": "UTF8"
+											}
+										},
+										{
+											"source": {
+												"name": "Last\nOrdered",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "LastOrdered",
+												"type": "String",
+												"physicalType": "UTF8"
+											}
+										},
+										{
+											"source": {
+												"name": "Qty on Hand",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "QtyonHand",
+												"type": "String",
+												"physicalType": "UTF8"
+											}
+										},
+										{
+											"source": {
+												"name": "Qty on Order",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "QtyonOrder",
+												"type": "String",
+												"physicalType": "UTF8"
+											}
+										},
+										{
+											"source": {
+												"name": "Qty\nSold",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "QtySold",
+												"type": "String",
+												"physicalType": "UTF8"
+											}
+										},
+										{
+											"source": {
+												"name": "Total\nQty\nRsv'd",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "TotalQtyRsvd",
+												"type": "String",
+												"physicalType": "UTF8"
+											}
+										},
+										{
+											"source": {
+												"name": "Total\nQty\nCommt'd",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "TotalQtyCommtd",
+												"type": "String",
+												"physicalType": "UTF8"
+											}
+										},
+										{
+											"source": {
+												"name": "Qty\nTransferred",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "QtyTransferred",
+												"type": "String",
+												"physicalType": "UTF8"
+											}
+										},
+										{
+											"source": {
+												"name": "WTD\nSales",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "WTDSales",
+												"type": "String",
+												"physicalType": "UTF8"
+											}
+										},
+										{
+											"source": {
+												"name": "Total\nNQA\nAdj",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "TotalNQAAdj",
+												"type": "String",
+												"physicalType": "UTF8"
+											}
+										},
+										{
+											"source": {
+												"name": "NQA",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "NQA",
+												"type": "String",
+												"physicalType": "UTF8"
+											}
+										},
+										{
+											"source": {
+												"name": "SIM\nAlert\nCode",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "SIMAlertCode",
+												"type": "String",
+												"physicalType": "UTF8"
+											}
+										},
+										{
+											"source": {
+												"name": "EDI Location ID",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "EDILocationID",
+												"type": "String",
+												"physicalType": "UTF8"
+											}
+										},
+										{
+											"source": {
+												"name": "PO Group\nID",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "POGroupID",
+												"type": "String",
+												"physicalType": "UTF8"
+											}
+										},
+										{
+											"source": {
+												"name": "Item Alert Comments",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "ItemAlertComments",
+												"type": "String",
+												"physicalType": "UTF8"
+											}
+										},
+										{
+											"source": {
+												"name": "Item Comments",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "ItemComments",
+												"type": "String",
+												"physicalType": "UTF8"
+											}
+										},
+										{
+											"source": {
+												"name": "PA\nOrder\nInfo",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "PAOrderInfo",
+												"type": "String",
+												"physicalType": "UTF8"
+											}
+										},
+										{
+											"source": {
+												"name": "Used\nMin OQ",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "UsedMinOQ",
+												"type": "String",
+												"physicalType": "UTF8"
+											}
+										},
+										{
+											"source": {
+												"name": "Pack\nSize 1",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "PackSize1",
+												"type": "String",
+												"physicalType": "UTF8"
+											}
+										},
+										{
+											"source": {
+												"name": "Pack\nSize 2",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "PackSize2",
+												"type": "String",
+												"physicalType": "UTF8"
+											}
+										},
+										{
+											"source": {
+												"name": "Pack\nSize 3",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "PackSize3",
+												"type": "String",
+												"physicalType": "UTF8"
+											}
+										},
+										{
+											"source": {
+												"name": "Pack Size\nOverride",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "PackSizeOverride",
+												"type": "String",
+												"physicalType": "UTF8"
+											}
+										},
+										{
+											"source": {
+												"name": "Dist\nItem\nStatus",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "DistItemStatus",
+												"type": "String",
+												"physicalType": "UTF8"
+											}
+										},
+										{
+											"source": {
+												"name": "Status\nOvrd",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "StatusOvrd",
+												"type": "String",
+												"physicalType": "UTF8"
+											}
+										},
+										{
+											"source": {
+												"name": "Status\nOvrd\nComments",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "StatusOvrdComments",
+												"type": "String",
+												"physicalType": "UTF8"
+											}
+										},
+										{
+											"source": {
+												"name": "Behavior\nGroup",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "BehaviorGroup",
+												"type": "String",
+												"physicalType": "UTF8"
+											}
+										},
+										{
+											"source": {
+												"name": "Dist\nUOM",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "DistUOM",
+												"type": "String",
+												"physicalType": "UTF8"
+											}
+										},
+										{
+											"source": {
+												"name": "SIM\nUOM",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "SIMUOM",
+												"type": "String",
+												"physicalType": "UTF8"
+											}
+										},
+										{
+											"source": {
+												"name": "Supplier\nLocation ID",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "SupplierLocationID",
+												"type": "String",
+												"physicalType": "UTF8"
+											}
+										},
+										{
+											"source": {
+												"name": "Supplier\nAlt ID",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "SupplierAltID",
+												"type": "String",
+												"physicalType": "UTF8"
+											}
+										},
+										{
+											"source": {
+												"name": "Unit\nPrice",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "UnitPrice",
+												"type": "String",
+												"physicalType": "UTF8"
+											}
+										},
+										{
+											"source": {
+												"name": "Brand Code",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "BrandCode",
+												"type": "String",
+												"physicalType": "UTF8"
+											}
+										},
+										{
+											"source": {
+												"name": "Product Group",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "ProductGroup",
+												"type": "String",
+												"physicalType": "UTF8"
+											}
+										},
+										{
+											"source": {
+												"name": "PA Order UDF1",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "PAOrderUDF1",
+												"type": "String",
+												"physicalType": "UTF8"
+											}
+										},
+										{
+											"source": {
+												"name": "PA Order UDF2",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "PAOrderUDF2",
+												"type": "String",
+												"physicalType": "UTF8"
+											}
+										},
+										{
+											"source": {
+												"name": "Alt Match ID",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "AltMatchID",
+												"type": "String",
+												"physicalType": "UTF8"
+											}
+										},
+										{
+											"source": {
+												"name": "Loc Case Count",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "LocCaseCount",
+												"type": "String",
+												"physicalType": "UTF8"
+											}
+										},
+										{
+											"source": {
+												"name": "Supp Case Count",
+												"type": "String",
+												"physicalType": "String"
+											},
+											"sink": {
+												"name": "SuppCaseCount",
+												"type": "String",
+												"physicalType": "UTF8"
+											}
+										}
+									],
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "DATALLIANCE_CSV",
+									"type": "DatasetReference",
+									"parameters": {
+										"File": "@replace(replace(replace(replace(replace(replace(replace(variables('FilesString'),'[',''),']',''),'{\"name\":\"',''),'\",\"type\":\"File\"}',''),'.xlsx','.csv'),':','-'),' ','_')",
+										"Folder": "@replace(substring(replace(replace(replace(replace(variables('FilesString'),'[',''),']',''),'{\"name\":\"',''),'\",\"type\":\"File\"}',''),0,10),'-','')"
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "DATALLIANCE_Parquet",
+									"type": "DatasetReference",
+									"parameters": {
+										"Folder": "@replace(substring(replace(replace(replace(replace(variables('FilesString'),'[',''),']',''),'{\"name\":\"',''),'\",\"type\":\"File\"}',''),0,10),'-','')"
+									}
+								}
+							]
+						},
+						{
+							"name": "Copy to Current",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "TRANSFORM_CSV_TO_PARKET",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "ParquetSource",
+									"storeSettings": {
+										"type": "AzureBlobFSReadSettings",
+										"recursive": true,
+										"enablePartitionDiscovery": false
+									}
+								},
+								"sink": {
+									"type": "ParquetSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "ParquetWriteSettings"
+									}
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "DATALLIANCE_Parquet",
+									"type": "DatasetReference",
+									"parameters": {
+										"Folder": "@replace(substring(replace(replace(replace(replace(variables('FilesString'),'[',''),']',''),'{\"name\":\"',''),'\",\"type\":\"File\"}',''),0,10),'-','')"
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "DATALLIANCE_CURRENT",
+									"type": "DatasetReference"
+								}
+							]
+						},
+						{
+							"name": "Delete source file",
+							"type": "Delete",
+							"dependsOn": [
+								{
+									"activity": "Copy to Current",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataset": {
+									"referenceName": "DATALLIANCE_EXCEL_Dataset",
+									"type": "DatasetReference",
+									"parameters": {
+										"Filename": "@replace(replace(replace(replace(variables('FilesString'),'[',''),']',''),'{\"name\":\"',''),'\",\"type\":\"File\"}','')"
+									}
+								},
+								"enableLogging": false,
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"modifiedDatetimeStart": "2022-09-12T00:00:00.978Z",
+									"enablePartitionDiscovery": false
+								}
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "Filter xlsx",
+				"type": "Filter",
+				"dependsOn": [
+					{
+						"activity": "GET_EXCEL_FILES",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('GET_EXCEL_FILES').output.childItems",
+						"type": "Expression"
+					},
+					"condition": {
+						"value": "@endswith(item().name,'.xlsx')",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"variables": {
+			"FilesString": {
+				"type": "String"
+			},
+			"Today": {
+				"type": "String",
+				"defaultValue": "@{utcnow()}"
+			}
+		},
+		"folder": {
+			"name": "DATALLIANCE"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-09-13T00:34:46Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

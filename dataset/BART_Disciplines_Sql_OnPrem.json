@@ -1,0 +1,97 @@
+{
+	"name": "BART_Disciplines_Sql_OnPrem",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "USMIA_MDS_NASQLDB_OnPrem",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "BART"
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [
+			{
+				"name": "ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "MUID",
+				"type": "uniqueidentifier"
+			},
+			{
+				"name": "VersionName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VersionNumber",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Version_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "VersionFlag",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Name",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Code",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ChangeTrackingMask",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ADVOCACY_DISCIPLINE_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "EnterDateTime",
+				"type": "datetime2",
+				"scale": 3
+			},
+			{
+				"name": "EnterUserName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "EnterVersionNumber",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "LastChgDateTime",
+				"type": "datetime2",
+				"scale": 3
+			},
+			{
+				"name": "LastChgUserName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LastChgVersionNumber",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ValidationStatus",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "mdm",
+			"table": "ADVOCACY_DISCIPLINE"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

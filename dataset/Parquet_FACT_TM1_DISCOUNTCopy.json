@@ -1,0 +1,25 @@
+{
+	"name": "Parquet_FACT_TM1_DISCOUNTCopy",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_Data_Foundation_DataLake",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@concat(formatDateTime(utcnow(),'yyyyMMdd'),'/FACT_TM1_DISCOUNT.parquet')",
+					"type": "Expression"
+				},
+				"folderPath": "EDW/ANAPLAN/FACT_TM1_DISCOUNT",
+				"fileSystem": "prod"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

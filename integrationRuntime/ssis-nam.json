@@ -1,0 +1,19 @@
+{
+	"name": "ssis-nam",
+	"properties": {
+		"type": "Managed",
+		"description": "SSIS-RunTime-NAM",
+		"typeProperties": {
+			"computeProperties": {
+				"location": "East US 2",
+				"nodeSize": "Standard_D8_v3",
+				"numberOfNodes": 10,
+				"maxParallelExecutionsPerNode": 5
+			},
+			"ssisProperties": {
+				"edition": "Standard",
+				"licenseType": "BasePrice"
+			}
+		}
+	}
+}

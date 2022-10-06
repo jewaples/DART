@@ -1,0 +1,22 @@
+{
+	"name": "Template_IdsPages_Ingestion_To_File",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ID_NUMBER_OF_PAGES",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "STG",
+			"table": "HILLEBRAND_CONTACTS_PAGES"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

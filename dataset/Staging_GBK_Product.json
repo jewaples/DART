@@ -1,0 +1,205 @@
+{
+	"name": "Staging_GBK_Product",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "STAGING"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "Item Description",
+				"type": "varchar"
+			},
+			{
+				"name": "Item Id",
+				"type": "varchar"
+			},
+			{
+				"name": "Product Brand Planning Size Id",
+				"type": "varchar"
+			},
+			{
+				"name": "Product Brand Planning Size Description",
+				"type": "varchar"
+			},
+			{
+				"name": "Product Brand Size Description",
+				"type": "varchar"
+			},
+			{
+				"name": "Product Brand Size Id",
+				"type": "varchar"
+			},
+			{
+				"name": "Product Brand Label Description",
+				"type": "varchar"
+			},
+			{
+				"name": "Product Brand Label Id",
+				"type": "varchar"
+			},
+			{
+				"name": "Product Brand Group Description",
+				"type": "varchar"
+			},
+			{
+				"name": "Product Brand Group Id",
+				"type": "varchar"
+			},
+			{
+				"name": "Product Brand House Description",
+				"type": "varchar"
+			},
+			{
+				"name": "Product Brand House Id",
+				"type": "varchar"
+			},
+			{
+				"name": "Bottle Size",
+				"type": "varchar"
+			},
+			{
+				"name": "Bottle Volume",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "Bottles per Case",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Retail Units per Case",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Bottles per Retail Unit",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Active for Planning",
+				"type": "varchar"
+			},
+			{
+				"name": "SAP Material Group Code",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "SAP Material Group Description",
+				"type": "varchar"
+			},
+			{
+				"name": "SAP Material Type",
+				"type": "varchar"
+			},
+			{
+				"name": "Beverage Type",
+				"type": "varchar"
+			},
+			{
+				"name": "PROOF",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "Product Planning Type ID",
+				"type": "varchar"
+			},
+			{
+				"name": "Product Planning Type",
+				"type": "varchar"
+			},
+			{
+				"name": "Total Case Volume",
+				"type": "decimal",
+				"precision": 36,
+				"scale": 6
+			},
+			{
+				"name": "Material Price Group",
+				"type": "varchar"
+			},
+			{
+				"name": "Brand Group Code",
+				"type": "varchar"
+			},
+			{
+				"name": "Brand Group Description",
+				"type": "varchar"
+			},
+			{
+				"name": "Representative Planning IPC",
+				"type": "varchar"
+			},
+			{
+				"name": "Representative Planning IPC Description",
+				"type": "varchar"
+			},
+			{
+				"name": "Container Type Code",
+				"type": "varchar"
+			},
+			{
+				"name": "Container Type Description",
+				"type": "varchar"
+			},
+			{
+				"name": "Outer Packaging Type Code",
+				"type": "varchar"
+			},
+			{
+				"name": "Outer Packaging Type Description",
+				"type": "varchar"
+			},
+			{
+				"name": "Product Hierarchy Level 4 Code",
+				"type": "varchar"
+			},
+			{
+				"name": "Product Hierarchy Level 4 Description",
+				"type": "varchar"
+			},
+			{
+				"name": "Brand Status Code",
+				"type": "varchar"
+			},
+			{
+				"name": "Brand Status",
+				"type": "varchar"
+			},
+			{
+				"name": "Brand Classification Code",
+				"type": "varchar"
+			},
+			{
+				"name": "Brand Classification",
+				"type": "varchar"
+			},
+			{
+				"name": "Active for Annual Planning Code",
+				"type": "varchar"
+			},
+			{
+				"name": "Active for Annual Planning",
+				"type": "varchar"
+			},
+			{
+				"name": "SCC Code",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "STG",
+			"table": "NAMIBP_PRODUCT_MD_GBK"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

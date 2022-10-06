@@ -1,0 +1,63 @@
+{
+	"name": "Anaplan_CS_Details_SQL",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "RAD"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "PROMOTIONS_BRAND SIZE_PROMOTION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PROMOTIONS_BRAND SIZE_PROMOTION CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PROMOTIONS_BRAND SIZE_BRAND SIZE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PROMOTIONS_BRAND SIZE_BRAND SIZE_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PROMOTIONS_BRAND SIZE_MARKET",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PROMOTIONS_BRAND SIZE_MARKET_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PROMOTIONS_BRAND SIZE_FUNDING_SOURCE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PERIOD",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FORECAST",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "BUDGET",
+				"type": "float",
+				"precision": 15
+			}
+		],
+		"typeProperties": {
+			"schema": "RAD",
+			"table": "NAMIBP_ANAPLAN_SC"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

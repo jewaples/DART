@@ -1,0 +1,104 @@
+{
+	"name": "RAD_Dim_Deal_Organizer_Sql",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "RAD"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "DEAL_KEY",
+				"type": "varchar"
+			},
+			{
+				"name": "DEAL_MARKET",
+				"type": "varchar"
+			},
+			{
+				"name": "DISTRIBUTOR_ID",
+				"type": "varchar"
+			},
+			{
+				"name": "DEAL_DISTRIBUTOR",
+				"type": "varchar"
+			},
+			{
+				"name": "DEAL_BRAND_PLANNING_SIZE_CODE",
+				"type": "varchar"
+			},
+			{
+				"name": "DEAL_BRAND_PLANNING_SIZE",
+				"type": "varchar"
+			},
+			{
+				"name": "DEAL_NAME",
+				"type": "varchar"
+			},
+			{
+				"name": "DEAL_ID",
+				"type": "varchar"
+			},
+			{
+				"name": "DEAL_TIME",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "DEAL_PERIOD",
+				"type": "varchar"
+			},
+			{
+				"name": "DEAL_ORGANIZER_PRICE_TO_RETAIL",
+				"type": "decimal",
+				"precision": 38,
+				"scale": 0
+			},
+			{
+				"name": "DEAL_PRICE_TO_RETAIL",
+				"type": "decimal",
+				"precision": 18,
+				"scale": 0
+			},
+			{
+				"name": "DEAL_LIST_PRICE_FRONTLINE",
+				"type": "decimal",
+				"precision": 18,
+				"scale": 0
+			},
+			{
+				"name": "DEAL_DISCOUNT_VOLUME",
+				"type": "decimal",
+				"precision": 38,
+				"scale": 0
+			},
+			{
+				"name": "DEAL_PERCENTAGE_SOLD_ON_DEAL",
+				"type": "decimal",
+				"precision": 38,
+				"scale": 0
+			},
+			{
+				"name": "DEAL_LOWER_BOUND",
+				"type": "decimal",
+				"precision": 18,
+				"scale": 0
+			},
+			{
+				"name": "DEAL_UPPER_BOUND",
+				"type": "decimal",
+				"precision": 18,
+				"scale": 0
+			}
+		],
+		"typeProperties": {
+			"schema": "RAD",
+			"table": "DIM_DEAL_ORGANIZER"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

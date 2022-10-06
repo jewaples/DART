@@ -1,0 +1,29 @@
+{
+	"name": "RAD_BrandTeams_SQL",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "RAD"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "PRODUCT_BRAND_GROUP_DESCRIPTION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "B_TEAM",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "RAD",
+			"table": "BRAND_TEAMS"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,81 @@
+{
+	"name": "Ecommerce_Minibar_OOS_SQL",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "ECOMMERCE"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "SUPPLIER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZIP_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "STATE_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "REGION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PRODUCT_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VOLUME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PACK_SIZE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PRICE",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "VARIANT_ACTIVE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "IN_STOCK",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TIMESTAMP",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "PIPELINE_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SOURCE_FILE",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "STG",
+			"table": "MINIBAR_OUT_OF_STOCK"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

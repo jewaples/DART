@@ -1,0 +1,659 @@
+{
+	"name": "AAS_Model_Refresh_CCC_RGM_Partitions_2021",
+	"properties": {
+		"activities": [
+			{
+				"name": "Refresh_Partition_FY2021_H2",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": {
+						"value": "https://prod-99.westeurope.logic.azure.com:443/workflows/f072f84d4b1a4234919c9418d60681c6/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=kPm1yNz-hGyIQ0ICkkxd74aF_MT_1VzN2d8FuXY2ejc",
+						"type": "Expression"
+					},
+					"method": "POST",
+					"headers": {
+						"Content-Type": "application/json"
+					},
+					"body": {
+						"value": "@concat('{\"aasUrl\":\"',pipeline().parameters.in_model_url,'\",\"aasRefreshBody\":{\"CommitMode\":\"transactional\",\"MaxParallelism\":2,\"Objects\":[\n {\n        \"database\": \"Commercial_Control_Center\",\n        \"table\": \"RGM - Sales\",\n        \"partition\": \"RGM Sales - FY2021 H2\"\n      }\n\t  ],\"RetryCount\":2,\"Type\":\"Full\"}}')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "SetVarRefreshStatusStart_FY2021_H2",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Refresh_Partition_FY2021_H2",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "var_refresh_status",
+					"value": "Start state"
+				}
+			},
+			{
+				"name": "UntilRefreshFinished_FY2021_H2",
+				"type": "Until",
+				"dependsOn": [
+					{
+						"activity": "SetVarRefreshStatusStart_FY2021_H2",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@or(equals(variables('var_refresh_status'),'succeeded'),equals(variables('var_refresh_status'),'failed'))",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "WaitForRefresh_FY2021_H2",
+							"type": "Wait",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"waitTimeInSeconds": 600
+							}
+						},
+						{
+							"name": "GetAasRefreshStatus_FY2021_H2",
+							"type": "WebActivity",
+							"dependsOn": [
+								{
+									"activity": "WaitForRefresh_FY2021_H2",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"url": {
+									"value": "@activity('Refresh_Partition_FY2021_H2').output.headers['location']",
+									"type": "Expression"
+								},
+								"method": "GET",
+								"headers": {
+									"Content-Type": "application/json"
+								},
+								"authentication": {
+									"type": "MSI",
+									"resource": "https://*.asazure.windows.net"
+								}
+							}
+						},
+						{
+							"name": "SetVarRefreshStatus_FY2021_H2",
+							"type": "SetVariable",
+							"dependsOn": [
+								{
+									"activity": "GetAasRefreshStatus_FY2021_H2",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "var_refresh_status",
+								"value": {
+									"value": "@activity('GetAasRefreshStatus_FY2021_H2').output.status",
+									"type": "Expression"
+								}
+							}
+						}
+					],
+					"timeout": "7.00:00:00"
+				}
+			},
+			{
+				"name": "Refresh_Partition_FY2021_H1",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "IfRefreshFailed_FY2021_H2",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": {
+						"value": "https://prod-99.westeurope.logic.azure.com:443/workflows/f072f84d4b1a4234919c9418d60681c6/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=kPm1yNz-hGyIQ0ICkkxd74aF_MT_1VzN2d8FuXY2ejc",
+						"type": "Expression"
+					},
+					"method": "POST",
+					"headers": {
+						"Content-Type": "application/json"
+					},
+					"body": {
+						"value": "@concat('{\"aasUrl\":\"',pipeline().parameters.in_model_url,'\",\"aasRefreshBody\":{\"CommitMode\":\"transactional\",\"MaxParallelism\":2,\"Objects\":[\n {\n        \"database\": \"Commercial_Control_Center\",\n        \"table\": \"RGM - Sales\",\n        \"partition\": \"RGM Sales - FY2021 H1\"\n      }\n\t  ],\"RetryCount\":2,\"Type\":\"Full\"}}')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "UntilRefreshFinished_FY2021_H1",
+				"type": "Until",
+				"dependsOn": [
+					{
+						"activity": "SetVarRefreshStatusStart_FY2021_H1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@or(equals(variables('var_refresh_status'),'succeeded'),equals(variables('var_refresh_status'),'failed'))",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "WaitForRefresh_FY2021_H1",
+							"type": "Wait",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"waitTimeInSeconds": 600
+							}
+						},
+						{
+							"name": "GetAasRefreshStatus_FY2021_H1",
+							"type": "WebActivity",
+							"dependsOn": [
+								{
+									"activity": "WaitForRefresh_FY2021_H1",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"url": {
+									"value": "@activity('Refresh_Partition_FY2021_H1').output.headers['location']",
+									"type": "Expression"
+								},
+								"method": "GET",
+								"headers": {
+									"Content-Type": "application/json"
+								},
+								"authentication": {
+									"type": "MSI",
+									"resource": "https://*.asazure.windows.net"
+								}
+							}
+						},
+						{
+							"name": "SetVarRefreshStatus_FY2021_H1",
+							"type": "SetVariable",
+							"dependsOn": [
+								{
+									"activity": "GetAasRefreshStatus_FY2021_H1",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "var_refresh_status",
+								"value": {
+									"value": "@activity('GetAasRefreshStatus_FY2021_H1').output.status",
+									"type": "Expression"
+								}
+							}
+						}
+					],
+					"timeout": "7.00:00:00"
+				}
+			},
+			{
+				"name": "SetVarRefreshStatusStart_FY2021_H1",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Refresh_Partition_FY2021_H1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "var_refresh_status",
+					"value": "Start state"
+				}
+			},
+			{
+				"name": "Log ErrorInfo_FY2021_H2",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "Refresh_Partition_FY2021_H2",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[LOGS].[ups_ADD_CUBE_REFRESH_LOGGING]",
+					"storedProcedureParameters": {
+						"AffectedRows": {
+							"value": "0",
+							"type": "Int32"
+						},
+						"BatchId": {
+							"value": "0",
+							"type": "Int32"
+						},
+						"CubeName": {
+							"value": {
+								"value": "@pipeline().parameters.CubeName",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"ErrorIndicator": {
+							"value": "0",
+							"type": "Int32"
+						},
+						"ErrorMessage": {
+							"value": {
+								"value": "@string(activity('Refresh_Partition_FY2021_H2').Error.message)",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"FileId": {
+							"value": "0",
+							"type": "Int32"
+						},
+						"Message": {
+							"value": "NA",
+							"type": "String"
+						},
+						"Status": {
+							"value": "ERROR",
+							"type": "String"
+						},
+						"StepId": {
+							"value": "0",
+							"type": "Int32"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "NAM_COM_DART_SQL",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "IfRefreshFailed_FY2021_H2",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "UntilRefreshFinished_FY2021_H2",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@or(or(equals(variables('var_refresh_status'),'failed'), equals(variables('var_refresh_status'),'timedOut')), \nequals(variables('var_refresh_status'),'cancelled'))",
+						"type": "Expression"
+					},
+					"ifTrueActivities": [
+						{
+							"name": "Log Error_FY2021_H2",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[LOGS].[ups_ADD_CUBE_REFRESH_LOGGING]",
+								"storedProcedureParameters": {
+									"AffectedRows": {
+										"value": "0",
+										"type": "Int32"
+									},
+									"BatchId": {
+										"value": "0",
+										"type": "Int32"
+									},
+									"CubeName": {
+										"value": {
+											"value": "@pipeline().parameters.CubeName",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"ErrorIndicator": {
+										"value": "1",
+										"type": "Int32"
+									},
+									"ErrorMessage": {
+										"value": {
+											"value": "@string(activity('GetAasRefreshStatus_FY2021_H2').output.messages)",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"FileId": {
+										"value": "0",
+										"type": "Int32"
+									},
+									"Message": {
+										"value": "NA",
+										"type": "String"
+									},
+									"Status": {
+										"value": "ERROR",
+										"type": "String"
+									},
+									"StepId": {
+										"value": "0",
+										"type": "Int32"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "NAM_COM_DART_SQL",
+								"type": "LinkedServiceReference"
+							}
+						},
+						{
+							"name": "Refesh Failed_FY2021_H2",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [
+								{
+									"activity": "Log Error_FY2021_H2",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[LOGS].[ups_ADD_CUBE_REFRESH_FAIL]"
+							},
+							"linkedServiceName": {
+								"referenceName": "NAM_COM_DART_SQL",
+								"type": "LinkedServiceReference"
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "Log ErrorInfo_FY2021_H1",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "Refresh_Partition_FY2021_H1",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[LOGS].[ups_ADD_CUBE_REFRESH_LOGGING]",
+					"storedProcedureParameters": {
+						"AffectedRows": {
+							"value": "0",
+							"type": "Int32"
+						},
+						"BatchId": {
+							"value": "0",
+							"type": "Int32"
+						},
+						"CubeName": {
+							"value": {
+								"value": "@pipeline().parameters.CubeName",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"ErrorIndicator": {
+							"value": "0",
+							"type": "Int32"
+						},
+						"ErrorMessage": {
+							"value": {
+								"value": "@string(activity('Refresh_Partition_FY2021_H1').Error.message)",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"FileId": {
+							"value": "0",
+							"type": "Int32"
+						},
+						"Message": {
+							"value": "NA",
+							"type": "String"
+						},
+						"Status": {
+							"value": "ERROR",
+							"type": "String"
+						},
+						"StepId": {
+							"value": "0",
+							"type": "Int32"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "NAM_COM_DART_SQL",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "IfRefreshFailed_FY2021_H1",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "UntilRefreshFinished_FY2021_H1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@or(or(equals(variables('var_refresh_status'),'failed'), equals(variables('var_refresh_status'),'timedOut')), \nequals(variables('var_refresh_status'),'cancelled'))",
+						"type": "Expression"
+					},
+					"ifTrueActivities": [
+						{
+							"name": "Log Error_FY2021_H1",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[LOGS].[ups_ADD_CUBE_REFRESH_LOGGING]",
+								"storedProcedureParameters": {
+									"AffectedRows": {
+										"value": "0",
+										"type": "Int32"
+									},
+									"BatchId": {
+										"value": "0",
+										"type": "Int32"
+									},
+									"CubeName": {
+										"value": {
+											"value": "@pipeline().parameters.CubeName",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"ErrorIndicator": {
+										"value": "1",
+										"type": "Int32"
+									},
+									"ErrorMessage": {
+										"value": {
+											"value": "@string(activity('GetAasRefreshStatus_FY2021_H1').output.messages)",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"FileId": {
+										"value": "0",
+										"type": "Int32"
+									},
+									"Message": {
+										"value": "NA",
+										"type": "String"
+									},
+									"Status": {
+										"value": "ERROR",
+										"type": "String"
+									},
+									"StepId": {
+										"value": "0",
+										"type": "Int32"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "NAM_COM_DART_SQL",
+								"type": "LinkedServiceReference"
+							}
+						},
+						{
+							"name": "Refesh Failed_FY2021_H1",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [
+								{
+									"activity": "Log Error_FY2021_H1",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[LOGS].[ups_ADD_CUBE_REFRESH_FAIL]"
+							},
+							"linkedServiceName": {
+								"referenceName": "NAM_COM_DART_SQL",
+								"type": "LinkedServiceReference"
+							}
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"in_model_url": {
+				"type": "string",
+				"defaultValue": "https://eastus.asazure.windows.net/servers/bdhaas2/models/Commercial_Control_Center/refreshes"
+			},
+			"CubeName": {
+				"type": "string",
+				"defaultValue": "Commercial_Control_Center"
+			}
+		},
+		"variables": {
+			"var_refresh_status": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "AAS Refresh"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-05-03T11:57:46Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

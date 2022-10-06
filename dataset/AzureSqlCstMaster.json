@@ -1,0 +1,114 @@
+{
+	"name": "AzureSqlCstMaster",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "CUS_DIST_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CUS_DA_DIST_ID",
+				"type": "varchar"
+			},
+			{
+				"name": "CUS_DIVISION",
+				"type": "varchar"
+			},
+			{
+				"name": "CUS_DA_LOC_ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "CUS_LOC_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CUS_LOC_STATUS",
+				"type": "varchar"
+			},
+			{
+				"name": "CUS_DIST_OWN_LOC_ID",
+				"type": "varchar"
+			},
+			{
+				"name": "CUS_EDI_LOC_ID",
+				"type": "varchar"
+			},
+			{
+				"name": "CUS_SUPP_LOC_ID",
+				"type": "varchar"
+			},
+			{
+				"name": "CUS_SHIPLANE",
+				"type": "varchar"
+			},
+			{
+				"name": "CUS_TOT_LEADTIME",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "CUS_SHIP_METHOD",
+				"type": "varchar"
+			},
+			{
+				"name": "CUS_HUB_ID",
+				"type": "varchar"
+			},
+			{
+				"name": "CUS_LOC_ORD_INFO",
+				"type": "varchar"
+			},
+			{
+				"name": "CUS_SL_ORDER_INFO",
+				"type": "varchar"
+			},
+			{
+				"name": "CUS_SL_SS_DAYS",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "CUS_SL_PICK",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "CUS_SL_TRANSIT",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "CUS_SL_RECEIPT",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "FILE_DATE",
+				"type": "varchar"
+			},
+			{
+				"name": "LAST_UPDATE_DATE",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "LAST_UPDATE_BY",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "VMI",
+			"table": "CUSTOMER_LOCATION_MASTER"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

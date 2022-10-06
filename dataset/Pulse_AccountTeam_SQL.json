@@ -1,0 +1,117 @@
+{
+	"name": "Pulse_AccountTeam_SQL",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "PULSE"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "Id",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AccountId",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserId",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TeamMemberRole",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PhotoUrl",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Title",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AccountAccessLevel",
+				"type": "nvarchar"
+			},
+			{
+				"name": "OpportunityAccessLevel",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CaseAccessLevel",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ContactAccessLevel",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CurrencyIsoCode",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CreatedDate",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CreatedById",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LastModifiedDate",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LastModifiedById",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SystemModstamp",
+				"type": "nvarchar"
+			},
+			{
+				"name": "IsDeleted",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Discipline__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Email__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Markets__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Phone__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Core_AccountName__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Core_LastVisitDate__c",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Core_UserFirstName__c",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "PULSE",
+			"table": "ACCOUNT_TEAM_MEMBER"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

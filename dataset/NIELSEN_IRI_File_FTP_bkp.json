@@ -1,0 +1,46 @@
+{
+	"name": "NIELSEN_IRI_File_FTP_bkp",
+	"properties": {
+		"description": "It describes the file in the data source store. ",
+		"linkedServiceName": {
+			"referenceName": "NAM_NIELSEN_IRI_FTP",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"path": {
+				"type": "String",
+				"defaultValue": "/"
+			},
+			"filename": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "NIELSEN"
+		},
+		"annotations": [],
+		"type": "FileShare",
+		"typeProperties": {
+			"compression": {
+				"type": "GZip"
+			},
+			"fileName": {
+				"value": "@dataset().filename",
+				"type": "Expression"
+			},
+			"folderPath": {
+				"value": "@dataset().path",
+				"type": "Expression"
+			},
+			"key": {
+				"value": "@dataset().filename",
+				"type": "Expression"
+			},
+			"bucketName": {
+				"value": "@dataset().path",
+				"type": "Expression"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

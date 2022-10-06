@@ -1,0 +1,52 @@
+{
+	"name": "Store_locator_Brand_output",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_EPAM_FTP",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "STORE LOCATOR"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "SftpLocation",
+				"fileName": "Brands.csv",
+				"folderPath": "/out"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "ITEM_ID",
+				"type": "String"
+			},
+			{
+				"name": "ITEM_DESCRIPTION",
+				"type": "String"
+			},
+			{
+				"name": "BRAND_ID",
+				"type": "String"
+			},
+			{
+				"name": "BRAND_GROUP",
+				"type": "String"
+			},
+			{
+				"name": "PRODUCT_BRAND_DESCRIPTION",
+				"type": "String"
+			},
+			{
+				"name": "BOTTLE_VOLUME",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,340 @@
+{
+	"name": "AAS_Model_Refresh_CCC_Dimensions",
+	"properties": {
+		"activities": [
+			{
+				"name": "RefreshAasModel",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": {
+						"value": "https://prod-99.westeurope.logic.azure.com:443/workflows/f072f84d4b1a4234919c9418d60681c6/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=kPm1yNz-hGyIQ0ICkkxd74aF_MT_1VzN2d8FuXY2ejc",
+						"type": "Expression"
+					},
+					"method": "POST",
+					"headers": {
+						"Content-Type": "application/json"
+					},
+					"body": {
+						"value": "@concat('{\"aasUrl\":\"',pipeline().parameters.in_model_url,'\",\"aasRefreshBody\":{\"CommitMode\":\"transactional\",\"MaxParallelism\":2,\"Objects\":[  \n {\n        \"database\": \"Commercial_Control_Center\",\n        \"table\": \"Time\"\n      },\n      {\n        \"database\": \"Commercial_Control_Center\",\n        \"table\": \"Case Type\"\n      },\n      {\n        \"database\": \"Commercial_Control_Center\",\n        \"table\": \"Advocacy Disciplines\"\n      },\n      {\n        \"database\": \"Commercial_Control_Center\",\n        \"table\": \"Advocacy Disciplines\"\n      },\n      {\n        \"database\": \"Commercial_Control_Center\",\n        \"table\": \"Account\"\n      },\n      {\n        \"database\": \"Commercial_Control_Center\",\n        \"table\": \"Product\"\n      },\n      {\n        \"database\": \"Commercial_Control_Center\",\n        \"table\": \"Distributor\"\n      },\n      {\n        \"database\": \"Commercial_Control_Center\",\n        \"table\": \"Metrics\"\n      },\n      {\n        \"database\": \"Commercial_Control_Center\",\n        \"table\": \"Invoice Period\"\n      },\n      {\n        \"database\": \"Commercial_Control_Center\",\n        \"table\": \"Period Type\"\n      },\n      {\n        \"database\": \"Commercial_Control_Center\",\n        \"table\": \"Sales Person\"\n      },\n      {\n        \"database\": \"Commercial_Control_Center\",\n        \"table\": \"AnaplanFact\"\n      },\n      {\n        \"database\": \"Commercial_Control_Center\",\n        \"table\": \"Anaplan Metrics\"\n      },\n      {\n        \"database\": \"Commercial_Control_Center\",\n        \"table\": \"Snapshot\"\n      },\n      {\n        \"database\": \"Commercial_Control_Center\",\n        \"table\": \"Anaplan with Snapshot Fact\"\n      },\n      {\n        \"database\": \"Commercial_Control_Center\",\n        \"table\": \"Time Frame Metric Slicer\"\n      },\n      {\n        \"database\": \"Commercial_Control_Center\",\n        \"table\": \"Target Brands\"\n      },\n      {\n        \"database\": \"Commercial_Control_Center\",\n        \"table\": \"Selling Days Calendar\"\n      },\n      {\n        \"database\": \"Commercial_Control_Center\",\n        \"table\": \"Change Selector\"\n      },\n      {\n        \"database\": \"Commercial_Control_Center\",\n        \"table\": \"Margins\"\n      },\n      {\n        \"database\": \"Commercial_Control_Center\",\n        \"table\": \"Margins Slicer\"\n      },\n      {\n        \"database\": \"Commercial_Control_Center\",\n        \"table\": \"States by Margins Calculation\"\n      },\n      {\n        \"database\": \"Commercial_Control_Center\",\n        \"table\": \"Consumer Metrics\"\n      },\n      {\n        \"database\": \"Commercial_Control_Center\",\n        \"table\": \"Custom Category Table\"\n      },\n      {\n        \"database\": \"Commercial_Control_Center\",\n        \"table\": \"Custom Category Share\"\n      },\n      {\n        \"database\": \"Commercial_Control_Center\",\n        \"table\": \"Battleground Categories\"\n      },\n      {\n        \"database\": \"Commercial_Control_Center\",\n        \"table\": \"Category Compare Bridge\"\n      },\n      {\n        \"database\": \"Commercial_Control_Center\",\n        \"table\": \"Brand Extension Bridge 1\"\n      },\n      {\n        \"database\": \"Commercial_Control_Center\",\n        \"table\": \"Brand Extension Bridge 2\"\n      },\n      {\n        \"database\": \"Commercial_Control_Center\",\n        \"table\": \"Brand Label Competitive Set\"\n      },\n      {\n        \"database\": \"Commercial_Control_Center\",\n        \"table\": \"Brand Label Competitive Set Bridge\"\n      },\n      {\n        \"database\": \"Commercial_Control_Center\",\n        \"table\": \"Brand Group Bridge Table\"\n      },\n      {\n        \"database\": \"Commercial_Control_Center\",\n        \"table\": \"Brand Teams Table\"\n      },\n      {\n        \"database\": \"Commercial_Control_Center\",\n        \"table\": \"Time Frame Metric Slicer Weekly\"\n      },\n      {\n        \"database\": \"Commercial_Control_Center\",\n        \"table\": \"Brand Group Competitive Set\"\n      },\n      {\n        \"database\": \"Commercial_Control_Center\",\n        \"table\": \"Nabca Competitive Metrics\"\n      },\n      {\n        \"database\": \"Commercial_Control_Center\",\n        \"table\": \"Date Bridge Table\"\n      },\n      {\n        \"database\": \"Commercial_Control_Center\",\n        \"table\": \"Account_Dynamic_Columns\"\n      },\n      {\n        \"database\": \"Commercial_Control_Center\",\n        \"table\": \"Account - Region Dist Bridge\"\n      },\n      {\n        \"database\": \"Commercial_Control_Center\",\n        \"table\": \"NABCA Greenbook Metrics\"\n      },\n      {\n        \"database\": \"Commercial_Control_Center\",\n        \"table\": \"Nielsen Metrics\"\n      },\n    {\n        \"database\": \"Commercial_Control_Center\",\n        \"table\": \"Deal Organizer\"\n      },\n      {\n        \"database\": \"Commercial_Control_Center\",\n        \"table\": \"Calculation Type\"\n      },\n    {\n        \"database\": \"Commercial_Control_Center\",\n        \"table\": \"Calculation Scenarios\"\n      },\n      {\n        \"database\": \"Commercial_Control_Center\",\n        \"table\": \"Planning Size Bridge\"\n      },\n      {\n        \"database\": \"Commercial_Control_Center\",\n        \"table\": \"Working Days Calendar\"\n      }\n],\"RetryCount\":2,\"Type\":\"Full\"}}')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "SetVarRefreshStatusStart",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "RefreshAasModel",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "var_refresh_status",
+					"value": "Start state"
+				}
+			},
+			{
+				"name": "UntilRefreshFinished",
+				"type": "Until",
+				"dependsOn": [
+					{
+						"activity": "SetVarRefreshStatusStart",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@or(equals(variables('var_refresh_status'),'succeeded'),equals(variables('var_refresh_status'),'failed'))",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "WaitForRefresh",
+							"type": "Wait",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"waitTimeInSeconds": 300
+							}
+						},
+						{
+							"name": "GetAasRefreshStatus",
+							"type": "WebActivity",
+							"dependsOn": [
+								{
+									"activity": "WaitForRefresh",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"url": {
+									"value": "@activity('RefreshAasModel').output.headers['location']",
+									"type": "Expression"
+								},
+								"method": "GET",
+								"headers": {
+									"Content-Type": "application/json"
+								},
+								"authentication": {
+									"type": "MSI",
+									"resource": "https://*.asazure.windows.net"
+								}
+							}
+						},
+						{
+							"name": "SetVarRefreshStatus",
+							"type": "SetVariable",
+							"dependsOn": [
+								{
+									"activity": "GetAasRefreshStatus",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "var_refresh_status",
+								"value": {
+									"value": "@activity('GetAasRefreshStatus').output.status",
+									"type": "Expression"
+								}
+							}
+						}
+					],
+					"timeout": "7.00:00:00"
+				}
+			},
+			{
+				"name": "Log ErrorInfo",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "RefreshAasModel",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[LOGS].[ups_ADD_CUBE_REFRESH_LOGGING]",
+					"storedProcedureParameters": {
+						"AffectedRows": {
+							"value": "0",
+							"type": "Int32"
+						},
+						"BatchId": {
+							"value": "0",
+							"type": "Int32"
+						},
+						"CubeName": {
+							"value": {
+								"value": "@pipeline().parameters.CubeName",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"ErrorIndicator": {
+							"value": "0",
+							"type": "Int32"
+						},
+						"ErrorMessage": {
+							"value": {
+								"value": "@string(activity('RefreshAasModel').Error.message)",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"FileId": {
+							"value": "0",
+							"type": "Int32"
+						},
+						"Message": {
+							"value": "NA",
+							"type": "String"
+						},
+						"Status": {
+							"value": "ERROR",
+							"type": "String"
+						},
+						"StepId": {
+							"value": "0",
+							"type": "Int32"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "NAM_COM_DART_SQL",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "IfRefreshFailed",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "UntilRefreshFinished",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@or(or(equals(variables('var_refresh_status'),'failed'), equals(variables('var_refresh_status'),'timedOut')), \nequals(variables('var_refresh_status'),'cancelled'))",
+						"type": "Expression"
+					},
+					"ifTrueActivities": [
+						{
+							"name": "Log Error",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[LOGS].[ups_ADD_CUBE_REFRESH_LOGGING]",
+								"storedProcedureParameters": {
+									"AffectedRows": {
+										"value": "0",
+										"type": "Int32"
+									},
+									"BatchId": {
+										"value": "0",
+										"type": "Int32"
+									},
+									"CubeName": {
+										"value": {
+											"value": "@pipeline().parameters.CubeName",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"ErrorIndicator": {
+										"value": "1",
+										"type": "Int32"
+									},
+									"ErrorMessage": {
+										"value": {
+											"value": "@string(activity('GetAasRefreshStatus').output.messages)",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"FileId": {
+										"value": "0",
+										"type": "Int32"
+									},
+									"Message": {
+										"value": "NA",
+										"type": "String"
+									},
+									"Status": {
+										"value": "ERROR",
+										"type": "String"
+									},
+									"StepId": {
+										"value": "0",
+										"type": "Int32"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "NAM_COM_DART_SQL",
+								"type": "LinkedServiceReference"
+							}
+						},
+						{
+							"name": "Refesh Failed",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [
+								{
+									"activity": "Log Error",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[LOGS].[ups_ADD_CUBE_REFRESH_FAIL]"
+							},
+							"linkedServiceName": {
+								"referenceName": "NAM_COM_DART_SQL",
+								"type": "LinkedServiceReference"
+							}
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"in_model_url": {
+				"type": "string",
+				"defaultValue": "https://eastus.asazure.windows.net/servers/bdhaas2/models/Commercial_Control_Center/refreshes"
+			},
+			"CubeName": {
+				"type": "string",
+				"defaultValue": "Commercial_Control_Center"
+			}
+		},
+		"variables": {
+			"var_refresh_status": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "AAS Refresh"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-02-18T17:12:55Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

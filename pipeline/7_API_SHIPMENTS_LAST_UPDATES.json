@@ -1,0 +1,26 @@
+{
+	"name": "7_API_SHIPMENTS_LAST_UPDATES",
+	"properties": {
+		"activities": [
+			{
+				"name": "Set variable1",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "UTC",
+					"value": "1"
+				}
+			}
+		],
+		"variables": {
+			"UTC": {
+				"type": "String",
+				"defaultValue": "1"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-04-07T12:39:31Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

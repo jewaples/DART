@@ -1,0 +1,264 @@
+{
+	"name": "AzureSqlTableFACT_ANAPLAN",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "DEPLETION_PERIOD",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "PERIOD",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "Item_Id",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DISTRIBUTOR",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CHANNEL",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FISCAL_YEAR",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "FISCAL_PERIOD",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "TIMESTAMP_PRIOR_LE",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "TIMESTAMP_SNAPSHOT",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "VOL_ACT_CS",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "VOL_ACT_9L",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "VOL_ACT_LE_CS",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "VOL_ACT_LE_9L",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "VOL_FCST_CS",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "VOL_FCST_9L",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "VOL_GOAL_CS",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "VOL_GOAL_9L",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "VOL_QUARTER_CS",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "VOL_QUARTER_9L",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "NSV_ACT",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "NSV_ACT_LE",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "NSV_FCST",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "NSV_GOAL",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "NSV_QUARTER",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "GS_ACT",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "GS_ACT_LE",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "GS_FCST",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "GS_GOAL",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "DISC_ACT",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "DISCOUNT_ACT_LE",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "DISCOUNT_TOTAL_ACT_LE",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "DISCOUNT_SCANS_ACT_LE",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "DISCOUNT_FCST",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "DISCOUNT_GOAL",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "DISCOUNT_TOTAL_FCST",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "DISCOUNT_TOTAL_GOAL",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "DISCOUNT_SCANS_FCST",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "DISCOUNT_SCANS_GOAL",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "VOL_COVID_GOAL_CS",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "VOL_COVID_GOAL_9L",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "NSV_COVID_GOAL",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "GS_COVID_GOAL",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "DISCOUNT_COVID_GOAL",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "DISCOUNT_COVID_TOTAL_GOAL",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "DISCOUNT_COVID_SCANS_GOAL",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "GS_QUARTER",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "DISCOUNT_TOTAL_QUARTER",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "DISCOUNT_SCANS_QUARTER",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "DISCOUNT_QUARTER",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "PRODUCT_BRAND_PLANNING_SIZE",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "RAD",
+			"table": "FACT_ANAPLAN"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

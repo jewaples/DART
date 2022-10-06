@@ -1,0 +1,20 @@
+{
+	"name": "SapHanaTable_StoAnalysis",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_SAP_HANA_OnPrem",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "BILLINGS"
+		},
+		"annotations": [],
+		"type": "SapHanaTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "_SYS_BIC",
+			"table": "T_Prod.Distributors_USA.DailySales.Reporting/CV_R_STO_ANALYSIS"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

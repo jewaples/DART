@@ -1,0 +1,75 @@
+{
+	"name": "Ecommerce_Drizly_Staging_SQL",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_RGM_Analytics_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "RGM"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "COUNTRY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "STATE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "REPRESENTATIVE_ADDRESS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ZIP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "BOTTLE_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "QUANTITY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PRODUCT_TYPE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "STORE_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RATING",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CURRENCY_ISO",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PRICE",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "DISCOUNTS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DATE",
+				"type": "datetime2",
+				"scale": 7
+			}
+		],
+		"typeProperties": {
+			"schema": "",
+			"table": "TVP"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

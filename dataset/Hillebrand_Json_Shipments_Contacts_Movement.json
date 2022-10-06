@@ -1,0 +1,99 @@
+{
+	"name": "Hillebrand_Json_Shipments_Contacts_Movement",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_Data_Foundation_DataLake",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "hillebrand_movement_contacts_json",
+				"folderPath": "EDW/BILLINGS/HILLEBRAND/API_PROCESS/HILLEBRANDSHIPMENTSCONTACTS",
+				"fileSystem": "prod"
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"_pagingInfo": {
+					"type": "object",
+					"properties": {
+						"totalItems": {
+							"type": "integer"
+						},
+						"totalPages": {
+							"type": "integer"
+						},
+						"hasPreviousPage": {
+							"type": "boolean"
+						},
+						"hasNextPage": {
+							"type": "boolean"
+						},
+						"itemsOnPage": {
+							"type": "integer"
+						},
+						"pageNumber": {
+							"type": "integer"
+						},
+						"pageSize": {
+							"type": "integer"
+						}
+					}
+				},
+				"items": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"_links": {
+								"type": "object",
+								"properties": {
+									"href": {
+										"type": "string"
+									},
+									"rel": {
+										"type": "string"
+									}
+								}
+							},
+							"id": {
+								"type": "string"
+							},
+							"party": {
+								"type": "object",
+								"properties": {
+									"id": {
+										"type": "integer"
+									},
+									"name": {
+										"type": "string"
+									}
+								}
+							},
+							"name": {
+								"type": "string"
+							},
+							"reference": {
+								"type": "string"
+							},
+							"role": {
+								"type": "string"
+							},
+							"userActsFor": {
+								"type": "boolean"
+							}
+						}
+					}
+				},
+				"SHIPMENT_ID": {
+					"type": "string"
+				}
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

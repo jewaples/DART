@@ -1,0 +1,223 @@
+{
+	"name": "Parquet_FACT_TM1_DISCOUNT",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_Data_Foundation_DataLake",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "FACT_TM1_DISCOUNT.parquet",
+				"folderPath": "EDW/ANAPLAN/FACT_TM1_DISCOUNT/Current",
+				"fileSystem": "prod"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "DEPLETION_PERIOD",
+				"type": "INT32"
+			},
+			{
+				"name": "PERIOD",
+				"type": "INT96"
+			},
+			{
+				"name": "Item_Id",
+				"type": "UTF8"
+			},
+			{
+				"name": "DISTRIBUTOR",
+				"type": "UTF8"
+			},
+			{
+				"name": "CHANNEL",
+				"type": "UTF8"
+			},
+			{
+				"name": "FISCAL_YEAR",
+				"type": "INT32"
+			},
+			{
+				"name": "FISCAL_PERIOD",
+				"type": "INT32"
+			},
+			{
+				"name": "TIMESTAMP_PRIOR_LE",
+				"type": "INT96"
+			},
+			{
+				"name": "TIMESTAMP_SNAPSHOT",
+				"type": "INT96"
+			},
+			{
+				"name": "VOL_ACT_CS",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "VOL_ACT_9L",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "VOL_ACT_LE_CS",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "VOL_ACT_LE_9L",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "VOL_FCST_CS",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "VOL_FCST_9L",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "VOL_GOAL_CS",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "VOL_GOAL_9L",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "VOL_QUARTER_CS",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "VOL_QUARTER_9L",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "NSV_ACT",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "NSV_ACT_LE",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "NSV_FCST",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "NSV_GOAL",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "NSV_QUARTER",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "GS_ACT",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "GS_ACT_LE",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "GS_FCST",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "GS_GOAL",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "DISC_ACT",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "DISCOUNT_ACT_LE",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "DISCOUNT_TOTAL_ACT_LE",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "DISCOUNT_SCANS_ACT_LE",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "DISCOUNT_FCST",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "DISCOUNT_GOAL",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "DISCOUNT_TOTAL_FCST",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "DISCOUNT_TOTAL_GOAL",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "DISCOUNT_SCANS_FCST",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "DISCOUNT_SCANS_GOAL",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "VOL_COVID_GOAL_CS",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "VOL_COVID_GOAL_9L",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "NSV_COVID_GOAL",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "GS_COVID_GOAL",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "DISCOUNT_COVID_GOAL",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "DISCOUNT_COVID_TOTAL_GOAL",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "DISCOUNT_COVID_SCANS_GOAL",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "GS_QUARTER",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "DISCOUNT_TOTAL_QUARTER",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "DISCOUNT_SCANS_QUARTER",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "DISCOUNT_QUARTER",
+				"type": "DOUBLE"
+			},
+			{
+				"name": "PRODUCT_BRAND_PLANNING_SIZE",
+				"type": "UTF8"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

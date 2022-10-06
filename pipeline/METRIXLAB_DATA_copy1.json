@@ -1,0 +1,255 @@
+{
+	"name": "METRIXLAB_DATA_copy1",
+	"properties": {
+		"description": "Move files from one folder to another folder",
+		"activities": [
+			{
+				"name": "ForEachFile",
+				"description": "Iterate each file, and move them one by one.",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "FilterList",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('FilterList').output.value",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "Copy data",
+							"description": "Copy data to METRIX.METRIXLAB table",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "Get_SrcMetadata",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "DelimitedTextSource",
+									"storeSettings": {
+										"type": "AzureBlobFSReadSettings",
+										"recursive": true,
+										"enablePartitionDiscovery": false
+									},
+									"formatSettings": {
+										"type": "DelimitedTextReadSettings",
+										"skipLineCount": 7
+									}
+								},
+								"sink": {
+									"type": "AzureSqlSink",
+									"preCopyScript": "IF EXISTS(SELECT 'Y' FROM sysobjects where name like '%METRIXLAB_TMP_1%') BEGIN DROP TABLE METRIX.METRIXLAB_TMP_1 END",
+									"writeBehavior": "insert",
+									"sqlWriterUseTableLock": true,
+									"tableOption": "autoCreate",
+									"disableMetricsCollection": false
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "METRIXLAB_Source",
+									"type": "DatasetReference",
+									"parameters": {
+										"env": {
+											"value": "@pipeline().parameters.Environment",
+											"type": "Expression"
+										},
+										"path": {
+											"value": "@pipeline().parameters.PathSource",
+											"type": "Expression"
+										},
+										"file": {
+											"value": "@item().name",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "METRIXLAB_TMP_Sql",
+									"type": "DatasetReference"
+								}
+							]
+						},
+						{
+							"name": "Get_SrcMetadata",
+							"type": "GetMetadata",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataset": {
+									"referenceName": "METRIXLAB_Source",
+									"type": "DatasetReference",
+									"parameters": {
+										"env": "@pipeline().parameters.Environment",
+										"path": {
+											"value": "@pipeline().parameters.PathSource",
+											"type": "Expression"
+										},
+										"file": {
+											"value": "@item().name",
+											"type": "Expression"
+										}
+									}
+								},
+								"fieldList": [
+									"itemName",
+									"lastModified",
+									"size"
+								],
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "GetFileList",
+				"type": "GetMetadata",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "METRIXLAB_File_Azure_Storage",
+						"type": "DatasetReference",
+						"parameters": {
+							"path": {
+								"value": "@pipeline().parameters.FolderPath_SourceStore",
+								"type": "Expression"
+							}
+						}
+					},
+					"fieldList": [
+						"itemName",
+						"childItems",
+						"lastModified"
+					]
+				}
+			},
+			{
+				"name": "FilterList",
+				"type": "Filter",
+				"dependsOn": [
+					{
+						"activity": "GetFileList",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('GetFileList').output.childItems",
+						"type": "Expression"
+					},
+					"condition": {
+						"value": "@contains(item().name,'.csv')",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"FolderPath_SourceStore": {
+				"type": "String",
+				"defaultValue": "/prod/Metrixlab"
+			},
+			"Filename_Source": {
+				"type": "String",
+				"defaultValue": "Power BI Dashboard_United States_stacked 1.csv"
+			},
+			"Destination_Table": {
+				"type": "string",
+				"defaultValue": "METRIX.METRIXLAB_TMP_1"
+			},
+			"Environment": {
+				"type": "string",
+				"defaultValue": "prod"
+			},
+			"PathSource": {
+				"type": "string",
+				"defaultValue": "Metrixlab"
+			},
+			"Log_Table": {
+				"type": "string",
+				"defaultValue": "LOGS.SOURCE_FILES_LOAD_LOG"
+			},
+			"Is_Zip": {
+				"type": "string",
+				"defaultValue": "0"
+			},
+			"STARTDATE": {
+				"type": "string"
+			},
+			"SOURCE": {
+				"type": "string",
+				"defaultValue": "Metrix"
+			},
+			"Stage_table": {
+				"type": "string",
+				"defaultValue": "METRIX.METRIXLAB_TMP_1"
+			},
+			"FolderPath_DestinationStore": {
+				"type": "string",
+				"defaultValue": "METRIX.METRIXLAB"
+			}
+		},
+		"folder": {
+			"name": "METRIXLAB"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-08-01T17:28:25Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

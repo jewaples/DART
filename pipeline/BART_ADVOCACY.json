@@ -1,0 +1,1322 @@
+{
+	"name": "BART_ADVOCACY",
+	"properties": {
+		"description": "Move files from one folder to another folder",
+		"activities": [
+			{
+				"name": "GetFileList",
+				"description": "Get the list of file",
+				"type": "GetMetadata",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "BART_Advocacy_Server_DataSource_Folder",
+						"type": "DatasetReference",
+						"parameters": {
+							"FolderPath": "@pipeline().parameters.FolderPath_SourceStore"
+						}
+					},
+					"fieldList": [
+						"itemName",
+						"childItems"
+					]
+				}
+			},
+			{
+				"name": "ForEachFile",
+				"description": "Iterate each file, and move them one by one.",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "FilterFiles",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('FilterFiles').output.value",
+						"type": "Expression"
+					},
+					"batchCount": 20,
+					"activities": [
+						{
+							"name": "File_Lookup",
+							"type": "Lookup",
+							"dependsOn": [
+								{
+									"activity": "Get_SrcMetadata",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderStoredProcedureName": "[STG].[usp_FILE_LOOKUP]",
+									"storedProcedureParameters": {
+										"FILE_NAME": {
+											"type": "String",
+											"value": {
+												"value": "@activity('Get_SrcMetadata').output.itemName",
+												"type": "Expression"
+											}
+										},
+										"TABLE_NAME": {
+											"type": "String",
+											"value": {
+												"value": "@pipeline().parameters.Destination_Table",
+												"type": "Expression"
+											}
+										}
+									},
+									"partitionOption": "None"
+								},
+								"dataset": {
+									"referenceName": "BART_Advocacy_Sql",
+									"type": "DatasetReference"
+								},
+								"firstRowOnly": true
+							}
+						},
+						{
+							"name": "If Condition",
+							"type": "IfCondition",
+							"dependsOn": [
+								{
+									"activity": "File_Lookup",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"expression": {
+									"value": "@activity('File_Lookup').output.firstRow.EXIST",
+									"type": "Expression"
+								},
+								"ifFalseActivities": [
+									{
+										"name": "Copy Advocacy File",
+										"description": "Copy a file from the source store to the destination store.",
+										"type": "Copy",
+										"dependsOn": [],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"source": {
+												"type": "FileSystemSource",
+												"recursive": false
+											},
+											"sink": {
+												"type": "AzureBlobFSSink"
+											},
+											"enableStaging": false,
+											"dataIntegrationUnits": 0
+										},
+										"inputs": [
+											{
+												"referenceName": "BART_Advocacy_Server_DataSource_File",
+												"type": "DatasetReference",
+												"parameters": {
+													"path": "@pipeline().parameters.FolderPath_SourceStore",
+													"filename": "@item().name"
+												}
+											}
+										],
+										"outputs": [
+											{
+												"referenceName": "BART_Advocacy_Azure_Storage_Destination",
+												"type": "DatasetReference",
+												"parameters": {
+													"path": "@pipeline().parameters.FolderPath_DestinationStore",
+													"filename": {
+														"value": "@concat('Advocacy_', formatDateTime(pipeline().parameters.STARTDATE,'yyyy_MM_dd'),'.csv' )",
+														"type": "Expression"
+													}
+												}
+											}
+										]
+									},
+									{
+										"name": "Insert_Source_Data",
+										"description": "Inserts source file metadata in log table",
+										"type": "SqlServerStoredProcedure",
+										"dependsOn": [],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"storedProcedureName": "[STG].[usp_INSERT_SRC_FILES]",
+											"storedProcedureParameters": {
+												"FILE_NAME": {
+													"value": {
+														"value": "@item().name",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"SRC_CREATED_DATE": {
+													"value": {
+														"value": "@activity('Get_SrcMetadata').output.lastModified",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"SRC_PATH": {
+													"value": {
+														"value": "@pipeline().parameters.FolderPath_SourceStore",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"SRC_SIZE": {
+													"value": {
+														"value": "@activity('Get_SrcMetadata').output.size",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"TABLE_NAME": {
+													"value": {
+														"value": "@pipeline().parameters.Destination_Table",
+														"type": "Expression"
+													},
+													"type": "String"
+												}
+											}
+										},
+										"linkedServiceName": {
+											"referenceName": "NAM_COM_DART_SQL",
+											"type": "LinkedServiceReference"
+										}
+									},
+									{
+										"name": "Get_AdlMetadata",
+										"type": "GetMetadata",
+										"dependsOn": [
+											{
+												"activity": "Copy Advocacy File",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											},
+											{
+												"activity": "Insert_Source_Data",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"dataset": {
+												"referenceName": "BART_Advocacy_Azure_Storage_Destination",
+												"type": "DatasetReference",
+												"parameters": {
+													"path": "@pipeline().parameters.FolderPath_DestinationStore",
+													"filename": "@concat('Advocacy_', formatDateTime(pipeline().parameters.STARTDATE,'yyyy_MM_dd'),'.csv' )"
+												}
+											},
+											"fieldList": [
+												"itemName",
+												"size",
+												"lastModified"
+											]
+										}
+									},
+									{
+										"name": "Validate_Destination_Data",
+										"description": "Inserts source file metadata in log table",
+										"type": "SqlServerStoredProcedure",
+										"dependsOn": [
+											{
+												"activity": "Get_AdlMetadata",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"storedProcedureName": "[STG].[usp_VALIDATE_DST_FILES]",
+											"storedProcedureParameters": {
+												"FILE_NAME": {
+													"value": {
+														"value": "@item().name",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"DST_CREATED_DATE": {
+													"value": {
+														"value": "@activity('Get_AdlMetadata').output.lastModified",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"DST_PATH": {
+													"value": {
+														"value": "@pipeline().parameters.FolderPath_DestinationStore",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"DST_SIZE": {
+													"value": {
+														"value": "@activity('Get_AdlMetadata').output.size",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"TABLE_NAME": {
+													"value": {
+														"value": "@pipeline().parameters.Destination_Table",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"IS_ZIP": {
+													"value": {
+														"value": "@pipeline().parameters.Is_Zip",
+														"type": "Expression"
+													},
+													"type": "Int"
+												}
+											}
+										},
+										"linkedServiceName": {
+											"referenceName": "NAM_COM_DART_SQL",
+											"type": "LinkedServiceReference"
+										}
+									}
+								]
+							}
+						},
+						{
+							"name": "Get_SrcMetadata",
+							"type": "GetMetadata",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataset": {
+									"referenceName": "BART_Advocacy_Server_DataSource_File",
+									"type": "DatasetReference",
+									"parameters": {
+										"path": "@pipeline().parameters.FolderPath_SourceStore",
+										"filename": "@item().name"
+									}
+								},
+								"fieldList": [
+									"itemName",
+									"size",
+									"lastModified"
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "FilterFiles",
+				"description": "Only files will be selected, the sub-folders will not be selected.",
+				"type": "Filter",
+				"dependsOn": [
+					{
+						"activity": "GetFileList",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('GetFileList').output.childItems",
+						"type": "Expression"
+					},
+					"condition": {
+						"value": "@endswith(item().name,'.csv')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Load DIM_ADVOCACY",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "Advocacy_file_exist",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@activity('Advocacy_file_exist').output.exists",
+						"type": "Expression"
+					},
+					"ifTrueActivities": [
+						{
+							"name": "Copy_Advocacy_Storage_SqlBD",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "DelimitedTextSource",
+									"storeSettings": {
+										"type": "AzureBlobFSReadSettings",
+										"recursive": false,
+										"enablePartitionDiscovery": false
+									},
+									"formatSettings": {
+										"type": "DelimitedTextReadSettings"
+									}
+								},
+								"sink": {
+									"type": "AzureSqlSink",
+									"preCopyScript": "TRUNCATE TABLE STG.STG_ADVOCACY",
+									"writeBehavior": "insert",
+									"disableMetricsCollection": false
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"mappings": [
+										{
+											"source": {
+												"name": "Tdlinx",
+												"type": "String"
+											},
+											"sink": {
+												"name": "TDLINX",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "Sgws Num",
+												"type": "String"
+											},
+											"sink": {
+												"name": "SGWS_NUM",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "Account Name",
+												"type": "String"
+											},
+											"sink": {
+												"name": "ACCOUNT_NAME",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "Address",
+												"type": "String"
+											},
+											"sink": {
+												"name": "ADDRESS",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "City",
+												"type": "String"
+											},
+											"sink": {
+												"name": "CITY",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "State",
+												"type": "String"
+											},
+											"sink": {
+												"name": "STATE",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "Employee Name",
+												"type": "String"
+											},
+											"sink": {
+												"name": "DISCIPLINE_NAME",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "Zip",
+												"type": "String"
+											},
+											"sink": {
+												"name": "ZIP",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "Additional Info",
+												"type": "String"
+											},
+											"sink": {
+												"name": "ADDITIONAL_INFORMATION",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "Active",
+												"type": "String"
+											},
+											"sink": {
+												"name": "ACTIVE",
+												"type": "String"
+											}
+										}
+									]
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "BART_File_Adl_Storage",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "BART_Advocacy_Sql",
+									"type": "DatasetReference"
+								}
+							]
+						},
+						{
+							"name": "Bart_Disciplines_SqlOnprem_SqlDB",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "SqlServerSource",
+									"partitionOption": "None"
+								},
+								"sink": {
+									"type": "AzureSqlSink",
+									"preCopyScript": "TRUNCATE TABLE STG.STG_DISCIPLINES",
+									"writeBehavior": "insert",
+									"disableMetricsCollection": false
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"mappings": [
+										{
+											"source": {
+												"name": "ADVOCACY_DISCIPLINE_NAME",
+												"type": "String"
+											},
+											"sink": {
+												"name": "ADVOCACY_DISCIPLINE_NAME",
+												"type": "String"
+											}
+										}
+									]
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "BART_Disciplines_Sql_OnPrem",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "BART_Disciplines_Sql",
+									"type": "DatasetReference"
+								}
+							]
+						},
+						{
+							"name": "DIM_ADVOCACY_Stg_EdwDb",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "Bart_Disciplines_SqlOnprem_SqlDB",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								},
+								{
+									"activity": "Get Exceptions",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderQuery": "SELECT  TRIM(a.[TDLINX]) AS [TDLINX]\n --   ,e.TDLINX\n\t   ,TRIM(a.[SGWS_NUM]) AS [SGWS_NUM]\n       ,TRIM(a.[ACCOUNT_NAME]) AS [ACCOUNT_NAME]\n       ,TRIM(a.[ADDRESS]) AS [ADDRESS]\n       ,TRIM(a.[CITY]) AS [CITY]\n       ,TRIM(a.[STATE]) AS [STATE]\n       ,d.[ADVOCACY_DISCIPLINE_NAME] as[DISCIPLINE_NAME]\n       ,TRIM(a.[ZIP]) AS [ZIP]\n       ,TRIM(a.[ADDITIONAL_INFORMATION]) AS [ADDITIONAL_INFORMATION]\n       ,TRIM(a.[ACTIVE]) AS [ACTIVE]\nFROM(\n\tSELECT  a.*, sp.value\n\tFROM [STG].[STG_ADVOCACY] a\n\tCROSS APPLY string_split (DISCIPLINE_NAME, ',') sp)  a\nINNER JOIN [STG].[STG_DISCIPLINES] d ON  a.value LIKE CONCAT('%',d.[ADVOCACY_DISCIPLINE_NAME],'%')\nLEFT JOIN [STG].[STG_ADVOCACY_EXCEPTION] e ON a.TDLINX = e.TDLINX \nWHERE e.TDLINX IS NULL \nAND  a.[TDLINX] IS NOT NULL ",
+									"partitionOption": "None"
+								},
+								"sink": {
+									"type": "AzureSqlSink",
+									"preCopyScript": "TRUNCATE TABLE RAD.DIM_ADVOCACY",
+									"writeBehavior": "insert",
+									"disableMetricsCollection": false
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"mappings": [
+										{
+											"source": {
+												"name": "TDLINX",
+												"type": "String"
+											},
+											"sink": {
+												"name": "TDLINX",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "SGWS_NUM",
+												"type": "String"
+											},
+											"sink": {
+												"name": "SGWS_NUM",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "ACCOUNT_NAME",
+												"type": "String"
+											},
+											"sink": {
+												"name": "ACCOUNT_NAME",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "ADDRESS",
+												"type": "String"
+											},
+											"sink": {
+												"name": "ADDRESS",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "CITY",
+												"type": "String"
+											},
+											"sink": {
+												"name": "CITY",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "STATE",
+												"type": "String"
+											},
+											"sink": {
+												"name": "STATE",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "DISCIPLINE_NAME",
+												"type": "String"
+											},
+											"sink": {
+												"name": "DISCIPLINE_NAME",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "ZIP",
+												"type": "String"
+											},
+											"sink": {
+												"name": "ZIP",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "ADDITIONAL_INFORMATION",
+												"type": "String"
+											},
+											"sink": {
+												"name": "ADDITIONAL_INFORMATION",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "ACTIVE",
+												"type": "String"
+											},
+											"sink": {
+												"name": "ACTIVE",
+												"type": "String"
+											}
+										}
+									]
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "BART_Disciplines_Sql",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "RAD_Dim_Advocacy_Sql",
+									"type": "DatasetReference"
+								}
+							]
+						},
+						{
+							"name": "Insert ADVOCACY_EXCEPTIONS staging Onprem",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "Delete ADVOCACY_EXCEPTIONS staging Onprem",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderQuery": {
+										"value": "SELECT  TRIM([TDLINX]) AS [NAME]\n        , @{pipeline().parameters.ImportType} as [IMPORTTYPE]\n\t\t,0 AS IMPORTSTATUS_ID\n\t\t,'ADVOCACY_DISCIPLINE_EXCEPTIONS' AS BATCHTAG\n       ,TRIM([TDLINX]) AS [TDLINX]\n\t   ,TRIM([SGWS_NUM]) AS [SGWS_NUM]\n       ,TRIM([ACCOUNT_NAME]) AS [ACCOUNT_NAME]\n       ,TRIM([ADDRESS]) AS [ADDRESS]\n       ,TRIM([CITY]) AS [CITY]\n       ,TRIM([STATE]) AS [STATE]\n       ,TRIM([DISCIPLINE_NAME]) AS DISCIPLINE_NAME\n       ,TRIM([ZIP]) AS [ZIP]\n       ,TRIM([ADDITIONAL_INFORMATION]) AS [ADDITIONAL_INFORMATION]\n       ,TRIM([ACTIVE]) AS [ACTIVE]\nFROM [STG].[STG_ADVOCACY_EXCEPTION]",
+										"type": "Expression"
+									},
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"sink": {
+									"type": "SqlServerSink",
+									"writeBehavior": "insert"
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"mappings": [
+										{
+											"source": {
+												"name": "IMPORTTYPE",
+												"type": "Int32"
+											},
+											"sink": {
+												"name": "ImportType",
+												"type": "Byte"
+											}
+										},
+										{
+											"source": {
+												"name": "IMPORTSTATUS_ID",
+												"type": "Int32"
+											},
+											"sink": {
+												"name": "ImportStatus_ID",
+												"type": "Byte"
+											}
+										},
+										{
+											"source": {
+												"name": "BATCHTAG",
+												"type": "String"
+											},
+											"sink": {
+												"name": "BatchTag",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "NAME",
+												"type": "String"
+											},
+											"sink": {
+												"name": "Name",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "TDLINX",
+												"type": "String"
+											},
+											"sink": {
+												"name": "TDLINX",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "SGWS_NUM",
+												"type": "String"
+											},
+											"sink": {
+												"name": "SGWS_NUM",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "ACCOUNT_NAME",
+												"type": "String"
+											},
+											"sink": {
+												"name": "ACCOUNT_NAME",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "ADDRESS",
+												"type": "String"
+											},
+											"sink": {
+												"name": "ADDRESS",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "CITY",
+												"type": "String"
+											},
+											"sink": {
+												"name": "CITY",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "STATE",
+												"type": "String"
+											},
+											"sink": {
+												"name": "STATE",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "DISCIPLINE_NAME",
+												"type": "String"
+											},
+											"sink": {
+												"name": "DISCIPLINE_NAME",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "ZIP",
+												"type": "String"
+											},
+											"sink": {
+												"name": "ZIP",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "ADDITIONAL_INFORMATION",
+												"type": "String"
+											},
+											"sink": {
+												"name": "ADDITIONAL_INFORMATION",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "ACTIVE",
+												"type": "String"
+											},
+											"sink": {
+												"name": "ACTIVE",
+												"type": "String"
+											}
+										}
+									]
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "BART_Disciplines_Sql",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "BART_Exceptions_SqlOnprem",
+									"type": "DatasetReference"
+								}
+							]
+						},
+						{
+							"name": "Delete ADVOCACY_EXCEPTIONS staging Onprem",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "Get Exceptions",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "SqlServerSource",
+									"sqlReaderQuery": "TRUNCATE TABLE stg.[ADVOCACY_DISCIPLINE_EXCEPTIONS_Leaf];  \n   \nINSERT INTO stg.[ADVOCACY_DISCIPLINE_EXCEPTIONS_Leaf] (ImportType,ImportStatus_ID,BatchTag,Code)     \nSELECT   \n4 AS ImportType   \n,0 AS ImportStatus_ID   \n,'Delete-ADVOCACY_DISCIPLINE_EXCEPTIONS-DailyProcess' AS BatchTag   \n,Code   \nFROM mdm.ADVOCACY_DISCIPLINE_EXCEPTIONS where code <> 0;   \n   \nEXEC stg.[udp_ADVOCACY_DISCIPLINE_EXCEPTIONS_Leaf] @VersionName = 'VERSION_1', @LogFlag = 0, @BatchTag = 'Delete-ADVOCACY_DISCIPLINE_EXCEPTIONS-DailyProcess'   \n  \n\nSELECT * FROM [stg].[ADVOCACY_DISCIPLINE_EXCEPTIONS_Leaf]  WHERE ID = -1\n",
+									"partitionOption": "None"
+								},
+								"sink": {
+									"type": "SqlServerSink",
+									"writeBehavior": "insert"
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "BART_Exceptions_SqlOnprem",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "BART_Exceptions_SqlOnprem",
+									"type": "DatasetReference"
+								}
+							]
+						},
+						{
+							"name": "Update MDS Tables",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "Insert ADVOCACY_EXCEPTIONS staging Onprem",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "SqlServerSource",
+									"sqlReaderQuery": "DECLARE @ModelName nVarchar(50) = 'Account'   \nDECLARE @Model_ID int   \nDECLARE @Version_Name nvarchar(50)     \nDECLARE @BatchTag nvarchar(50) = 'ADVOCACY_DISCIPLINE_EXCEPTIONS'  \nDECLARE @LogFlag int = 2  \n  \nSET @Model_ID = (SELECT Model_ID   \n                 FROM mdm.viw_SYSTEM_SCHEMA_VERSION   \n                 WHERE Model_Name = @ModelName)   \nSET @Version_Name = (SELECT Name   \n                    FROM mdm.viw_SYSTEM_SCHEMA_VERSION   \n                    WHERE ID = (SELECT MAX(ID)   \n                   FROM mdm.viw_SYSTEM_SCHEMA_VERSION   \n                   WHERE Model_ID = @Model_ID))  \n \nEXECUTE [stg].[udp_ADVOCACY_DISCIPLINE_EXCEPTIONS_Leaf] @Version_Name, @LogFlag, @BatchTag; \n\n\nSELECT * FROM [stg].[ADVOCACY_DISCIPLINE_EXCEPTIONS_Leaf]  WHERE ID = -1\n",
+									"partitionOption": "None"
+								},
+								"sink": {
+									"type": "SqlServerSink",
+									"writeBehavior": "insert"
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "BART_Exceptions_SqlOnprem",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "BART_Exceptions_SqlOnprem",
+									"type": "DatasetReference"
+								}
+							]
+						},
+						{
+							"name": "MDS Entity Validation",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "Update MDS Tables",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "SqlServerSource",
+									"sqlReaderQuery": " DECLARE @ModelName nVarchar(50) = 'Account'  \n DECLARE @StagingLeafTable nVarchar(65) = 'ADVOCACY_DISCIPLINE_EXCEPTIONS_Leaf'  \n DECLARE @UserName nvarchar(50)= 'BL\\usblsqldba'  \n  \n DECLARE @User_ID int  \n DECLARE @Model_ID int \n DECLARE @Version_ID int  \n DECLARE @Entity_ID int  \n  \n SET @User_ID =  (SELECT ID   \n                  FROM  mdm.tblUser u  \n                  WHERE u.UserName = @UserName)  \n SET @Entity_ID = (SELECT Entity_ID  \n                  FROM mdm.viw_SYSTEM_SCHEMA_ENTITY  \n                  WHERE StagingLeafTable = @StagingLeafTable)  \n SET @Model_ID = (SELECT Model_ID  \n                  FROM mdm.viw_SYSTEM_SCHEMA_VERSION  \n                  WHERE Model_Name = @ModelName)  \n SET @Version_ID = (SELECT MAX(ID)  \n                    FROM mdm.viw_SYSTEM_SCHEMA_VERSION  \n                    WHERE Model_ID = @Model_ID) \n  \n EXECUTE [mdm].[udpValidateEntity] @User_ID, @Version_ID, @Entity_ID; \n\nSELECT * FROM [stg].[ADVOCACY_DISCIPLINE_EXCEPTIONS_Leaf]   WHERE ID = -1",
+									"partitionOption": "None"
+								},
+								"sink": {
+									"type": "SqlServerSink",
+									"writeBehavior": "insert"
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "BART_Exceptions_SqlOnprem",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "BART_Exceptions_SqlOnprem",
+									"type": "DatasetReference"
+								}
+							]
+						},
+						{
+							"name": "Get Exceptions",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "Copy_Advocacy_Storage_SqlBD",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderQuery": "SELECT DISTINCT\n       [TDLINX]\n      ,[SGWS_NUM]\n      ,[ACCOUNT_NAME]\n      ,[ADDRESS]\n      ,[CITY]\n      ,[STATE]\n      ,[DISCIPLINE_NAME]\n      ,[ZIP]\n      ,[ADDITIONAL_INFORMATION]\n      ,[ACTIVE]\nFROM  [STG].[STG_ADVOCACY] a\nLEFT JOIN  [STG].[TD_ACCOUNT] t ON TRIM(a.TDLINX) = t.TDLINX_OUTLET_CODE\nWHERE t.TDLINX_OUTLET_CODE IS NULL",
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"sink": {
+									"type": "AzureSqlSink",
+									"preCopyScript": "TRUNCATE TABLE [STG].[STG_ADVOCACY_EXCEPTION]",
+									"writeBehavior": "insert",
+									"disableMetricsCollection": false
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"mappings": [
+										{
+											"source": {
+												"name": "TDLINX",
+												"type": "String"
+											},
+											"sink": {
+												"name": "TDLINX",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "SGWS_NUM",
+												"type": "String"
+											},
+											"sink": {
+												"name": "SGWS_NUM",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "ACCOUNT_NAME",
+												"type": "String"
+											},
+											"sink": {
+												"name": "ACCOUNT_NAME",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "ADDRESS",
+												"type": "String"
+											},
+											"sink": {
+												"name": "ADDRESS",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "CITY",
+												"type": "String"
+											},
+											"sink": {
+												"name": "CITY",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "STATE",
+												"type": "String"
+											},
+											"sink": {
+												"name": "STATE",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "DISCIPLINE_NAME",
+												"type": "String"
+											},
+											"sink": {
+												"name": "DISCIPLINE_NAME",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "ZIP",
+												"type": "String"
+											},
+											"sink": {
+												"name": "ZIP",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "ADDITIONAL_INFORMATION",
+												"type": "String"
+											},
+											"sink": {
+												"name": "ADDITIONAL_INFORMATION",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"name": "ACTIVE",
+												"type": "String"
+											},
+											"sink": {
+												"name": "ACTIVE",
+												"type": "String"
+											}
+										}
+									]
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "Staging_Sql_Source",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "BART_Tdlinx_Exception_insert",
+									"type": "DatasetReference"
+								}
+							]
+						}
+					]
+				}
+			},
+			{
+				"name": "Advocacy_file_exist",
+				"type": "GetMetadata",
+				"dependsOn": [
+					{
+						"activity": "ForEachFile",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "BART_File_Adl_Storage",
+						"type": "DatasetReference"
+					},
+					"fieldList": [
+						"exists"
+					],
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"recursive": true
+					},
+					"formatSettings": {
+						"type": "DelimitedTextReadSettings"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"FolderPath_SourceStore": {
+				"type": "String"
+			},
+			"FolderPath_DestinationStore": {
+				"type": "String",
+				"defaultValue": "prod/bart"
+			},
+			"Destination_Table": {
+				"type": "string",
+				"defaultValue": "LOGS.SOURCE_FILES_LOAD_LOG"
+			},
+			"STARTDATE": {
+				"type": "string"
+			},
+			"ImportType": {
+				"type": "int",
+				"defaultValue": 2
+			},
+			"Is_Zip": {
+				"type": "int",
+				"defaultValue": 0
+			}
+		},
+		"folder": {
+			"name": "BART"
+		},
+		"annotations": [],
+		"lastPublishTime": "2021-08-06T17:23:55Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

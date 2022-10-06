@@ -1,0 +1,231 @@
+{
+	"name": "BEP_File_Azure_Storage",
+	"properties": {
+		"description": "It describes the destination store.",
+		"linkedServiceName": {
+			"referenceName": "NAM_Data_Foundation_DataLake",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"path": {
+				"type": "string"
+			},
+			"filename": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "BEP"
+		},
+		"annotations": [],
+		"type": "AzureBlobFSFile",
+		"structure": [
+			{
+				"name": "site_id",
+				"type": "String"
+			},
+			{
+				"name": "state_name",
+				"type": "String"
+			},
+			{
+				"name": "period_name",
+				"type": "String"
+			},
+			{
+				"name": "product_universe",
+				"type": "String"
+			},
+			{
+				"name": "item_product",
+				"type": "String"
+			},
+			{
+				"name": "item_supplier_name",
+				"type": "String"
+			},
+			{
+				"name": "place_id",
+				"type": "String"
+			},
+			{
+				"name": "place_type_name",
+				"type": "String"
+			},
+			{
+				"name": "place_td_link_id",
+				"type": "String"
+			},
+			{
+				"name": "place_name",
+				"type": "String"
+			},
+			{
+				"name": "place_address",
+				"type": "String"
+			},
+			{
+				"name": "place_city",
+				"type": "String"
+			},
+			{
+				"name": "postal_code",
+				"type": "String"
+			},
+			{
+				"name": "customer_premise",
+				"type": "String"
+			},
+			{
+				"name": "customer_no",
+				"type": "String"
+			},
+			{
+				"name": "mission_id",
+				"type": "String"
+			},
+			{
+				"name": "mission_version",
+				"type": "String"
+			},
+			{
+				"name": "mission_name",
+				"type": "String"
+			},
+			{
+				"name": "mission_response_id",
+				"type": "String"
+			},
+			{
+				"name": "mission_latitude",
+				"type": "String"
+			},
+			{
+				"name": "mission_longitude",
+				"type": "String"
+			},
+			{
+				"name": "mission_created_at",
+				"type": "String"
+			},
+			{
+				"name": "mission_updated_at",
+				"type": "String"
+			},
+			{
+				"name": "mission_completed_at",
+				"type": "String"
+			},
+			{
+				"name": "mission_state",
+				"type": "String"
+			},
+			{
+				"name": "task_id",
+				"type": "String"
+			},
+			{
+				"name": "task_version",
+				"type": "String"
+			},
+			{
+				"name": "parent_task_id",
+				"type": "String"
+			},
+			{
+				"name": "parent_task_value",
+				"type": "String"
+			},
+			{
+				"name": "task_type",
+				"type": "String"
+			},
+			{
+				"name": "task_title",
+				"type": "String"
+			},
+			{
+				"name": "task_description",
+				"type": "String"
+			},
+			{
+				"name": "task_position",
+				"type": "String"
+			},
+			{
+				"name": "section_id",
+				"type": "String"
+			},
+			{
+				"name": "section_title",
+				"type": "String"
+			},
+			{
+				"name": "task_response_id",
+				"type": "String"
+			},
+			{
+				"name": "task_response_created_at",
+				"type": "String"
+			},
+			{
+				"name": "task_response_completed_at",
+				"type": "String"
+			},
+			{
+				"name": "task_response_firebase_url",
+				"type": "String"
+			},
+			{
+				"name": "task_response_file_picker_url",
+				"type": "String"
+			},
+			{
+				"name": "task_response_short_response",
+				"type": "String"
+			},
+			{
+				"name": "task_response_long_response",
+				"type": "String"
+			},
+			{
+				"name": "task_response_int_response",
+				"type": "String"
+			},
+			{
+				"name": "task_response_float_response",
+				"type": "String"
+			},
+			{
+				"name": "task_response_date_response",
+				"type": "String"
+			},
+			{
+				"name": "task_response_is_deleted",
+				"type": "String"
+			}
+		],
+		"typeProperties": {
+			"format": {
+				"type": "TextFormat",
+				"columnDelimiter": "|",
+				"rowDelimiter": "",
+				"treatEmptyAsNull": true,
+				"skipLineCount": 0,
+				"firstRowAsHeader": true
+			},
+			"compression": {
+				"type": "ZipDeflate"
+			},
+			"fileName": {
+				"value": "@dataset().filename",
+				"type": "Expression"
+			},
+			"folderPath": {
+				"value": "@dataset().path",
+				"type": "Expression"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,30 @@
+{
+	"name": "RESTLinkedService",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"description": "a",
+		"annotations": [],
+		"type": "RestService",
+		"typeProperties": {
+			"url": "https://login.hillebrand.com/oauth2/aus2lt1zi5HuDEayF0i7/v1/token",
+			"enableServerCertificateValidation": false,
+			"authenticationType": "Anonymous",
+			"authHeaders": {
+				"Content-Type": {
+					"type": "SecureString",
+					"value": "**********"
+				},
+				"Accept": {
+					"type": "SecureString",
+					"value": "**********"
+				}
+			},
+			"authHeader": {
+				"x-api-key": {
+					"type": "SecureString",
+					"value": "**********"
+				}
+			}
+		}
+	}
+}

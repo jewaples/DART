@@ -1,0 +1,9 @@
+{
+	"name": "bdh-datafactory-nam-dev",
+	"location": "eastus2",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "d13f1e32-4ed0-4988-a3ab-2330d1fc7810",
+		"tenantId": "9e16780e-719d-496b-a880-24ac20c30a60"
+	}
+}

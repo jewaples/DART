@@ -1,0 +1,570 @@
+{
+	"name": "AzureSqlTOperationsRpt",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "Item_Description",
+				"type": "varchar"
+			},
+			{
+				"name": "Item_Id",
+				"type": "varchar"
+			},
+			{
+				"name": "Product_Brand_Planning_Size_Id",
+				"type": "varchar"
+			},
+			{
+				"name": "Product_Brand_Planning_Size_Description",
+				"type": "varchar"
+			},
+			{
+				"name": "Product_Brand_Size_Description",
+				"type": "varchar"
+			},
+			{
+				"name": "Product_Brand_Size_Id",
+				"type": "varchar"
+			},
+			{
+				"name": "Product_Brand_Label_Description",
+				"type": "varchar"
+			},
+			{
+				"name": "Product_Brand_Label_Id",
+				"type": "varchar"
+			},
+			{
+				"name": "Product_Brand_Group_Description",
+				"type": "varchar"
+			},
+			{
+				"name": "Product_Brand_Group_Id",
+				"type": "varchar"
+			},
+			{
+				"name": "Product_Brand_House_Description",
+				"type": "varchar"
+			},
+			{
+				"name": "Product_Brand_House_Id",
+				"type": "varchar"
+			},
+			{
+				"name": "Bottle_Size",
+				"type": "varchar"
+			},
+			{
+				"name": "Bottle_Volume",
+				"type": "decimal",
+				"precision": 17,
+				"scale": 3
+			},
+			{
+				"name": "Bottles_per_Case",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Total_Case_Volume",
+				"type": "decimal",
+				"precision": 17,
+				"scale": 3
+			},
+			{
+				"name": "Brand_Group_Code",
+				"type": "varchar"
+			},
+			{
+				"name": "Brand_Group_Description",
+				"type": "varchar"
+			},
+			{
+				"name": "DISTRIBUTOR",
+				"type": "varchar"
+			},
+			{
+				"name": "Distributor_Id",
+				"type": "varchar"
+			},
+			{
+				"name": "Region_Distributor",
+				"type": "varchar"
+			},
+			{
+				"name": "Region_Distributor_Id",
+				"type": "varchar"
+			},
+			{
+				"name": "MARKET",
+				"type": "varchar"
+			},
+			{
+				"name": "Market_Id",
+				"type": "varchar"
+			},
+			{
+				"name": "Sub_Region",
+				"type": "varchar"
+			},
+			{
+				"name": "Sub_Region_Id",
+				"type": "varchar"
+			},
+			{
+				"name": "Super_Region",
+				"type": "varchar"
+			},
+			{
+				"name": "Super_Region_Id",
+				"type": "varchar"
+			},
+			{
+				"name": "Business_Unit",
+				"type": "varchar"
+			},
+			{
+				"name": "Business_Unit_Id",
+				"type": "varchar"
+			},
+			{
+				"name": "COUNTRY",
+				"type": "varchar"
+			},
+			{
+				"name": "Country_Code",
+				"type": "varchar"
+			},
+			{
+				"name": "FISCAL_QUARTER",
+				"type": "varchar"
+			},
+			{
+				"name": "CALENDAR_YEAR",
+				"type": "varchar"
+			},
+			{
+				"name": "CALENDAR_QUARTER",
+				"type": "varchar"
+			},
+			{
+				"name": "CALENDAR_MONTH",
+				"type": "varchar"
+			},
+			{
+				"name": "_BIC_ZDPPLROLS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "_BIC_ZDPPLCYCV",
+				"type": "nvarchar"
+			},
+			{
+				"name": "_BIC_ZBILLSCEN",
+				"type": "nvarchar"
+			},
+			{
+				"name": "_BIC_ZDPCASTYP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FISCAL_YR",
+				"type": "varchar"
+			},
+			{
+				"name": "CALMONTH",
+				"type": "varchar"
+			},
+			{
+				"name": "FISCAL_PERIOD",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "CALENDAR_MONTH_2",
+				"type": "varchar"
+			},
+			{
+				"name": "Commercial_Division",
+				"type": "varchar"
+			},
+			{
+				"name": "Commercial_National_Manager",
+				"type": "varchar"
+			},
+			{
+				"name": "Commercial_Region",
+				"type": "varchar"
+			},
+			{
+				"name": "Transatlantic_Scope",
+				"type": "varchar"
+			},
+			{
+				"name": "Transatlantic_Market_Type",
+				"type": "varchar"
+			},
+			{
+				"name": "Brand_Status",
+				"type": "varchar"
+			},
+			{
+				"name": "Brand_Classification",
+				"type": "varchar"
+			},
+			{
+				"name": "Active_for_Annual_Planning",
+				"type": "varchar"
+			},
+			{
+				"name": "SCC_Code",
+				"type": "varchar"
+			},
+			{
+				"name": "Brand_Status_Code",
+				"type": "varchar"
+			},
+			{
+				"name": "Brand_Classification_Code",
+				"type": "varchar"
+			},
+			{
+				"name": "Active_for_Annual_Planning_Code",
+				"type": "varchar"
+			},
+			{
+				"name": "Commercial_Division_Code",
+				"type": "varchar"
+			},
+			{
+				"name": "Commercial_National_Manager_Code",
+				"type": "varchar"
+			},
+			{
+				"name": "Commercial_Region_Code",
+				"type": "varchar"
+			},
+			{
+				"name": "Transatlantic_Scope_Code",
+				"type": "varchar"
+			},
+			{
+				"name": "Transatlantic_Market_Type_Code",
+				"type": "varchar"
+			},
+			{
+				"name": "Price_List_Type",
+				"type": "varchar"
+			},
+			{
+				"name": "Price_List_Type_Description",
+				"type": "varchar"
+			},
+			{
+				"name": "AG_QUARTER",
+				"type": "varchar"
+			},
+			{
+				"name": "AG_YEAR",
+				"type": "varchar"
+			},
+			{
+				"name": "Label_Month",
+				"type": "varchar"
+			},
+			{
+				"name": "_BIC_ZENDINVCY",
+				"type": "decimal",
+				"precision": 17,
+				"scale": 3
+			},
+			{
+				"name": "_BIC_ZENDINVLY",
+				"type": "decimal",
+				"precision": 17,
+				"scale": 3
+			},
+			{
+				"name": "_BIC_ZBILVLCY",
+				"type": "decimal",
+				"precision": 17,
+				"scale": 3
+			},
+			{
+				"name": "_BIC_ZBILVLLY",
+				"type": "decimal",
+				"precision": 17,
+				"scale": 3
+			},
+			{
+				"name": "_BIC_ZBILVLYTD",
+				"type": "decimal",
+				"precision": 17,
+				"scale": 3
+			},
+			{
+				"name": "_BIC_ZBILVLYTG",
+				"type": "decimal",
+				"precision": 17,
+				"scale": 3
+			},
+			{
+				"name": "_BIC_ZBILVLR3",
+				"type": "decimal",
+				"precision": 17,
+				"scale": 3
+			},
+			{
+				"name": "_BIC_ZBILVLR12",
+				"type": "decimal",
+				"precision": 17,
+				"scale": 3
+			},
+			{
+				"name": "_BIC_ZBILPVCY",
+				"type": "decimal",
+				"precision": 17,
+				"scale": 3
+			},
+			{
+				"name": "_BIC_ZBILPVYTD",
+				"type": "decimal",
+				"precision": 17,
+				"scale": 3
+			},
+			{
+				"name": "_BIC_ZBILPVYTG",
+				"type": "decimal",
+				"precision": 17,
+				"scale": 3
+			},
+			{
+				"name": "_BIC_ZBILPVR3",
+				"type": "decimal",
+				"precision": 17,
+				"scale": 3
+			},
+			{
+				"name": "_BIC_ZBILPVR12",
+				"type": "decimal",
+				"precision": 17,
+				"scale": 3
+			},
+			{
+				"name": "_BIC_ZBILPLCY",
+				"type": "decimal",
+				"precision": 17,
+				"scale": 3
+			},
+			{
+				"name": "_BIC_ZBILPLYTD",
+				"type": "decimal",
+				"precision": 17,
+				"scale": 3
+			},
+			{
+				"name": "_BIC_ZBILPLYTG",
+				"type": "decimal",
+				"precision": 17,
+				"scale": 3
+			},
+			{
+				"name": "_BIC_ZBILPLR3",
+				"type": "decimal",
+				"precision": 17,
+				"scale": 3
+			},
+			{
+				"name": "_BIC_ZBILPLR12",
+				"type": "decimal",
+				"precision": 17,
+				"scale": 3
+			},
+			{
+				"name": "_BIC_ZPLBILCY",
+				"type": "decimal",
+				"precision": 17,
+				"scale": 3
+			},
+			{
+				"name": "_BIC_ZPLBILLY",
+				"type": "decimal",
+				"precision": 17,
+				"scale": 3
+			},
+			{
+				"name": "_BIC_ZPLBILYTD",
+				"type": "decimal",
+				"precision": 17,
+				"scale": 3
+			},
+			{
+				"name": "_BIC_ZPLBILYTG",
+				"type": "decimal",
+				"precision": 17,
+				"scale": 3
+			},
+			{
+				"name": "_BIC_ZPLBILR3",
+				"type": "decimal",
+				"precision": 17,
+				"scale": 3
+			},
+			{
+				"name": "_BIC_ZPLBILR12",
+				"type": "decimal",
+				"precision": 17,
+				"scale": 3
+			},
+			{
+				"name": "ZBILVLR6",
+				"type": "decimal",
+				"precision": 17,
+				"scale": 3
+			},
+			{
+				"name": "ZBILPVR6",
+				"type": "decimal",
+				"precision": 17,
+				"scale": 3
+			},
+			{
+				"name": "ZBILPLR6",
+				"type": "decimal",
+				"precision": 17,
+				"scale": 3
+			},
+			{
+				"name": "ZPLBILR6",
+				"type": "decimal",
+				"precision": 17,
+				"scale": 3
+			},
+			{
+				"name": "VAR_PENDING_V_BILLED_VOL",
+				"type": "decimal",
+				"precision": 17,
+				"scale": 3
+			},
+			{
+				"name": "VAR_PENDING_V_BILLED_VOL_YTD",
+				"type": "decimal",
+				"precision": 17,
+				"scale": 3
+			},
+			{
+				"name": "VAR_PENDING_V_BILLED_VOL_YTG",
+				"type": "decimal",
+				"precision": 17,
+				"scale": 3
+			},
+			{
+				"name": "VAR_PENDING_V_BILLED_VOL_R3",
+				"type": "decimal",
+				"precision": 17,
+				"scale": 3
+			},
+			{
+				"name": "VAR_PENDING_V_BILLED_VOL_R6",
+				"type": "decimal",
+				"precision": 17,
+				"scale": 3
+			},
+			{
+				"name": "VAR_PENDING_V_BILLED_VOL_R12",
+				"type": "decimal",
+				"precision": 17,
+				"scale": 3
+			},
+			{
+				"name": "VAR_PENDING_V_PENDIND_LY_VOL",
+				"type": "decimal",
+				"precision": 17,
+				"scale": 3
+			},
+			{
+				"name": "VAR_PENDING_V_PENDIND_LY_VOL_YTD",
+				"type": "decimal",
+				"precision": 17,
+				"scale": 3
+			},
+			{
+				"name": "VAR_PENDING_V_PENDIND_LY_VOL_YTG",
+				"type": "decimal",
+				"precision": 17,
+				"scale": 3
+			},
+			{
+				"name": "VAR_PENDING_V_PENDIND_LY_VOL_R3",
+				"type": "decimal",
+				"precision": 17,
+				"scale": 3
+			},
+			{
+				"name": "VAR_PENDING_V_PENDING_LY_VOL_R6",
+				"type": "decimal",
+				"precision": 17,
+				"scale": 3
+			},
+			{
+				"name": "VAR_PENDING_V_PENDIND_LY_VOL_R12",
+				"type": "decimal",
+				"precision": 17,
+				"scale": 3
+			},
+			{
+				"name": "VAR_PENDING_V_PLANNED_VOL",
+				"type": "decimal",
+				"precision": 17,
+				"scale": 3
+			},
+			{
+				"name": "VAR_PENDING_V_PLANNED_VOL_YTD",
+				"type": "decimal",
+				"precision": 17,
+				"scale": 3
+			},
+			{
+				"name": "VAR_PENDING_V_PLANNED_VOL_YTG",
+				"type": "decimal",
+				"precision": 17,
+				"scale": 3
+			},
+			{
+				"name": "VAR_PENDING_V_PLANNED_VOL_R3",
+				"type": "decimal",
+				"precision": 17,
+				"scale": 3
+			},
+			{
+				"name": "VAR_PENDING_V_PLANNED_VOL_R6",
+				"type": "decimal",
+				"precision": 17,
+				"scale": 3
+			},
+			{
+				"name": "VAR_PENDING_V_PLANNED_VOL_R12",
+				"type": "decimal",
+				"precision": 17,
+				"scale": 3
+			},
+			{
+				"name": "BILLEDPENDING_PLANNED_VOL_FY",
+				"type": "decimal",
+				"precision": 17,
+				"scale": 3
+			}
+		],
+		"typeProperties": {
+			"schema": "STG",
+			"table": "STG_OPERATIONS_REPORTING"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

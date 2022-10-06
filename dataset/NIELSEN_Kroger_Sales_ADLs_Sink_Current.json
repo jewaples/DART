@@ -1,0 +1,25 @@
+{
+	"name": "NIELSEN_Kroger_Sales_ADLs_Sink_Current",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_Data_Foundation_DataLake",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "NIELSEN"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "KROGER_SALES.parquet",
+				"folderPath": "EDW/NIELSEN/KROGER_SALES/Current",
+				"fileSystem": "prod"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

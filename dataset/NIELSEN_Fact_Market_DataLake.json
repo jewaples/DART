@@ -1,0 +1,231 @@
+{
+	"name": "NIELSEN_Fact_Market_DataLake",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_Data_Foundation_DataLake",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"path": {
+				"type": "string"
+			},
+			"filename": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "NIELSEN"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@dataset().filename",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@dataset().path",
+					"type": "Expression"
+				}
+			},
+			"columnDelimiter": "|",
+			"compressionCodec": "gzip",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "Market Key",
+				"type": "String"
+			},
+			{
+				"name": "PRODUCT KEY",
+				"type": "String"
+			},
+			{
+				"name": "Period Key",
+				"type": "String"
+			},
+			{
+				"name": "$",
+				"type": "String"
+			},
+			{
+				"name": "Base $",
+				"type": "String"
+			},
+			{
+				"name": "Incr $",
+				"type": "String"
+			},
+			{
+				"name": "Units",
+				"type": "String"
+			},
+			{
+				"name": "9L EQ",
+				"type": "String"
+			},
+			{
+				"name": "Base 9L EQ",
+				"type": "String"
+			},
+			{
+				"name": "Incr 9L EQ",
+				"type": "String"
+			},
+			{
+				"name": "No Promo $",
+				"type": "String"
+			},
+			{
+				"name": "Disp w/o Feat $",
+				"type": "String"
+			},
+			{
+				"name": "Disp w/o Feat Base $",
+				"type": "String"
+			},
+			{
+				"name": "Disp w/o Feat Incr $",
+				"type": "String"
+			},
+			{
+				"name": "Feat w/o Disp $",
+				"type": "String"
+			},
+			{
+				"name": "Feat w/o Disp Base $",
+				"type": "String"
+			},
+			{
+				"name": "Feat w/o Disp Incr $",
+				"type": "String"
+			},
+			{
+				"name": "Feat & Disp $",
+				"type": "String"
+			},
+			{
+				"name": "Feat & Disp Base $",
+				"type": "String"
+			},
+			{
+				"name": "Feat & Disp Incr $",
+				"type": "String"
+			},
+			{
+				"name": "Price Decr Only $",
+				"type": "String"
+			},
+			{
+				"name": "Price Decr Only Base $",
+				"type": "String"
+			},
+			{
+				"name": "Price Decr Only Incr $",
+				"type": "String"
+			},
+			{
+				"name": "No Promo Units",
+				"type": "String"
+			},
+			{
+				"name": "Disp w/o Feat Units",
+				"type": "String"
+			},
+			{
+				"name": "Feat w/o Disp Units",
+				"type": "String"
+			},
+			{
+				"name": "Feat & Disp Units",
+				"type": "String"
+			},
+			{
+				"name": "Price Decr Only Units",
+				"type": "String"
+			},
+			{
+				"name": "No Promo 9L EQ",
+				"type": "String"
+			},
+			{
+				"name": "Disp w/o Feat 9L EQ",
+				"type": "String"
+			},
+			{
+				"name": "Disp w/o Feat Base 9L EQ",
+				"type": "String"
+			},
+			{
+				"name": "Disp w/o Feat Incr 9L EQ",
+				"type": "String"
+			},
+			{
+				"name": "Feat w/o Disp 9L EQ",
+				"type": "String"
+			},
+			{
+				"name": "Feat w/o Disp Base 9L EQ",
+				"type": "String"
+			},
+			{
+				"name": "Feat w/o Disp Incr 9L EQ",
+				"type": "String"
+			},
+			{
+				"name": "Feat & Disp 9L EQ",
+				"type": "String"
+			},
+			{
+				"name": "Feat & Disp Base 9L EQ",
+				"type": "String"
+			},
+			{
+				"name": "Feat & Disp Incr 9L EQ",
+				"type": "String"
+			},
+			{
+				"name": "Price Decr Only 9L EQ",
+				"type": "String"
+			},
+			{
+				"name": "Price Decr Only Base 9L EQ",
+				"type": "String"
+			},
+			{
+				"name": "Price Decr Only Incr 9L EQ",
+				"type": "String"
+			},
+			{
+				"name": "Number of Stores Selling",
+				"type": "String"
+			},
+			{
+				"name": "Number of Stores",
+				"type": "String"
+			},
+			{
+				"name": "9L EQ / Wghtd Dist - Context",
+				"type": "String"
+			},
+			{
+				"name": "$ / Wghtd Dist - Context",
+				"type": "String"
+			},
+			{
+				"name": "Avg 750ML EQ Price",
+				"type": "String"
+			},
+			{
+				"name": "Wghtd Dist - Context",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

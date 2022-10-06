@@ -1,0 +1,142 @@
+{
+	"name": "Ecommerce_Product_IPC_Load",
+	"properties": {
+		"activities": [
+			{
+				"name": "Load Staging IPC",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SapHanaSource",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"preCopyScript": "TRUNCATE TABLE  STG.NAMIBP_PRODUCT_UPC",
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "MATERIAL",
+									"type": "String"
+								},
+								"sink": {
+									"name": "MATERIAL",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "TXT",
+									"type": "String"
+								},
+								"sink": {
+									"name": "TXT",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "BRAND GROUP",
+									"type": "String"
+								},
+								"sink": {
+									"name": "BRAND_GROUP",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "UPC_BT",
+									"type": "String"
+								},
+								"sink": {
+									"name": "UPC_BT",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "UPC_CS",
+									"type": "String"
+								},
+								"sink": {
+									"name": "UPC_CS",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "Ecommerce_Product_UPC_Hana",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "Ecommerce_Product_UPC_SQL",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Load Xref_Product_UPC",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "Load Staging IPC",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "ECOMM.usp_XREF_PRODUCT_UPC_LOAD"
+				},
+				"linkedServiceName": {
+					"referenceName": "NAM_COM_DART_SQL",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"folder": {
+			"name": "ECOMMERCE"
+		},
+		"annotations": [],
+		"lastPublishTime": "2021-04-20T22:27:37Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

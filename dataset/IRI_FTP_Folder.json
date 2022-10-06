@@ -1,0 +1,20 @@
+{
+	"name": "IRI_FTP_Folder",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_IRI_FTP",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "IRI"
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "FtpServerLocation"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

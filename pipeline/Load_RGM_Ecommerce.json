@@ -1,0 +1,136 @@
+{
+	"name": "Load_RGM_Ecommerce",
+	"properties": {
+		"activities": [
+			{
+				"name": "Load Drizly",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Ecommerce_Drizly",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"FolderPath_SourceStore": "rgm/Inputs/Beezlabs/Drizly",
+						"FolderPath_DestinationStore": "dbo.Ecommerce",
+						"Destination_Table": "dbo.ECOMM_FILES_LOAD_LOG",
+						"Is_Zip": "0",
+						"STARTDATE": {
+							"value": "@pipeline().parameters.STARTDATE",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "Load Independent",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Load Drizly",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Ecommerce_Independet_Retail",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"FolderPath_SourceStore": "rgm/Inputs/Beezlabs/Independent",
+						"FolderPath_DestinationStore": "dbo.Ecommerce",
+						"Destination_Table": "dbo.ECOMM_FILES_LOAD_LOG",
+						"Is_Zip": "0",
+						"STARTDATE": {
+							"value": "@pipeline().parameters.STARTDATE",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "COSTCO_SALES",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "NIELSEN_COSTCO_SALES",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"FolderPath_SourceStore": "prod/Costco",
+						"FolderPath_DestinationStore": "NIELSEN.COSTCO_SALES",
+						"Destination_Table": "LOGS.SOURCE_FILES_LOAD_LOG",
+						"Is_Zip": "0",
+						"STARTDATE": {
+							"value": "@pipeline().parameters.STARTDATE",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "KROGER_SALES",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "COSTCO_SALES",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "NIELSEN_KROGER_SALES",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"STARTDATE": {
+							"value": "@pipeline().parameters.STARTDATE",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "Load Retail Sync",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "EDW_NABCA_RETAILSYNC",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"STARTDATE": {
+							"value": "@pipeline().parameters.STARTDATE",
+							"type": "Expression"
+						}
+					}
+				}
+			}
+		],
+		"parameters": {
+			"STARTDATE": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-03-01T17:44:09Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

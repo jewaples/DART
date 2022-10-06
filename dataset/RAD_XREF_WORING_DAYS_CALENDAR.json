@@ -1,0 +1,41 @@
+{
+	"name": "RAD_XREF_WORING_DAYS_CALENDAR",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Date",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "Day",
+				"type": "nvarchar"
+			},
+			{
+				"name": "WorkDay_Holiday",
+				"type": "nvarchar"
+			},
+			{
+				"name": "WorkDayNumber",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": "RAD",
+			"table": "XREF_WORING_DAYS_CALENDAR"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

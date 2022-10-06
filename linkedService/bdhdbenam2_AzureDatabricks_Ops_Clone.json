@@ -1,0 +1,21 @@
+{
+	"name": "bdhdbenam2_AzureDatabricks_Ops_Clone",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"description": "BacarDHI Ops (clone) cluster",
+		"annotations": [],
+		"type": "AzureDatabricks",
+		"typeProperties": {
+			"domain": "https://adb-4343854903470496.16.azuredatabricks.net",
+			"accessToken": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "NAM_bdh_AzureKeyVault",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "Databricks-ADF-Token"
+			},
+			"existingClusterId": "0614-143233-xwn2yyli"
+		}
+	}
+}

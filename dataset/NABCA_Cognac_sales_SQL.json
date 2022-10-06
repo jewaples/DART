@@ -1,0 +1,142 @@
+{
+	"name": "NABCA_Cognac_sales_SQL",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Cognac_Sales"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "BRAND_EXTENSION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CATEGORY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SIZE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "VALUE_ADD",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SUBCATEGORY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SPIRITS_PRICE_TIER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "WHISKEY_TYPE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MANUFACTURER",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RAD_BRAND",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RAD_BRAND_GROUP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RAD_PORTFOLIO",
+				"type": "nvarchar"
+			},
+			{
+				"name": "RAD_HOUSE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "NIELSEN_UNITS",
+				"type": "decimal",
+				"precision": 33,
+				"scale": 3
+			},
+			{
+				"name": "NABCA_PRODUCT_CLASS_ABBREVIATION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TDLINX_ACCOUNT",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TDLINX_PREMISE_TYPE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "STATE_CODE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PERIOD",
+				"type": "date"
+			},
+			{
+				"name": "BOTTLES_SOLD",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "VOLUME",
+				"type": "decimal",
+				"precision": 35,
+				"scale": 3
+			},
+			{
+				"name": "SHELF_DOLLAR_VOL",
+				"type": "decimal",
+				"precision": 35,
+				"scale": 2
+			},
+			{
+				"name": "RETAIL_DOLLAR_VOL",
+				"type": "decimal",
+				"precision": 35,
+				"scale": 2
+			},
+			{
+				"name": "SHELF_PRICE_BOTTLE",
+				"type": "decimal",
+				"precision": 35,
+				"scale": 2
+			},
+			{
+				"name": "RETAIL_PRICE_BOTTLE",
+				"type": "decimal",
+				"precision": 35,
+				"scale": 2
+			},
+			{
+				"name": "SHELF_PRICE_VOLUME",
+				"type": "decimal",
+				"precision": 35,
+				"scale": 2
+			},
+			{
+				"name": "RETAIL_PRICE_VOLUME",
+				"type": "decimal",
+				"precision": 35,
+				"scale": 2
+			}
+		],
+		"typeProperties": {
+			"schema": "NABCA",
+			"table": "PRODUCT_SALES_EY"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

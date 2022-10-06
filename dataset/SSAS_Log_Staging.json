@@ -1,0 +1,76 @@
+{
+	"name": "SSAS_Log_Staging",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "STAGING"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "EventName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "utc_timestamp",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "EndTime",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "EventClass",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "EventSubclass",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "SPID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Duration",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "NTUserName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DatabaseName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ApplicationName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TextData",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "LOGS",
+			"table": "SSAS_EVENT_LOG"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

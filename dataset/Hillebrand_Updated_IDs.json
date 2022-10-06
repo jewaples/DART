@@ -1,0 +1,22 @@
+{
+	"name": "Hillebrand_Updated_IDs",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ID",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "STG",
+			"table": "HILLEBRAND_UPDATED_IDS"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

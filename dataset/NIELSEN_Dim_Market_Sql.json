@@ -1,0 +1,44 @@
+{
+	"name": "NIELSEN_Dim_Market_Sql",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_COM_DART_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "NIELSEN"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "MARKET_KEY",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "MARKET_DESCRIPTION",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PIPELINE_ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SOURCE_FILE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TIMESTAMP",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			}
+		],
+		"typeProperties": {
+			"schema": "NIELSEN",
+			"table": "DIM_MARKET"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

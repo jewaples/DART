@@ -1,0 +1,55 @@
+{
+	"name": "AAS_model_Scale_S0",
+	"properties": {
+		"activities": [
+			{
+				"name": "Scale_AAS",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": {
+						"value": "@pipeline().parameters.in_model_url",
+						"type": "Expression"
+					},
+					"method": "PATCH",
+					"body": {
+						"sku": {
+							"capacity": 1,
+							"name": "S0",
+							"tier": "Standard"
+						}
+					},
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://management.azure.com/"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"in_model_url": {
+				"type": "string",
+				"defaultValue": "https://management.azure.com/subscriptions/bfdd0a4a-b14b-466c-96f0-47620227e40b/resourceGroups/BigData_Hub-EU/providers/Microsoft.AnalysisServices/servers/bdhaas2/?api-version=2017-08-01"
+			}
+		},
+		"variables": {
+			"var_refresh_status": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "AAS Refresh"
+		},
+		"annotations": [],
+		"lastPublishTime": "2021-08-06T17:23:53Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

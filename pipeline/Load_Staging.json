@@ -1,0 +1,528 @@
+{
+	"name": "Load_Staging",
+	"properties": {
+		"activities": [
+			{
+				"name": "Get_Hana_Tables",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SapHanaSource",
+						"query": "\n SELECT *\n   FROM\n   (\n   SELECT SCHEMA_NAME || '.' || TABLE_NAME AS  \"HANA_NAME\",\n    TABLE_NAME AS  \"SQL_NAME\",\nSCHEMA_NAME AS   \"SCHEMA_NAME\"\n   FROM tables\n)T\n   WHERE T.HANA_NAME \n   IN('_SYS_BI.M_TIME_DIMENSION',\n\t 'DISTRIBUTORS_USA.DEALS',\n          'DISTRIBUTORS_USA.DEAL_ORGANIZER',\n\t  'DISTRIBUTORS_USA.NAMIBP_CS_STATE',\n          'DISTRIBUTORS_USA.NAMIBP_CS_DATE',\n          'DISTRIBUTORS_USA.DISTRIBUTOR_CALENDAR',\n          'DISTRIBUTORS_USA.DISTRIBUTOR_SHIPMENT'\n          --'DISTRIBUTORS_USA.DISTRIBUTOR_SALES'\n)",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "Hana_Source_Tables",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "Copy_Each_Hana_Table",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Get_Hana_Tables",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Get_Hana_Tables').output.value",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "copy_tables_Hana_Sql_Db",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "SapHanaSource",
+									"query": {
+										"value": "  SELECT * FROM @{item().SCHEMA_NAME}.@{item().SQL_NAME}",
+										"type": "Expression"
+									},
+									"partitionOption": "None"
+								},
+								"sink": {
+									"type": "AzureSqlSink",
+									"preCopyScript": {
+										"value": "TRUNCATE TABLE STG.@{item().SQL_Name}",
+										"type": "Expression"
+									},
+									"writeBehavior": "insert",
+									"disableMetricsCollection": false
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "Hana_Source_Tables",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "Azure_Sql_Staging_Tables",
+									"type": "DatasetReference"
+								}
+							]
+						}
+					]
+				}
+			},
+			{
+				"name": "Get_MDS_Tables",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SqlServerSource",
+						"sqlReaderQuery": "  SELECT *\n  FROM(\n  SELECT table_Schema +'.'+ TABLE_NAME AS Table_Name\n  ,TABLE_NAME AS SQL_NAME\n  ,table_Schema AS [SCHEMA_NAME]\n  FROM information_Schema.tables\n  )T\n   WHERE T.TABLE_NAME IN(\n'mdm.CALLED_ON_UNIVERSE',\n 'mdm.CUSTOMER_INCLUDED',\n'mdm.NAMIBP_PRODUCT_MD',\n'mdm.NAMIBP_CUSTOMER_MD',\n'mdm.ADVOCACY_ACCOUNT',\n'mdm.BAM_ACCOUNT',\n'mdm.NATIONAL_ACCOUNTS_FRANCHISE',\n'mdm.VIP_ACCOUNT',\n'mdm.TD_ACCOUNT',\n'mdm.CUSTOMER_MARKETING_SEGMENT',\n'mdm.CUSTOMER_INCLUDED_EXTENDED',\n'mdm.FRANCHISE_STATES_DISTRIBUTOR_GROUPING',\n'mdm.TIME_FRAME_METRIC_SLICER',\n'mdm.CHANGE_METRIC_SLICER',\n'mdm.IMAGE',\n'mdm.PRODUCT_FLAGS',\n'mdm.OPS_BP_PRODUCT_GROUPING',\n'mdm.OPS_ORDER_DEADLINES',\n'mdm.OPS_MANUAL_ALLOCATIONS',\n'mdm.OPS_MANUAL_ALLOCATIONS_IPC',\n'mdm.OPS_VMI_SCOPE'\n  )",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "MDS_Source_Tables",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "Copy_Each_MDS_Table",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Get_MDS_Tables",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Get_MDS_Tables').output.value",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "copy_tables_MDS_Sql_Db",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "SqlServerSource",
+									"sqlReaderQuery": {
+										"value": "SELECT * FROM @{item().SCHEMA_NAME}.@{item().SQL_NAME}",
+										"type": "Expression"
+									},
+									"partitionOption": "None"
+								},
+								"sink": {
+									"type": "AzureSqlSink",
+									"preCopyScript": {
+										"value": "TRUNCATE TABLE STG.@{item().SQL_Name}",
+										"type": "Expression"
+									},
+									"writeBehavior": "insert",
+									"disableMetricsCollection": false
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "MDS_Source_Tables",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "Azure_Sql_Staging_Tables",
+									"type": "DatasetReference"
+								}
+							]
+						}
+					]
+				}
+			},
+			{
+				"name": "Get_GBK",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "Copy_Each_MDS_Table",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SqlServerSource",
+						"sqlReaderQuery": "\n  SELECT *\n  FROM(\n  SELECT table_Schema +'.'+ TABLE_NAME AS Table_Name\n  ,TABLE_NAME AS SQL_NAME\n  ,table_Schema AS [SCHEMA_NAME]\n  FROM information_Schema.tables\n  )T\n   WHERE T.TABLE_NAME IN(\n 'mdm.TARGET_CATEGORIES',\n'mdm.TARGET_COMPETITIVE_SET',\n'mdm.TOP_SUPPLIERS',\n'mdm.UNMAPPED_BRANDS',\n'mdm.WHISKEY_BRANDS_SUB_CATEGORY'\n )",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "GBK_Source_Tables",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "Copy_Each_GBK_Table",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Get_GBK",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Get_GBK').output.value",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "copy_tables_GBK_Sql_Db",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "SqlServerSource",
+									"sqlReaderQuery": {
+										"value": "SELECT * FROM @{item().SCHEMA_NAME}.@{item().SQL_NAME}",
+										"type": "Expression"
+									},
+									"partitionOption": "None"
+								},
+								"sink": {
+									"type": "AzureSqlSink",
+									"preCopyScript": {
+										"value": "TRUNCATE TABLE STG.@{item().SQL_Name}",
+										"type": "Expression"
+									},
+									"writeBehavior": "insert",
+									"disableMetricsCollection": false
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "GBK_Source_Tables",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "Azure_Sql_Staging_Tables",
+									"type": "DatasetReference"
+								}
+							]
+						}
+					]
+				}
+			},
+			{
+				"name": "Get_Hana_Special_Tables",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "Copy_Each_Hana_Table",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SapHanaSource",
+						"query": "\n SELECT *\n   FROM\n   (\n   SELECT SCHEMA_NAME || '.' || TABLE_NAME AS  \"HANA_NAME\",\n    TABLE_NAME AS  \"SQL_NAME\",\nSCHEMA_NAME AS   \"SCHEMA_NAME\"\n   FROM tables\n)T\n   WHERE T.HANA_NAME \n   IN( \n  'SAPP30./BIC/AZMD_SPNAM2',\n   'SAPP30./BIC/AZOTC_AO362',\n   'SAPP30./BIC/AZOTC_AO142',\n   'SAPP30./BIC/AZMD_O0100',\n   'SAPP30./BIC/PZMATERIAL',\n   'SAPP30./BIC/AZOTC_AO372',\n   'SAPP30./BIC/AZOTC_AO382'\n)",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "Hana_Source_Tables",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "Copy_Each_Hana_Special_Table",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Get_Hana_Special_Tables",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Get_Hana_Special_Tables').output.value",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "copy_tables_Hana_special_Sql_Db",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "SapHanaSource",
+									"partitionOption": "None"
+								},
+								"sink": {
+									"type": "AzureSqlSink",
+									"preCopyScript": {
+										"value": "TRUNCATE TABLE STG.[@{item().SQL_Name}]",
+										"type": "Expression"
+									},
+									"writeBehavior": "insert",
+									"disableMetricsCollection": false
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "Hana_Source_Special_Tables",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "Azure_Sql_Staging_Tables",
+									"type": "DatasetReference"
+								}
+							]
+						}
+					]
+				}
+			},
+			{
+				"name": "Get_Hana_Sales",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "Copy_Each_Hana_Special_Table",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SapHanaSource",
+						"query": "\n SELECT *\n   FROM\n   (\n   SELECT SCHEMA_NAME || '.' || TABLE_NAME AS  \"HANA_NAME\",\n    TABLE_NAME AS  \"SQL_NAME\",\nSCHEMA_NAME AS   \"SCHEMA_NAME\"\n   FROM tables\n)T\n   WHERE T.HANA_NAME \n   IN( 'DISTRIBUTORS_USA.DISTRIBUTOR_SALES')",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "Hana_Source_Tables",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "Copy_Hana_Sales",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Get_Hana_Sales",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Get_Hana_Sales').output.value",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "copy_Sales_Hana_Sql_Db",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "SapHanaSource",
+									"query": " SELECT TOP 1 * FROM DISTRIBUTORS_USA.DISTRIBUTOR_SALES\n WHERE INVOICE_DT = (SELECT MAX(INVOICE_DT) FROM  DISTRIBUTORS_USA.DISTRIBUTOR_SALES)",
+									"partitionOption": "None"
+								},
+								"sink": {
+									"type": "AzureSqlSink",
+									"preCopyScript": {
+										"value": "TRUNCATE TABLE STG.@{item().SQL_Name}",
+										"type": "Expression"
+									},
+									"writeBehavior": "insert",
+									"disableMetricsCollection": false
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "Hana_Source_Tables",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "Azure_Sql_Staging_Tables",
+									"type": "DatasetReference"
+								}
+							]
+						}
+					]
+				}
+			},
+			{
+				"name": "Load_GBK_Product_MD",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Copy_Each_GBK_Table",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SapHanaSource",
+						"query": "SELECT * FROM DISTRIBUTORS_USA.NAMIBP_PRODUCT_MD",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"preCopyScript": "TRUNCATE TABLE STG.NAMIBP_PRODUCT_MD_GBK",
+						"writeBehavior": "insert",
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "Hana_Source_Tables",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "Staging_GBK_Product",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"folder": {
+			"name": "STAGING"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-09-22T19:28:37Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

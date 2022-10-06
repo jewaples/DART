@@ -1,0 +1,327 @@
+{
+	"name": "INNOVATION_NRS",
+	"properties": {
+		"description": "Move files from Innovation (NRS) to DART db",
+		"activities": [
+			{
+				"name": "Copy Innovation NRS File to DART",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false,
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "PC3 Distributor",
+									"type": "String"
+								},
+								"sink": {
+									"name": "PC3_DISTRIBUTOR",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "PC3 Distributor ID",
+									"type": "String"
+								},
+								"sink": {
+									"name": "PC3_DISTRIBUTOR_ID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "NRS Customer",
+									"type": "String"
+								},
+								"sink": {
+									"name": "NRS_CUSTOMER",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "I3 Innovation Product",
+									"type": "String"
+								},
+								"sink": {
+									"name": "I3_INNOVATION_PRODUCT",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "P4 Code",
+									"type": "String"
+								},
+								"sink": {
+									"name": "P4_CODE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "P4 Brand Size",
+									"type": "String"
+								},
+								"sink": {
+									"name": "P4_BRAND_SIZE",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Period",
+									"type": "String"
+								},
+								"sink": {
+									"name": "PERIOD",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Volumes 9L",
+									"type": "String"
+								},
+								"sink": {
+									"name": "VOLUMES_9L",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "POD",
+									"type": "String"
+								},
+								"sink": {
+									"name": "POD",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "SPPD",
+									"type": "String"
+								},
+								"sink": {
+									"name": "SPPD",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "NSV",
+									"type": "String"
+								},
+								"sink": {
+									"name": "NSV",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "GP",
+									"type": "String"
+								},
+								"sink": {
+									"name": "GP",
+									"type": "Double"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "INNOVATION_FILE_ADLS",
+						"type": "DatasetReference",
+						"parameters": {
+							"FolderPath": {
+								"value": "@pipeline().parameters.FolderPath_SourceStore",
+								"type": "Expression"
+							},
+							"FileName": {
+								"value": "@pipeline().parameters.FileName",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "AzureSqlTable_FACT_SALES_INNOVATION_NRS",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Delete From Source",
+				"type": "Delete",
+				"dependsOn": [
+					{
+						"activity": "Copy data Archive",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "INNOVATION_FILE_ADLS",
+						"type": "DatasetReference",
+						"parameters": {
+							"FolderPath": {
+								"value": "@pipeline().parameters.FolderPath_SourceStore",
+								"type": "Expression"
+							},
+							"FileName": {
+								"value": "@pipeline().parameters.FileName",
+								"type": "Expression"
+							}
+						}
+					},
+					"enableLogging": false,
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
+						"enablePartitionDiscovery": false
+					}
+				}
+			},
+			{
+				"name": "Copy data Archive",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Copy Innovation NRS File to DART",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "INNOVATION_FILE_ADLS",
+						"type": "DatasetReference",
+						"parameters": {
+							"FolderPath": {
+								"value": "@pipeline().parameters.FolderPath_SourceStore",
+								"type": "Expression"
+							},
+							"FileName": {
+								"value": "@pipeline().parameters.FileName",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "INNOVATION_FILE_ADLS",
+						"type": "DatasetReference",
+						"parameters": {
+							"FolderPath": {
+								"value": "@concat( pipeline().parameters.FolderPath_DestinationStore,\nformatDateTime(utcnow(),'yyyyMMdd'))",
+								"type": "Expression"
+							},
+							"FileName": {
+								"value": "@pipeline().parameters.FileName",
+								"type": "Expression"
+							}
+						}
+					}
+				]
+			}
+		],
+		"parameters": {
+			"FolderPath_SourceStore": {
+				"type": "String",
+				"defaultValue": "prod/Innovation/"
+			},
+			"FolderPath_DestinationStore": {
+				"type": "String",
+				"defaultValue": "prod/Innovation/Archive/"
+			},
+			"FileName": {
+				"type": "string",
+				"defaultValue": "Export for BI by P4 (only NRS).csv"
+			}
+		},
+		"folder": {
+			"name": "INNOVATION"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-07-27T14:33:13Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

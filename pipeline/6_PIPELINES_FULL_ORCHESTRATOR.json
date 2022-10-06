@@ -1,0 +1,66 @@
+{
+	"name": "6_PIPELINES_FULL_ORCHESTRATOR",
+	"properties": {
+		"activities": [
+			{
+				"name": "Hillebrand_API_Generic_Call",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "1_API_GENERIC_CALL",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Hillebrand_API_Shipments_Call",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Hillebrand_API_Generic_Call",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "2_API_SHIPMENTS_CALL",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Hillebrand_API_Shipments_Legs_Call",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Hillebrand_API_Shipments_Call",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "3_API_SHIPMENTS_LEGS_CALL",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"folder": {
+			"name": "HILLEBRAND/FULL_API_CALL"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-04-06T20:09:36Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

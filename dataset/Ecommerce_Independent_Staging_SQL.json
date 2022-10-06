@@ -1,0 +1,54 @@
+{
+	"name": "Ecommerce_Independent_Staging_SQL",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_RGM_Analytics_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "RGM"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "WEBSITE_ADDRESS",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PRODUCT_NAME",
+				"type": "nvarchar"
+			},
+			{
+				"name": "QUANTITY",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CURRENCY_ISO",
+				"type": "nvarchar"
+			},
+			{
+				"name": "REGULAR_PRICE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DISCOUNTED_PRICE",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SKU",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DATE",
+				"type": "datetime2",
+				"scale": 7
+			}
+		],
+		"typeProperties": {
+			"schema": "",
+			"table": "TVP"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

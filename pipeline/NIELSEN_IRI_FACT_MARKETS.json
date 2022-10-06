@@ -1,0 +1,1058 @@
+{
+	"name": "NIELSEN_IRI_FACT_MARKETS",
+	"properties": {
+		"description": "Move files from one folder to another folder",
+		"activities": [
+			{
+				"name": "ForEachFile",
+				"description": "Iterate each file, and move them one by one.",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "FilterFiles",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('FilterFiles').output.value",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "File_Lookup",
+							"type": "Lookup",
+							"dependsOn": [
+								{
+									"activity": "Get_SrcMetadata",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderStoredProcedureName": "[STG].[usp_FILE_LOOKUP]",
+									"storedProcedureParameters": {
+										"FILE_NAME": {
+											"type": "String",
+											"value": {
+												"value": "@activity('Get_SrcMetadata').output.itemName",
+												"type": "Expression"
+											}
+										},
+										"TABLE_NAME": {
+											"type": "String",
+											"value": {
+												"value": "@pipeline().parameters.Destination_Table",
+												"type": "Expression"
+											}
+										}
+									},
+									"partitionOption": "None"
+								},
+								"dataset": {
+									"referenceName": "RAD_File_Table_Destination",
+									"type": "DatasetReference"
+								},
+								"firstRowOnly": true
+							}
+						},
+						{
+							"name": "If Condition",
+							"type": "IfCondition",
+							"dependsOn": [
+								{
+									"activity": "File_Lookup",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"expression": {
+									"value": "@activity('File_Lookup').output.firstRow.EXIST",
+									"type": "Expression"
+								},
+								"ifFalseActivities": [
+									{
+										"name": "Get_AdlMetadata",
+										"type": "GetMetadata",
+										"dependsOn": [
+											{
+												"activity": "Insert_Source_Data",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"dataset": {
+												"referenceName": "NIELSEN_IRI_File_Azure_Storage",
+												"type": "DatasetReference",
+												"parameters": {
+													"path": "@pipeline().parameters.FolderPath_DestinationStore",
+													"filename": "@item().name"
+												}
+											},
+											"fieldList": [
+												"itemName",
+												"size",
+												"lastModified"
+											]
+										}
+									},
+									{
+										"name": "Validate_Destination_Data",
+										"description": "Inserts source file metadata in log table",
+										"type": "SqlServerStoredProcedure",
+										"dependsOn": [
+											{
+												"activity": "Load Staging",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"storedProcedureName": "[STG].[usp_VALIDATE_DST_FILES]",
+											"storedProcedureParameters": {
+												"FILE_NAME": {
+													"value": {
+														"value": "@item().name",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"DST_CREATED_DATE": {
+													"value": {
+														"value": "@activity('Get_AdlMetadata').output.lastModified",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"DST_PATH": {
+													"value": {
+														"value": "@pipeline().parameters.FolderPath_DestinationStore",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"DST_SIZE": {
+													"value": {
+														"value": "@activity('Get_AdlMetadata').output.size",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"TABLE_NAME": {
+													"value": {
+														"value": "@pipeline().parameters.Destination_Table",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"IS_ZIP": {
+													"value": {
+														"value": "@pipeline().parameters.Is_Zip",
+														"type": "Expression"
+													},
+													"type": "String"
+												}
+											}
+										},
+										"linkedServiceName": {
+											"referenceName": "NAM_COM_DART_SQL",
+											"type": "LinkedServiceReference"
+										}
+									},
+									{
+										"name": "Load Staging",
+										"type": "Copy",
+										"dependsOn": [
+											{
+												"activity": "Get_AdlMetadata",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"source": {
+												"type": "DelimitedTextSource",
+												"storeSettings": {
+													"type": "AzureBlobFSReadSettings",
+													"recursive": false,
+													"enablePartitionDiscovery": false
+												},
+												"formatSettings": {
+													"type": "DelimitedTextReadSettings"
+												}
+											},
+											"sink": {
+												"type": "AzureSqlSink",
+												"writeBehavior": "insert",
+												"disableMetricsCollection": false
+											},
+											"enableStaging": false,
+											"translator": {
+												"type": "TabularTranslator",
+												"mappings": [
+													{
+														"source": {
+															"name": "Market Key",
+															"type": "String"
+														},
+														"sink": {
+															"name": "MARKET_KEY",
+															"type": "Int32"
+														}
+													},
+													{
+														"source": {
+															"name": "PRODUCT KEY",
+															"type": "String"
+														},
+														"sink": {
+															"name": "PRODUCT_KEY",
+															"type": "Int32"
+														}
+													},
+													{
+														"source": {
+															"name": "Period Key",
+															"type": "String"
+														},
+														"sink": {
+															"name": "PERIOD_KEY",
+															"type": "Int32"
+														}
+													},
+													{
+														"source": {
+															"name": "$",
+															"type": "String"
+														},
+														"sink": {
+															"name": "$_USD",
+															"type": "Decimal"
+														}
+													},
+													{
+														"source": {
+															"name": "Base $",
+															"type": "String"
+														},
+														"sink": {
+															"name": "BASE_$",
+															"type": "Decimal"
+														}
+													},
+													{
+														"source": {
+															"name": "Incr $",
+															"type": "String"
+														},
+														"sink": {
+															"name": "INCR_$",
+															"type": "Decimal"
+														}
+													},
+													{
+														"source": {
+															"name": "Units",
+															"type": "String"
+														},
+														"sink": {
+															"name": "UNITS",
+															"type": "Decimal"
+														}
+													},
+													{
+														"source": {
+															"name": "9L EQ",
+															"type": "String"
+														},
+														"sink": {
+															"name": "9L_EQ",
+															"type": "Decimal"
+														}
+													},
+													{
+														"source": {
+															"name": "Base 9L EQ",
+															"type": "String"
+														},
+														"sink": {
+															"name": "BASE_9L_EQ",
+															"type": "Decimal"
+														}
+													},
+													{
+														"source": {
+															"name": "Incr 9L EQ",
+															"type": "String"
+														},
+														"sink": {
+															"name": "INCR_9L_EQ",
+															"type": "Decimal"
+														}
+													},
+													{
+														"source": {
+															"name": "No Promo $",
+															"type": "String"
+														},
+														"sink": {
+															"name": "NO_PROMO_$",
+															"type": "Decimal"
+														}
+													},
+													{
+														"source": {
+															"name": "Disp w/o Feat $",
+															"type": "String"
+														},
+														"sink": {
+															"name": "DISP_W/O_FEAT_$",
+															"type": "Decimal"
+														}
+													},
+													{
+														"source": {
+															"name": "Disp w/o Feat Base $",
+															"type": "String"
+														},
+														"sink": {
+															"name": "DISP_W/O_FEAT_BASE_$",
+															"type": "Decimal"
+														}
+													},
+													{
+														"source": {
+															"name": "Disp w/o Feat Incr $",
+															"type": "String"
+														},
+														"sink": {
+															"name": "DISP_W/O_FEAT_INCR_$",
+															"type": "Decimal"
+														}
+													},
+													{
+														"source": {
+															"name": "Feat w/o Disp $",
+															"type": "String"
+														},
+														"sink": {
+															"name": "FEAT_W/O_DISP_$",
+															"type": "Decimal"
+														}
+													},
+													{
+														"source": {
+															"name": "Feat w/o Disp Base $",
+															"type": "String"
+														},
+														"sink": {
+															"name": "FEAT_W/O_DISP_BASE_$",
+															"type": "Decimal"
+														}
+													},
+													{
+														"source": {
+															"name": "Feat w/o Disp Incr $",
+															"type": "String"
+														},
+														"sink": {
+															"name": "FEAT_W/O_DISP_INCR_$",
+															"type": "Decimal"
+														}
+													},
+													{
+														"source": {
+															"name": "Feat & Disp $",
+															"type": "String"
+														},
+														"sink": {
+															"name": "FEAT_&_DISP_$",
+															"type": "Decimal"
+														}
+													},
+													{
+														"source": {
+															"name": "Feat & Disp Base $",
+															"type": "String"
+														},
+														"sink": {
+															"name": "FEAT_&_DISP_BASE_$",
+															"type": "Decimal"
+														}
+													},
+													{
+														"source": {
+															"name": "Feat & Disp Incr $",
+															"type": "String"
+														},
+														"sink": {
+															"name": "FEAT_&_DISP_INCR_$",
+															"type": "Decimal"
+														}
+													},
+													{
+														"source": {
+															"name": "Price Decr Only $",
+															"type": "String"
+														},
+														"sink": {
+															"name": "PRICE_DECR_ONLY_$",
+															"type": "Decimal"
+														}
+													},
+													{
+														"source": {
+															"name": "Price Decr Only Base $",
+															"type": "String"
+														},
+														"sink": {
+															"name": "PRICE_DECR_ONLY_BASE_$",
+															"type": "Decimal"
+														}
+													},
+													{
+														"source": {
+															"name": "Price Decr Only Incr $",
+															"type": "String"
+														},
+														"sink": {
+															"name": "PRICE_DECR_ONLY_INCR_$",
+															"type": "Decimal"
+														}
+													},
+													{
+														"source": {
+															"name": "No Promo Units",
+															"type": "String"
+														},
+														"sink": {
+															"name": "NO_PROMO_UNITS",
+															"type": "Decimal"
+														}
+													},
+													{
+														"source": {
+															"name": "Disp w/o Feat Units",
+															"type": "String"
+														},
+														"sink": {
+															"name": "DISP_W/O_FEAT_UNITS",
+															"type": "Decimal"
+														}
+													},
+													{
+														"source": {
+															"name": "Feat w/o Disp Units",
+															"type": "String"
+														},
+														"sink": {
+															"name": "FEAT_W/O_DISP_UNITS",
+															"type": "Decimal"
+														}
+													},
+													{
+														"source": {
+															"name": "Feat & Disp Units",
+															"type": "String"
+														},
+														"sink": {
+															"name": "FEAT_&_DISP_UNITS",
+															"type": "Decimal"
+														}
+													},
+													{
+														"source": {
+															"name": "Price Decr Only Units",
+															"type": "String"
+														},
+														"sink": {
+															"name": "PRICE_DECR_ONLY_UNITS",
+															"type": "Decimal"
+														}
+													},
+													{
+														"source": {
+															"name": "No Promo 9L EQ",
+															"type": "String"
+														},
+														"sink": {
+															"name": "NO_PROMO_9L_EQ",
+															"type": "Decimal"
+														}
+													},
+													{
+														"source": {
+															"name": "Disp w/o Feat 9L EQ",
+															"type": "String"
+														},
+														"sink": {
+															"name": "DISP_W/O_FEAT_9L_EQ",
+															"type": "Decimal"
+														}
+													},
+													{
+														"source": {
+															"name": "Disp w/o Feat Base 9L EQ",
+															"type": "String"
+														},
+														"sink": {
+															"name": "DISP_W/O_FEAT_BASE_9L_EQ",
+															"type": "Decimal"
+														}
+													},
+													{
+														"source": {
+															"name": "Disp w/o Feat Incr 9L EQ",
+															"type": "String"
+														},
+														"sink": {
+															"name": "DISP_W/O_FEAT_INCR_9L_EQ",
+															"type": "Decimal"
+														}
+													},
+													{
+														"source": {
+															"name": "Feat w/o Disp 9L EQ",
+															"type": "String"
+														},
+														"sink": {
+															"name": "FEAT_W/O_DISP_9L_EQ",
+															"type": "Decimal"
+														}
+													},
+													{
+														"source": {
+															"name": "Feat w/o Disp Base 9L EQ",
+															"type": "String"
+														},
+														"sink": {
+															"name": "FEAT_W/O_DISP_BASE_9L_EQ",
+															"type": "Decimal"
+														}
+													},
+													{
+														"source": {
+															"name": "Feat w/o Disp Incr 9L EQ",
+															"type": "String"
+														},
+														"sink": {
+															"name": "FEAT_W/O_DISP_INCR_9L_EQ",
+															"type": "Decimal"
+														}
+													},
+													{
+														"source": {
+															"name": "Feat & Disp 9L EQ",
+															"type": "String"
+														},
+														"sink": {
+															"name": "FEAT_&_DISP_9L_EQ",
+															"type": "Decimal"
+														}
+													},
+													{
+														"source": {
+															"name": "Feat & Disp Base 9L EQ",
+															"type": "String"
+														},
+														"sink": {
+															"name": "FEAT_&_DISP_BASE_9L_EQ",
+															"type": "Decimal"
+														}
+													},
+													{
+														"source": {
+															"name": "Feat & Disp Incr 9L EQ",
+															"type": "String"
+														},
+														"sink": {
+															"name": "FEAT_&_DISP_INCR_9L_EQ",
+															"type": "Decimal"
+														}
+													},
+													{
+														"source": {
+															"name": "Price Decr Only 9L EQ",
+															"type": "String"
+														},
+														"sink": {
+															"name": "PRICE_DECR_ONLY_9L_EQ",
+															"type": "Decimal"
+														}
+													},
+													{
+														"source": {
+															"name": "Price Decr Only Base 9L EQ",
+															"type": "String"
+														},
+														"sink": {
+															"name": "PRICE_DECR_ONLY_BASE_9L_EQ",
+															"type": "Decimal"
+														}
+													},
+													{
+														"source": {
+															"name": "Price Decr Only Incr 9L EQ",
+															"type": "String"
+														},
+														"sink": {
+															"name": "PRICE_DECR_ONLY_INCR_9L_EQ",
+															"type": "Decimal"
+														}
+													},
+													{
+														"source": {
+															"name": "Number of Stores",
+															"type": "String"
+														},
+														"sink": {
+															"name": "NUMBER_OF_STORES",
+															"type": "Decimal"
+														}
+													},
+													{
+														"source": {
+															"name": "9L EQ / Wghtd Dist - Context",
+															"type": "String"
+														},
+														"sink": {
+															"name": "9L_EQ_/_%ACV_WHERE_DIST_-_BA_SPIRITS_SHARE",
+															"type": "Decimal"
+														}
+													},
+													{
+														"source": {
+															"name": "$ / Wghtd Dist - Context",
+															"type": "String"
+														},
+														"sink": {
+															"name": "$_/_%ACV_WHERE_DIST_-_BA_SPIRITS_SHARE",
+															"type": "Decimal"
+														}
+													},
+													{
+														"source": {
+															"name": "Number of Stores Selling",
+															"type": "String"
+														},
+														"sink": {
+															"name": "NUMBER_OF_STORES_SELLING",
+															"type": "Decimal"
+														}
+													},
+													{
+														"source": {
+															"name": "Avg 750ML EQ Price",
+															"type": "String"
+														},
+														"sink": {
+															"name": "AVG_750ML_EQ_PRICE",
+															"type": "Decimal"
+														}
+													}
+												]
+											}
+										},
+										"inputs": [
+											{
+												"referenceName": "NIELSEN_Fact_Market_DataLake",
+												"type": "DatasetReference",
+												"parameters": {
+													"path": "@pipeline().parameters.FolderPath_DestinationStore",
+													"filename": "@item().name"
+												}
+											}
+										],
+										"outputs": [
+											{
+												"referenceName": "NIELSEN_STG_Fact_Market_Sql",
+												"type": "DatasetReference"
+											}
+										]
+									},
+									{
+										"name": "Insert_Source_Data",
+										"description": "Inserts source file metadata in log table",
+										"type": "SqlServerStoredProcedure",
+										"dependsOn": [],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"storedProcedureName": "[LOGS].[usp_INSERT_SRC_FILES]",
+											"storedProcedureParameters": {
+												"FILE_NAME": {
+													"value": {
+														"value": "@item().name",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"PIPELINE_ID": {
+													"value": {
+														"value": "@pipeline().RunId",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"SOURCE": {
+													"value": {
+														"value": "@pipeline().parameters.SOURCE",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"SRC_CREATED_DATE": {
+													"value": {
+														"value": "@activity('Get_SrcMetadata').output.lastModified",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"SRC_PATH": {
+													"value": {
+														"value": "@pipeline().parameters.FolderPath_SourceStore",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"SRC_SIZE": {
+													"value": {
+														"value": "@activity('Get_SrcMetadata').output.size",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"TABLE_NAME": {
+													"value": {
+														"value": "@pipeline().parameters.Destination_Table",
+														"type": "Expression"
+													},
+													"type": "String"
+												}
+											}
+										},
+										"linkedServiceName": {
+											"referenceName": "NAM_COM_DART_SQL",
+											"type": "LinkedServiceReference"
+										}
+									},
+									{
+										"name": "Update Staging  Filename PipelineID",
+										"type": "SqlServerStoredProcedure",
+										"dependsOn": [
+											{
+												"activity": "Validate_Destination_Data",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"policy": {
+											"timeout": "7.00:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"storedProcedureName": "STG.usp_UPDATE_STG_TABLE_FILENAME",
+											"storedProcedureParameters": {
+												"FILE_NAME": {
+													"value": {
+														"value": "@item().name",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"PIPELINE_ID": {
+													"value": {
+														"value": "@pipeline().RunId",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"TABLE_NAME": {
+													"value": {
+														"value": "@pipeline().parameters.Stage_table",
+														"type": "Expression"
+													},
+													"type": "String"
+												}
+											}
+										},
+										"linkedServiceName": {
+											"referenceName": "NAM_COM_DART_SQL",
+											"type": "LinkedServiceReference"
+										}
+									}
+								]
+							}
+						},
+						{
+							"name": "Get_SrcMetadata",
+							"type": "GetMetadata",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataset": {
+									"referenceName": "NIELSEN_IRI_File_Azure_Storage",
+									"type": "DatasetReference",
+									"parameters": {
+										"path": {
+											"value": "@pipeline().parameters.FolderPath_DestinationStore",
+											"type": "Expression"
+										},
+										"filename": "@item().name"
+									}
+								},
+								"fieldList": [
+									"itemName",
+									"size",
+									"lastModified"
+								]
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "FilterFiles",
+				"description": "Only files will be selected, the sub-folders will not be selected.",
+				"type": "Filter",
+				"dependsOn": [
+					{
+						"activity": "GetFileList",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('GetFileList').output.childItems",
+						"type": "Expression"
+					},
+					"condition": {
+						"value": "@contains(item().name,'UPC_Weekly_fct')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "GetFileList",
+				"type": "GetMetadata",
+				"dependsOn": [
+					{
+						"activity": "Clean STG table",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Copy_File",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "NIELSEN_IRI_Folder_Azure_Storage",
+						"type": "DatasetReference",
+						"parameters": {
+							"path": {
+								"value": "@pipeline().parameters.FolderPath_DestinationStore",
+								"type": "Expression"
+							}
+						}
+					},
+					"fieldList": [
+						"itemName",
+						"childItems"
+					]
+				}
+			},
+			{
+				"name": "Clean STG table",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[STG].[usp_CLEAN_NIELSEN_UPC_STG]"
+				},
+				"linkedServiceName": {
+					"referenceName": "NAM_COM_DART_SQL",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "Copy_File",
+				"description": "Copy a file from the source store to the destination store.",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "BinarySource",
+						"storeSettings": {
+							"type": "FtpReadSettings",
+							"recursive": true,
+							"wildcardFolderPath": {
+								"value": "@pipeline().parameters.FolderPath_SourceStore",
+								"type": "Expression"
+							},
+							"wildcardFileName": "StdMarkets_SpiritsUPC_Weekly_fct*",
+							"useBinaryTransfer": true,
+							"deleteFilesAfterCompletion": false,
+							"disableChunking": false
+						},
+						"formatSettings": {
+							"type": "BinaryReadSettings"
+						}
+					},
+					"sink": {
+						"type": "AzureBlobFSSink"
+					},
+					"enableStaging": false,
+					"dataIntegrationUnits": 0
+				},
+				"inputs": [
+					{
+						"referenceName": "NIELSEN_IRI_File_FTP",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "NIELSEN_IRI_Folder_Azure_Storage",
+						"type": "DatasetReference",
+						"parameters": {
+							"path": {
+								"value": "@pipeline().parameters.FolderPath_DestinationStore",
+								"type": "Expression"
+							}
+						}
+					}
+				]
+			}
+		],
+		"parameters": {
+			"FolderPath_SourceStore": {
+				"type": "String",
+				"defaultValue": "/ad_hoc"
+			},
+			"FolderPath_DestinationStore": {
+				"type": "String",
+				"defaultValue": "/prod/Nielsen_IRI/Fact_Market"
+			},
+			"Destination_Table": {
+				"type": "string",
+				"defaultValue": "LOGS.SOURCE_FILES_LOAD_LOG"
+			},
+			"Is_Zip": {
+				"type": "string",
+				"defaultValue": "0"
+			},
+			"STARTDATE": {
+				"type": "string"
+			},
+			"SOURCE": {
+				"type": "string",
+				"defaultValue": "Nielsen"
+			},
+			"Stage_table": {
+				"type": "string",
+				"defaultValue": "STG.NIELSEN_SPIRITS_UPC_FCT"
+			}
+		},
+		"folder": {
+			"name": "NIELSEN/Spirits"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-05-04T19:23:04Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

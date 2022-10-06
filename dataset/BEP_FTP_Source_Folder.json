@@ -1,0 +1,33 @@
+{
+	"name": "BEP_FTP_Source_Folder",
+	"properties": {
+		"description": "It describes the folder in the data source store.",
+		"linkedServiceName": {
+			"referenceName": "NAM_SGWS_FTP",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"FolderPath": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "BEP"
+		},
+		"annotations": [],
+		"type": "FileShare",
+		"typeProperties": {
+			"fileName": "",
+			"folderPath": {
+				"value": "@dataset().FolderPath",
+				"type": "Expression"
+			},
+			"key": "",
+			"bucketName": {
+				"value": "@dataset().FolderPath",
+				"type": "Expression"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

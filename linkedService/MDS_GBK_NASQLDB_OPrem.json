@@ -1,0 +1,16 @@
+{
+	"name": "MDS_GBK_NASQLDB_OPrem",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "SqlServer",
+		"typeProperties": {
+			"connectionString": "integrated security=False;data source=NASQLDBS01.GVA.DATA;initial catalog=MDS_GBK;user id=PBI_PROD",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiJhMzk0NjgyNS1hY2ZhLTRiNjgtODJkOS1hNjg4M2I1ZTI1NDIiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+		},
+		"connectVia": {
+			"referenceName": "nlmas005-IRtime",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

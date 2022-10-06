@@ -1,0 +1,20 @@
+{
+	"name": "hillebrand_binary",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_Data_Foundation_DataLake",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "hille_binary",
+				"folderPath": "hillebrand",
+				"fileSystem": "dev"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

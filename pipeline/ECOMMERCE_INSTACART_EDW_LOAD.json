@@ -1,0 +1,60 @@
+{
+	"name": "ECOMMERCE_INSTACART_EDW_LOAD",
+	"properties": {
+		"activities": [
+			{
+				"name": "Load DIM_PRODUCTS",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[ECOMM].[usp_DIM_PRODUCT_INSTACART_LOAD]"
+				},
+				"linkedServiceName": {
+					"referenceName": "NAM_COM_DART_SQL",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "Load FACT_ECOMMERCE",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "Load DIM_PRODUCTS",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[ECOMM].[usp_FACT_ECOMMERCE_INSTACART_LOAD]"
+				},
+				"linkedServiceName": {
+					"referenceName": "NAM_COM_DART_SQL",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"folder": {
+			"name": "ECOMMERCE"
+		},
+		"annotations": [],
+		"lastPublishTime": "2021-04-20T22:27:35Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

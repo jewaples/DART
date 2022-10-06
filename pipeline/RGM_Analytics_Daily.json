@@ -1,0 +1,129 @@
+{
+	"name": "RGM_Analytics_Daily",
+	"properties": {
+		"activities": [
+			{
+				"name": "RGM-Pipeline",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "RGM_RAD_Notebook",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/RGM_REENGINEERING/00.pipeline",
+					"baseParameters": {
+						"type_of_loading_data": {
+							"value": "@pipeline().parameters.type_of_loading_data",
+							"type": "Expression"
+						},
+						"Enviroment": {
+							"value": "@pipeline().parameters.Enviroment",
+							"type": "Expression"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "bdhdbenam2_AzureDatabricks",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "AAS_Model_Refresh_CCC_RGM_Partitions_2023_2022",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "AAS_Model_Refresh_CCC_Dimensions",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "AAS_Model_Refresh_CCC_RGM_Partitions_2023_2022",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "AAS_Model_Refresh_CCC_Dimensions",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "RGM-Pipeline",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "AAS_Model_Refresh_CCC_Dimensions",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "RGM_RAD_Notebook",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/RGM_REENGINEERING/00.pipeline rad",
+					"baseParameters": {
+						"Enviroment": {
+							"value": "@pipeline().parameters.Enviroment",
+							"type": "Expression"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "bdhdbenam2_AzureDatabricks",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"parameters": {
+			"STARTDATE": {
+				"type": "string"
+			},
+			"type_of_loading_data": {
+				"type": "string",
+				"defaultValue": "full_load"
+			},
+			"Enviroment": {
+				"type": "string",
+				"defaultValue": "PROD"
+			}
+		},
+		"folder": {
+			"name": "RGM"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-05-03T11:57:50Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

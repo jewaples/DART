@@ -1,0 +1,16 @@
+{
+	"name": "Rgm_Source_SQL",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "NAM_RGM_Analytics_SQL",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Cognac_Sales"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
