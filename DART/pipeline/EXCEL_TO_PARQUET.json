@@ -50,7 +50,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@activity('GET_EXCEL_FILES').output.childItems",
+						"value": "@range(sub(length(activity('GET_EXCEL_FILES').output.childItems),2),2)",
 						"type": "Expression"
 					},
 					"isSequential": true,
@@ -62,7 +62,7 @@
 							"userProperties": [],
 							"typeProperties": {
 								"expression": {
-									"value": "@and(contains(string(item()),'Delivered'),startswith(item().name,substring(activity('GET_EXCEL_FILES').output.childItems[sub(length(activity('GET_EXCEL_FILES').output.childItems),1)].name,0,10)))",
+									"value": "@contains(string(activity('GET_EXCEL_FILES').output.childItems[item()]),'Delivered')",
 									"type": "Expression"
 								},
 								"ifTrueActivities": [
@@ -74,7 +74,7 @@
 										"typeProperties": {
 											"variableName": "FilesStringDelivered",
 											"value": {
-												"value": "@{item()}",
+												"value": "@string(activity('GET_EXCEL_FILES').output.childItems[item()])",
 												"type": "Expression"
 											}
 										}
@@ -707,7 +707,7 @@
 							"userProperties": [],
 							"typeProperties": {
 								"expression": {
-									"value": "@and(contains(string(item()),'Enroute'),startswith(item().name,substring(activity('GET_EXCEL_FILES').output.childItems[sub(length(activity('GET_EXCEL_FILES').output.childItems),1)].name,0,10)))",
+									"value": "@contains(string(activity('GET_EXCEL_FILES').output.childItems[item()]),'Enroute')",
 									"type": "Expression"
 								},
 								"ifTrueActivities": [
@@ -719,7 +719,7 @@
 										"typeProperties": {
 											"variableName": "FilesStringEnroute",
 											"value": {
-												"value": "@{item()}",
+												"value": "@string(activity('GET_EXCEL_FILES').output.childItems[item()])",
 												"type": "Expression"
 											}
 										}
@@ -1472,7 +1472,7 @@
 			"name": "RYDER"
 		},
 		"annotations": [],
-		"lastPublishTime": "2022-09-09T18:27:45Z"
+		"lastPublishTime": "2022-10-06T13:39:37Z"
 	},
 	"type": "Microsoft.DataFactory/factories/pipelines"
 }

@@ -190,11 +190,25 @@
 										},
 										"userProperties": [],
 										"typeProperties": {
-											"storedProcedureName": "[STG].[usp_INSERT_SRC_FILES_SOURCE]",
+											"storedProcedureName": "[LOGS].[usp_INSERT_SRC_FILES]",
 											"storedProcedureParameters": {
 												"FILE_NAME": {
 													"value": {
 														"value": "@item().name",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"PIPELINE_ID": {
+													"value": {
+														"value": "@pipeline().RunId",
+														"type": "Expression"
+													},
+													"type": "String"
+												},
+												"SOURCE": {
+													"value": {
+														"value": "@pipeline().parameters.SOURCE",
 														"type": "Expression"
 													},
 													"type": "String"
@@ -223,13 +237,6 @@
 												"TABLE_NAME": {
 													"value": {
 														"value": "@pipeline().parameters.Destination_Table",
-														"type": "Expression"
-													},
-													"type": "String"
-												},
-												"SOURCE": {
-													"value": {
-														"value": "@pipeline().parameters.SOURCE",
 														"type": "Expression"
 													},
 													"type": "String"
@@ -376,6 +383,22 @@
 										"typeProperties": {
 											"source": {
 												"type": "DelimitedTextSource",
+												"additionalColumns": [
+													{
+														"name": "SOURCE_FILE",
+														"value": {
+															"value": "@item().name",
+															"type": "Expression"
+														}
+													},
+													{
+														"name": "PIPELINE_ID",
+														"value": {
+															"value": "@pipeline().RunId",
+															"type": "Expression"
+														}
+													}
+												],
 												"storeSettings": {
 													"type": "AzureBlobFSReadSettings",
 													"recursive": true
@@ -396,7 +419,6 @@
 													{
 														"source": {
 															"type": "String",
-															"physicalType": "String",
 															"ordinal": 1
 														},
 														"sink": {
@@ -408,7 +430,6 @@
 													{
 														"source": {
 															"type": "String",
-															"physicalType": "String",
 															"ordinal": 2
 														},
 														"sink": {
@@ -420,7 +441,6 @@
 													{
 														"source": {
 															"type": "String",
-															"physicalType": "String",
 															"ordinal": 3
 														},
 														"sink": {
@@ -432,7 +452,6 @@
 													{
 														"source": {
 															"type": "String",
-															"physicalType": "String",
 															"ordinal": 4
 														},
 														"sink": {
@@ -444,7 +463,6 @@
 													{
 														"source": {
 															"type": "String",
-															"physicalType": "String",
 															"ordinal": 5
 														},
 														"sink": {
@@ -456,7 +474,6 @@
 													{
 														"source": {
 															"type": "String",
-															"physicalType": "String",
 															"ordinal": 6
 														},
 														"sink": {
@@ -468,11 +485,32 @@
 													{
 														"source": {
 															"type": "String",
-															"physicalType": "String",
 															"ordinal": 7
 														},
 														"sink": {
 															"name": "USER_AGENT",
+															"type": "String",
+															"physicalType": "nvarchar"
+														}
+													},
+													{
+														"source": {
+															"name": "SOURCE_FILE",
+															"type": "String"
+														},
+														"sink": {
+															"name": "SOURCE_FILE",
+															"type": "String",
+															"physicalType": "nvarchar"
+														}
+													},
+													{
+														"source": {
+															"name": "PIPELINE_ID",
+															"type": "String"
+														},
+														"sink": {
+															"name": "PIPELINE_ID",
 															"type": "String",
 															"physicalType": "nvarchar"
 														}
@@ -826,7 +864,7 @@
 			"name": "STAGING"
 		},
 		"annotations": [],
-		"lastPublishTime": "2021-08-06T17:23:56Z"
+		"lastPublishTime": "2022-10-06T20:47:34Z"
 	},
 	"type": "Microsoft.DataFactory/factories/pipelines"
 }
